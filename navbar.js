@@ -74,7 +74,9 @@ function renderNavbar(activePage = '') {
             <div class="flex items-center space-x-2">
               <div class="hidden lg:block text-right">
                 <div class="text-xs font-bold text-[#ede8e1] leading-tight">${user.fullName || 'User'}</div>
-                <div class="text-[10px] ${roleInfo.class} inline-block font-semibold mt-0.5">${roleInfo.label}</div>
+                <a href="${userRole === 'infra_provider' ? 'dashboard-infra.html' : userRole === 'service_provider' ? 'dashboard-service.html' : userRole === 'visitor' ? 'dashboard-visitor.html' : 'preplans.html'}" class="text-[10px] ${roleInfo.class} inline-block font-semibold mt-0.5 hover:underline" title="Go to My Dashboard">
+                  ${roleInfo.label} &rarr;
+                </a>
               </div>
               <button onclick="window.ChronosSupabase.signOut()" class="p-2 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#9e9b93] hover:text-[#ede8e1] border border-[#2a2c35] transition" title="Sign Out">
                 <i data-lucide="log-out" class="w-4 h-4"></i>

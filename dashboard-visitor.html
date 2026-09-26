@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Companion — ChronosFlow Experience</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
+
+    <!-- Header & Persona Badge -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-sage">SPECTATOR TIER</span>
+          <span class="text-xs text-[#9e9b93] font-mono">Visitor Guest Companion</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">My Event Experience & Guidance</h1>
+        <p class="text-xs text-[#9e9b93]">
+          Your personalized itinerary, pre-planned transit corridors, hotel bookings, and real-time live match advisories.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <div class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs font-mono text-[#ede8e1] flex items-center space-x-2">
+          <i data-lucide="ticket" class="w-4 h-4 text-[#709775]"></i>
+          <span>Pass Holder: Ananya Sharma</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: DETAILS ABOUT THEIR EVENT (Digital Ticket & Venue Pass)        -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="ticket" class="w-5 h-5 text-[#709775]"></i>
+            <span>My Booked Event & Entry Pass</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Verified admission pass and seating credentials</p>
+        </div>
+        <span class="text-xs font-mono text-[#709775] font-bold">CONFIRMED ADMISSION</span>
+      </div>
+
+      <!-- Ticket Card -->
+      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-[#2a2c35] bg-gradient-to-r from-[#1a1b20] to-[#22242b] relative overflow-hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">Match Day Admission</div>
+            <h3 class="text-xl sm:text-2xl font-black text-[#ede8e1] mt-1" id="ticket-event-title">
+              Championship Trophy: 4-Day Mega Cricket Fixture
+            </h3>
+            <div class="flex items-center space-x-2 text-xs text-[#9e9b93] mt-1">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+              <span id="ticket-venue-name">Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul, Navi Mumbai</span>
+            </div>
+          </div>
+
+          <div class="text-left md:text-right font-mono">
+            <div class="text-[10px] text-[#9e9b93] uppercase">Pass Code</div>
+            <div class="text-base font-bold text-[#d4a373]" id="ticket-id">TKT-DYP-2026-94812</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+          <div class="p-3 rounded-xl bg-[#121316] border border-[#2a2c35]">
+            <div class="text-[10px] text-[#9e9b93] uppercase">Entry Portal</div>
+            <div class="text-sm font-bold text-[#709775] mt-0.5" id="ticket-gate">Gate 4 (West Wing)</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#121316] border border-[#2a2c35]">
+            <div class="text-[10px] text-[#9e9b93] uppercase">Seat Allocation</div>
+            <div class="text-sm font-bold text-[#ede8e1] mt-0.5" id="ticket-seat">Stand C &bull; Row 14 &bull; Seat 48</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#121316] border border-[#2a2c35]">
+            <div class="text-[10px] text-[#9e9b93] uppercase">Gates Open</div>
+            <div class="text-sm font-bold text-[#d4a373] mt-0.5">11:30 AM</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#121316] border border-[#2a2c35]">
+            <div class="text-[10px] text-[#9e9b93] uppercase">Match Start</div>
+            <div class="text-sm font-bold text-[#ede8e1] mt-0.5">01:30 PM</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: THE PRE-PLANS DECIDED FOR THEM (Transit, Route, Lodging)       -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="map" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>The Pre-Plans Decided for You</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Official journey recommendations computed by the event management baseline</p>
+        </div>
+        <span class="text-xs font-mono text-[#d4a373]">Pre-Event Brief</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="visitor-preplans-grid">
+        
+        <!-- Pre-plan: Transit Corridor -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">RECOMMENDED TRANSIT</span>
+            <span class="text-xs text-[#709775] font-mono">Guaranteed Headway</span>
+          </div>
+          <h4 class="text-sm font-bold text-[#ede8e1]">Suburban Train: Harbour Line Route</h4>
+          <p class="text-xs text-[#9e9b93] leading-relaxed">
+            Board the 12-car local from CSMT/Kurla departing at <strong>10:48 AM</strong>. Arrive at <strong>Nerul Railway Station at 11:32 AM</strong> to avoid peak congestion.
+          </p>
+        </div>
+
+        <!-- Pre-plan: Shaded Walking Corridor -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sage">FIRST/LAST MILE</span>
+            <span class="text-xs text-[#d4a373] font-mono">18 Min Walk / 5m Bus</span>
+          </div>
+          <h4 class="text-sm font-bold text-[#ede8e1]">Shaded Pedestrian Green Corridor</h4>
+          <p class="text-xs text-[#9e9b93] leading-relaxed">
+            Exit Nerul Station East. Follow the green overhead shaded pathway (1.8km) directly to <strong>Stadium Gate 4</strong>, or take the free NMMT continuous event shuttle from Depot Bay 2.
+          </p>
+        </div>
+
+        <!-- Pre-plan: Accommodation -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sand">HOTEL CLUSTER</span>
+            <span class="text-xs text-[#ede8e1] font-mono">1.4 km from Stadium</span>
+          </div>
+          <h4 class="text-sm font-bold text-[#ede8e1]">Nerul Sector 21 Hospitality Cluster</h4>
+          <p class="text-xs text-[#9e9b93] leading-relaxed">
+            Your booking is verified within walking radius of the stadium. Early check-in available from 10:00 AM.
+          </p>
+        </div>
+
+        <!-- Pre-plan: Bag Policy & Parking -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-terracotta">SECURITY & PARKING RULES</span>
+            <span class="text-xs text-[#c96a54] font-mono">Mandatory Policy</span>
+          </div>
+          <h4 class="text-sm font-bold text-[#ede8e1]">Strict Infield Pass-Only Parking & Bag Policy</h4>
+          <p class="text-xs text-[#9e9b93] leading-relaxed">
+            No private vehicle parking at the stadium perimeter. Private cars must park at <strong>Wonders Park Remote Plaza</strong>. Only transparent bags permitted; power banks allowed.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: CURRENT PLANS DECIDED FOR THEM (Live Day-of-Event Updates)     -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#c96a54] animate-pulse"></span>
+            <span>Current Plans Decided for You (Live Day-of-Event)</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Dynamic status, turnstile wait times, and live dispatch advisories</p>
+        </div>
+        <span class="text-xs font-mono text-[#c96a54]">Live Updates Active</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Live Factor 1: Gate Queue -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-[#9e9b93] uppercase font-bold text-[10px]">Gate 4 Turnstile Queue</span>
+            <span class="text-[#709775] font-mono font-bold">Fast Flow</span>
+          </div>
+          <div class="text-2xl font-black text-[#709775]">4 Mins Wait</div>
+          <p class="text-[11px] text-[#9e9b93]">Optical scanners operating at full throughput. No backpressure.</p>
+        </div>
+
+        <!-- Live Factor 2: Weather & Hydration -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-[#9e9b93] uppercase font-bold text-[10px]">Stadium Concourse Climate</span>
+            <span class="text-[#d4a373] font-mono font-bold">Heat Index High</span>
+          </div>
+          <div class="text-2xl font-black text-[#ede8e1]">31.4°C &bull; Humid</div>
+          <p class="text-[11px] text-[#d4a373]">Misting fans and free electrolyte water pods activated at Concourse Gate 4.</p>
+        </div>
+
+        <!-- Live Factor 3: Egress Routing Advisory -->
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-[#9e9b93] uppercase font-bold text-[10px]">Egress Dispatch Advisory</span>
+            <span class="text-[#c96a54] font-mono font-bold">Pacing Advice</span>
+          </div>
+          <div class="text-sm font-bold text-[#ede8e1] leading-snug">Seawoods Direct Loop Recommended</div>
+          <p class="text-[11px] text-[#9e9b93]">At 21:45 match end, use the Seawoods shuttle from Gate 4 to avoid Nerul station footbridge crush.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    async function loadVisitorDashboard() {
+      renderNavbar('visitor');
+      const data = await window.ChronosSupabase.getVisitorData();
+      
+      document.getElementById('ticket-event-title').innerText = data.event.title;
+      document.getElementById('ticket-venue-name').innerText = `${data.event.venue}, ${data.event.location}`;
+      document.getElementById('ticket-id').innerText = data.ticketId;
+      document.getElementById('ticket-gate').innerText = data.event.gate;
+      document.getElementById('ticket-seat').innerHTML = data.event.seat;
+      
+      lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadVisitorDashboard);
+  </script>
+</body>
+</html>

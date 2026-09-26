@@ -396,7 +396,168 @@ const ChronosSupabase = {
     } catch (e) {}
 
     return { success: true };
+  },
+
+  // 5. INFRASTRUCTURE MANAGER PIPELINE & ASSETS
+  async getInfraData() {
+    const assets = [
+      { id: "rail_nerul", name: "Nerul Railway Station", category: "Suburban Rail", capacity: "24,000 pax/hr", status: "Operational", line: "Harbour Line & Trans-Harbour Line", loadPct: 68 },
+      { id: "choke_lp", name: "LP Junction Arterial Control", category: "Traffic Grid", capacity: "Primary Highway Corridor", status: "Heavy Traffic Warning", line: "Sion-Panvel Expressway", loadPct: 92 },
+      { id: "park_wonders", name: "Wonders Park Remote Parking Plaza", category: "Parking & Shuttles", capacity: "1,500 Cars / 65 Buses", status: "Available", line: "Dedicated Loop Corridor", loadPct: 46 },
+      { id: "rail_seawoods", name: "Seawoods Grand Central Transit Hub", category: "Modern Integrated Hub", capacity: "18,000 pax/hr", status: "Optimal", line: "Harbour Line Southern Feeder", loadPct: 52 }
+    ];
+
+    let requests = [];
+    try {
+      const stored = localStorage.getItem('chronos_infra_requests');
+      if (stored) {
+        requests = JSON.parse(stored);
+      } else {
+        requests = [
+          {
+            id: "req_inf_01",
+            eventId: "dypatil_nerul",
+            eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
+            eventHost: "Vikram Sethi (Event Master Orchestrator)",
+            venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
+            date: "Sep 1 - Sep 4, 2026",
+            expectedVisitors: 50000,
+            requestedAsset: "Nerul Station & Bus Fleet",
+            requestText: "Allocate 65 feeder CNG loop shuttles from Nerul Station to Stadium Gate 4 between 10:30-13:30. Coordinate with Central Railway for 3 emergency rakes at 22:00.",
+            allocatedCapacity: "65 Shuttles & 3 Extra Rakes",
+            status: "PENDING",
+            timestamp: "2026-08-15T09:30:00Z"
+          },
+          {
+            id: "req_inf_02",
+            eventId: "dypatil_nerul",
+            eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
+            eventHost: "Vikram Sethi (Event Master Orchestrator)",
+            venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
+            date: "Sep 1 - Sep 4, 2026",
+            expectedVisitors: 50000,
+            requestedAsset: "LP Junction Traffic Police Unit",
+            requestText: "Designate freight lane diversion at Uran Phata and LP Junction to prevent match spectator buses from being delayed by port trailers.",
+            allocatedCapacity: "Green Corridor Priority Signage",
+            status: "APPROVED",
+            timestamp: "2026-08-14T14:15:00Z"
+          }
+        ];
+        localStorage.setItem('chronos_infra_requests', JSON.stringify(requests));
+      }
+    } catch (e) {}
+
+    return { assets, requests };
+  },
+
+  async respondToInfraRequest(requestId, newStatus, notes) {
+    try {
+      const stored = localStorage.getItem('chronos_infra_requests');
+      let requests = stored ? JSON.parse(stored) : [];
+      requests = requests.map(r => r.id === requestId ? { ...r, status: newStatus, responseNotes: notes, updated_at: new Date().toISOString() } : r);
+      localStorage.setItem('chronos_infra_requests', JSON.stringify(requests));
+    } catch (e) {}
+    return { success: true };
+  },
+
+  // 6. SERVICE MANAGER PORTFOLIO & RFPS
+  async getServiceData() {
+    const portfolio = [
+      { id: "srv_concessions", name: "Infield Concessions & Hydration Kiosks", domain: "F&B & Catering", capacity: "45 Satellite Kiosks / 15,000 servings/hr", activeUnits: 38, lead: "Chef Rajesh M." },
+      { id: "srv_screening", name: "Perimeter Security & Magnetometer Screening", domain: "Security & Access", capacity: "30 Optical Lanes / 19,500 pax/hr", activeUnits: 30, lead: "Capt. K. Roy" },
+      { id: "srv_medical", name: "Infield ALS Emergency Triage & Paramedics", domain: "Medical & Trauma", capacity: "12 ALS Ambulances & 4 Rapid Tents", activeUnits: 12, lead: "Dr. Sunita V." },
+      { id: "srv_sanitation", name: "Continuous Waste Disposal & Restroom Hygiene", domain: "Sanitation", capacity: "120 Roaming Crew Members", activeUnits: 110, lead: "M. Fernandes" }
+    ];
+
+    let requests = [];
+    try {
+      const stored = localStorage.getItem('chronos_service_requests');
+      if (stored) {
+        requests = JSON.parse(stored);
+      } else {
+        requests = [
+          {
+            id: "req_srv_01",
+            eventId: "dypatil_nerul",
+            eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
+            eventHost: "Vikram Sethi (Event Master Orchestrator)",
+            venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
+            serviceDomain: "F&B & Catering",
+            requestTitle: "Deploy 35 Satellite Beverage & Grab-and-Go Kiosks",
+            requirements: "High-density crowd expected during 15:00-20:30 inning intervals. Require pre-packaged hydration and electrolyte packs distributed across Sectors A to H.",
+            unitsRequested: 35,
+            status: "PENDING",
+            timestamp: "2026-08-16T11:00:00Z"
+          },
+          {
+            id: "req_srv_02",
+            eventId: "dypatil_nerul",
+            eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
+            eventHost: "Vikram Sethi (Event Master Orchestrator)",
+            venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
+            serviceDomain: "Medical & Trauma",
+            requestTitle: "High Heat Index Standby: 8 Cooling Misting Tents",
+            requirements: "Forecast shows 31.4°C and 78% humidity. Deploy 8 cooling hydration pods with paramedical triage stations at perimeter Gates 2, 4, and 7.",
+            unitsRequested: 8,
+            status: "ACCEPTED",
+            timestamp: "2026-08-15T16:20:00Z"
+          }
+        ];
+        localStorage.setItem('chronos_service_requests', JSON.stringify(requests));
+      }
+    } catch (e) {}
+
+    const actionPlaybook = [
+      { phase: "Ingress (10:00 - 13:00)", task: "Activate 30 outer magnetometer screening lanes. Pre-chill hydration inventory.", priority: "CRITICAL" },
+      { phase: "Match Live (13:00 - 18:00)", task: "Monitor concourse F&B queues. Restock Sector C satellite pods.", priority: "HIGH" },
+      { phase: "Inning Interval (18:00 - 18:45)", task: "Deploy roaming grab-and-go vendors into Stand aisles.", priority: "URGENT" },
+      { phase: "Egress Dispersal (21:30 - 23:00)", task: "Open all perimeter exit gates. Position medical standby teams along railway walking corridor.", priority: "HIGH" }
+    ];
+
+    return { portfolio, requests, actionPlaybook };
+  },
+
+  async respondToServiceRequest(requestId, newStatus, notes) {
+    try {
+      const stored = localStorage.getItem('chronos_service_requests');
+      let requests = stored ? JSON.parse(stored) : [];
+      requests = requests.map(r => r.id === requestId ? { ...r, status: newStatus, responseNotes: notes, updated_at: new Date().toISOString() } : r);
+      localStorage.setItem('chronos_service_requests', JSON.stringify(requests));
+    } catch (e) {}
+    return { success: true };
+  },
+
+  // 7. VISITOR / SPECTATOR DETAILS & DECIDED PLANS
+  async getVisitorData(email) {
+    return {
+      visitorName: "Ananya Sharma",
+      ticketId: "TKT-DYP-2026-94812",
+      event: {
+        title: "Championship Trophy: 4-Day Mega Cricket Fixture",
+        venue: "Dr. D.Y. Patil Sports Stadium",
+        location: "Sector 7, Nerul, Navi Mumbai",
+        date: "September 2, 2026",
+        gate: "Gate 4 (West Wing)",
+        seat: "North-West Stand &bull; Block C &bull; Row 14 &bull; Seat 48",
+        gateOpeningTime: "11:30 AM",
+        matchStartTime: "01:30 PM"
+      },
+      prePlansDecided: {
+        recommendedTransit: "Harbour Line Suburban Train departing CSMT/Kurla at 10:48 AM &bull; Arrive Nerul Station at 11:32 AM",
+        walkingCorridor: "Take shaded 1.8km pedestrian green corridor from Nerul East bypass directly to Stadium Gate 4 (18 min leisurely walk), or board free NMMT Event Shuttle from Nerul Depot Bay 2.",
+        hotelBooking: "Hotel booked at Sector 21 Nerul Cluster (1.4 km from venue)",
+        parkingNotice: "Infield stadium parking is 100% pass-restricted. Private cars must park at Wonders Park Overflow Plaza with shuttle transit.",
+        bagPolicy: "Transparent bags only. No outside water bottles (free purified hydration pods available at all concourses)."
+      },
+      liveCurrentStatus: {
+        gateQueueTime: "4 Mins (Optimal Flow)",
+        weatherAtStadium: "31.4°C &bull; Humid &bull; Heat Index Active",
+        concourseDensity: "Comfortable (Level 2)",
+        liveAdvisory: "Gate 4 attendees are advised to use the Seawoods Shuttle Loop upon match exit at 21:45 for faster rail connection."
+      }
+    };
   }
 };
 
 window.ChronosSupabase = ChronosSupabase;
+

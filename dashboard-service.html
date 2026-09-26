@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Manager — ChronosFlow Operations</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
+
+    <!-- Header & Persona Badge -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-amber">OPERATIONS TIER</span>
+          <span class="text-xs text-[#9e9b93] font-mono">Service Provider Command</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Hospitality, Concessions & Field Services</h1>
+        <p class="text-xs text-[#9e9b93]">
+          Catalog your service offerings, process host RFPs, allocate deployment units, and execute wave-by-wave operational checklists.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <div class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs font-mono text-[#9e9b93] flex items-center space-x-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-[#cc7744]"></i>
+          <span>Partner: Apex Mega-Event Services Ltd</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: WHAT KIND OF SERVICES WE PROVIDE (Service Portfolio)           -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="utensils-crossed" class="w-5 h-5 text-[#cc7744]"></i>
+            <span>Our Service Capabilities & Portfolio</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Services, equipment, and staff units registered for mega-event dispatch</p>
+        </div>
+
+        <button onclick="alert('Add service capability modal will open.')" class="px-3 py-1.5 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Add Service Offering</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="service-portfolio-grid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: REQUEST & RESPONSE OF SERVICES (RFPs from Event Hosts)         -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="message-square" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>Host Service Requests & RFPs</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Service contracts requested by event managers for upcoming venue fixtures</p>
+        </div>
+        <span class="text-xs font-mono text-[#d4a373]">Active RFP Pipeline</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="service-requests-grid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: WHAT SHOULD BE DONE IN AN EVENT (Operational Playbook)         -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="clipboard-check" class="w-5 h-5 text-[#709775]"></i>
+            <span>What Should Be Done in an Event (Execution Playbook)</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Phase-by-phase operational tasks to ensure zero service bottleneck</p>
+        </div>
+        <span class="text-xs font-mono text-[#709775]">Standard Operating Procedure</span>
+      </div>
+
+      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="service-playbook-grid">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    async function loadServiceDashboard() {
+      renderNavbar('service');
+      const data = await window.ChronosSupabase.getServiceData();
+
+      // Render Portfolio
+      const portContainer = document.getElementById('service-portfolio-grid');
+      portContainer.innerHTML = data.portfolio.map(p => `
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sand">${p.domain}</span>
+            <span class="text-[10px] font-mono text-[#709775]">Active</span>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-bold text-[#ede8e1] leading-tight">${p.name}</h4>
+            <div class="text-[11px] text-[#9e9b93] mt-0.5">Lead: ${p.lead}</div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-[#22242b] border border-[#2a2c35] text-xs space-y-1">
+            <div class="text-[#9e9b93] text-[10px] uppercase">Service Capacity</div>
+            <div class="font-mono font-bold text-[#ede8e1]">${p.capacity}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Requests
+      const reqContainer = document.getElementById('service-requests-grid');
+      reqContainer.innerHTML = data.requests.map(req => {
+        const isAccepted = req.status === 'ACCEPTED';
+        return `
+          <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${isAccepted ? 'badge-sage' : 'badge-amber'}">
+                  ${req.status}
+                </span>
+                <span class="text-[10px] font-mono text-[#d4a373]">${req.serviceDomain}</span>
+              </div>
+
+              <div>
+                <h4 class="text-sm font-bold text-[#ede8e1]">${req.requestTitle}</h4>
+                <div class="text-[11px] text-[#9e9b93]">From: ${req.eventHost} &bull; ${req.venue}</div>
+              </div>
+
+              <p class="text-xs text-[#9e9b93] leading-relaxed">${req.requirements}</p>
+
+              <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[11px] font-mono text-[#ede8e1] flex justify-between">
+                <span>Requested Units:</span>
+                <strong class="text-[#d4a373]">${req.unitsRequested} Deployment Units</strong>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#2a2c35] flex items-center justify-between text-xs font-bold">
+              ${isAccepted ? `
+                <span class="text-[#709775] flex items-center space-x-1">
+                  <i data-lucide="check-check" class="w-4 h-4"></i>
+                  <span>Contract Confirmed & Staff Assigned</span>
+                </span>
+                <button onclick="handleServiceStatus('${req.id}', 'DECLINED')" class="text-[#9e9b93] hover:text-[#c96a54] text-[11px]">Cancel</button>
+              ` : `
+                <button onclick="handleServiceStatus('${req.id}', 'ACCEPTED')" class="px-3.5 py-1.5 rounded-xl btn-sand flex items-center space-x-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Accept Contract & Allocate Staff</span>
+                </button>
+                <button onclick="handleServiceStatus('${req.id}', 'DECLINED')" class="px-2.5 py-1.5 rounded-xl bg-[#22242b] text-[#9e9b93] hover:text-[#c96a54]">Decline</button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Render Playbook
+      const pbContainer = document.getElementById('service-playbook-grid');
+      pbContainer.innerHTML = data.actionPlaybook.map((item, idx) => `
+        <div class="p-4 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold text-[#d4a373]">STEP ${idx + 1}</span>
+            <span class="text-[9px] font-mono uppercase font-bold px-1.5 py-0.5 rounded badge-terracotta">${item.priority}</span>
+          </div>
+          <h4 class="text-xs font-bold text-[#ede8e1]">${item.phase}</h4>
+          <p class="text-[11px] text-[#9e9b93] leading-relaxed">${item.task}</p>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    async function handleServiceStatus(reqId, status) {
+      await window.ChronosSupabase.respondToServiceRequest(reqId, status, "Approved by Service Lead");
+      loadServiceDashboard();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadServiceDashboard);
+  </script>
+</body>
+</html>

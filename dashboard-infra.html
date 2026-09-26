@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infrastructure Manager — ChronosFlow Grid</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
+
+    <!-- Header & Persona Badge -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-slate">LOGISTICS TIER</span>
+          <span class="text-xs text-[#9e9b93] font-mono">Infra Manager Command</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Infrastructure & Transit Operations</h1>
+        <p class="text-xs text-[#9e9b93]">
+          Manage physical assets, review event host pipeline, allocate transit corridors, and coordinate multi-agency requests.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <div class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs font-mono text-[#9e9b93] flex items-center space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-[#709775]"></i>
+          <span>Agency: Central Railway & NMMT Dispatch</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: WHICH EVENT MANAGER IS READY TO HOST (Host Pipeline)           -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="calendar-clock" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>Active Event Host Pipeline</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Verified event managers preparing to host mega-events in your jurisdiction</p>
+        </div>
+        <span class="text-xs font-mono text-[#d4a373]">1 Ready to Host</span>
+      </div>
+
+      <!-- Host Event Card -->
+      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:border-[#d4a373]/50 transition">
+        <div class="space-y-3 max-w-2xl">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-sand">READY TO HOST</span>
+            <span class="text-xs text-[#9e9b93] font-mono">&bull; Event ID: dypatil_nerul</span>
+            <span class="text-xs text-[#709775] font-mono">&bull; Baseline Locked</span>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-black text-[#ede8e1]">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
+            <div class="flex items-center space-x-2 text-xs text-[#9e9b93] mt-1">
+              <i data-lucide="user" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+              <span>Hosted by <strong>Vikram Sethi</strong> (National Sports Authority)</span>
+              <span>&bull;</span>
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+              <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
+            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
+              <div class="text-[10px] text-[#9e9b93]">Dates</div>
+              <div class="font-bold text-[#ede8e1]">Sep 1 - Sep 4</div>
+            </div>
+            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
+              <div class="text-[10px] text-[#9e9b93]">Daily Spectators</div>
+              <div class="font-bold text-[#d4a373]">50,000 / Day</div>
+            </div>
+            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
+              <div class="text-[10px] text-[#9e9b93]">Rail Demand</div>
+              <div class="font-bold text-[#709775]">24,000 pax/hr</div>
+            </div>
+            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
+              <div class="text-[10px] text-[#9e9b93]">Shuttle Fleet</div>
+              <div class="font-bold text-[#607d8b]">65 Buses Req</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 w-full sm:w-auto">
+          <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2">
+            <i data-lucide="radar" class="w-4 h-4"></i>
+            <span>Inspect 5km Twin</span>
+          </a>
+          <button onclick="scrollToRequests()" class="px-4 py-2.5 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-xs font-semibold flex items-center justify-center space-x-2">
+            <i data-lucide="inbox" class="w-4 h-4 text-[#d4a373]"></i>
+            <span>View Host Requests</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: REQUEST & RESPONSE PIPELINE (Requests from Event Hosts)        -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4" id="infra-requests-section">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="git-pull-request" class="w-5 h-5 text-[#607d8b]"></i>
+            <span>Infrastructure Requests & Responses</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Capacity and corridor allocation requests submitted by event managers</p>
+        </div>
+        <span class="text-xs font-mono text-[#709775]">Live Synchronized</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="infra-requests-grid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: MY REGISTERED INFRASTRUCTURE ASSETS                            -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="layers" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>My Registered Physical Assets</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
+        </div>
+
+        <button onclick="alert('Asset registration wizard will open.')" class="px-3 py-1.5 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Register Asset</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="infra-assets-grid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    async function loadInfraDashboard() {
+      renderNavbar('infra');
+      const data = await window.ChronosSupabase.getInfraData();
+      
+      // Render Requests
+      const reqContainer = document.getElementById('infra-requests-grid');
+      reqContainer.innerHTML = data.requests.map(req => {
+        const isApproved = req.status === 'APPROVED';
+        return `
+          <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${isApproved ? 'badge-sage' : 'badge-amber'}">
+                  ${req.status}
+                </span>
+                <span class="text-[10px] font-mono text-[#9e9b93]">${req.date}</span>
+              </div>
+
+              <h4 class="text-sm font-bold text-[#ede8e1]">${req.requestedAsset}</h4>
+              <p class="text-xs text-[#9e9b93] leading-relaxed">${req.requestText}</p>
+              
+              <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[11px] font-mono text-[#d4a373]">
+                Allocation: <strong>${req.allocatedCapacity}</strong>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#2a2c35] flex items-center justify-between text-xs font-bold">
+              ${isApproved ? `
+                <span class="text-[#709775] flex items-center space-x-1">
+                  <i data-lucide="check-check" class="w-4 h-4"></i>
+                  <span>Capacity Reserved & Approved</span>
+                </span>
+                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="text-[#9e9b93] hover:text-[#c96a54] text-[11px]">Revoke</button>
+              ` : `
+                <button onclick="handleStatus('${req.id}', 'APPROVED')" class="px-3.5 py-1.5 rounded-xl btn-sand flex items-center space-x-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Approve & Reserve Capacity</span>
+                </button>
+                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="px-2.5 py-1.5 rounded-xl bg-[#22242b] text-[#9e9b93] hover:text-[#c96a54]">Decline</button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Render Assets
+      const assetContainer = document.getElementById('infra-assets-grid');
+      assetContainer.innerHTML = data.assets.map(asset => `
+        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">${asset.category}</span>
+            <span class="text-[10px] font-mono text-[#709775]">${asset.status}</span>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-bold text-[#ede8e1] leading-tight">${asset.name}</h4>
+            <div class="text-[11px] text-[#9e9b93] mt-0.5">${asset.line}</div>
+          </div>
+
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between text-xs">
+              <span class="text-[#9e9b93]">Throughput Capacity:</span>
+              <span class="font-mono font-bold text-[#ede8e1]">${asset.capacity}</span>
+            </div>
+            <div class="w-full bg-[#1a1b20] h-1.5 rounded-full overflow-hidden">
+              <div class="bg-[#d4a373] h-full" style="width: ${asset.loadPct}%;"></div>
+            </div>
+            <div class="flex justify-between text-[10px] font-mono text-[#9e9b93]">
+              <span>Active Grid Load</span>
+              <span class="text-[#d4a373] font-bold">${asset.loadPct}%</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    async function handleStatus(reqId, status) {
+      await window.ChronosSupabase.respondToInfraRequest(reqId, status, "Processed by Infra Dispatcher");
+      loadInfraDashboard();
+    }
+
+    function scrollToRequests() {
+      document.getElementById('infra-requests-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadInfraDashboard);
+  </script>
+</body>
+</html>

@@ -174,7 +174,60 @@ CREATE POLICY "Allow public read access to live_decisions" ON public.live_decisi
 CREATE POLICY "Allow public insert to live_decisions" ON public.live_decisions FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public update to live_decisions" ON public.live_decisions FOR UPDATE USING (true);
 
--- 8. SEED BASELINE DATA (DY PATIL STADIUM, NERUL)
+-- 8. INFRASTRUCTURE ASSET REQUESTS & PIPELINE
+CREATE TABLE IF NOT EXISTS public.infra_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id TEXT REFERENCES public.events(id) ON DELETE CASCADE,
+    asset_name TEXT NOT NULL,
+    requested_by TEXT NOT NULL,
+    request_type TEXT NOT NULL,
+    details TEXT NOT NULL,
+    allocated_capacity TEXT,
+    status TEXT DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'APPROVED', 'NEGOTIATING', 'DECLINED')),
+    response_notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.infra_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public all infra_requests" ON public.infra_requests FOR ALL USING (true);
+
+-- 9. SERVICE PROVIDER REQUESTS & RFPS
+CREATE TABLE IF NOT EXISTS public.service_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id TEXT REFERENCES public.events(id) ON DELETE CASCADE,
+    service_domain TEXT NOT NULL,
+    requested_by TEXT NOT NULL,
+    service_title TEXT NOT NULL,
+    requirements TEXT NOT NULL,
+    units_requested INTEGER DEFAULT 1,
+    status TEXT DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'ACCEPTED', 'CONFIRMED', 'DECLINED')),
+    response_notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.service_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public all service_requests" ON public.service_requests FOR ALL USING (true);
+
+-- 10. VISITOR ITINERARIES & PERSONALIZED PRE-PLANS
+CREATE TABLE IF NOT EXISTS public.visitor_itineraries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    visitor_email TEXT NOT NULL,
+    event_id TEXT REFERENCES public.events(id) ON DELETE CASCADE,
+    seat_details TEXT NOT NULL,
+    gate_assignment TEXT NOT NULL,
+    recommended_departure_time TEXT,
+    recommended_transit TEXT,
+    walking_corridor TEXT,
+    hotel_booking TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.visitor_itineraries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public all visitor_itineraries" ON public.visitor_itineraries FOR ALL USING (true);
+
+-- 11. SEED BASELINE DATA (DY PATIL STADIUM, NERUL)
 INSERT INTO public.events (id, title, event_type, venue_name, venue_area, city, duration, expected_visitors, venue_capacity, highway, railway, description, status, is_locked)
 VALUES (
     'dypatil_nerul',

@@ -151,9 +151,13 @@
       if (currentRole === 'event_manager') {
         window.location.href = "preplans.html";
       } else if (currentRole === 'infra_provider') {
-        window.location.href = "simulations.html";
+        window.location.href = "dashboard-infra.html";
+      } else if (currentRole === 'service_provider') {
+        window.location.href = "dashboard-service.html";
+      } else if (currentRole === 'visitor') {
+        window.location.href = "dashboard-visitor.html";
       } else {
-        window.location.href = "current-events.html";
+        window.location.href = "index.html";
       }
     }
 

@@ -2,13 +2,13 @@
 
 > **"The Event Manager describes the event. The system designs, simulates, and orchestrates the operational plan."**
 
-ChronosFlow (codenamed **ORCHESTRA**) is a comprehensive multi-phase intelligence platform engineered for mega-event hospitality, crowd flow dynamics, and spatial capacity orchestration.
+ChronosFlow (codenamed **ORCHESTRA**) is a multi-sided intelligence platform engineered for mega-event hospitality, crowd flow dynamics, and spatial capacity orchestration.
 
 ---
 
-## 🏛️ Comprehensive Multi-Page Platform Architecture
+## 🏛️ Comprehensive Role-Driven Architecture
 
-The system has been completely restructured into an individual multi-page web platform featuring role-based portals and cloud database synchronization:
+The platform provides tailored command dashboards for all four mega-event stakeholders:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -24,56 +24,94 @@ The system has been completely restructured into an individual multi-page web pl
 │index.  │   │signin.    │    │signup.    │    │preplans.  │    │simulations│   │current-│
 │html    │   │html       │    │html       │    │html       │    │.html      │   │events. │
 └────────┘   └───────────┘    └───────────┘    └───────────┘    └───────────┘   └────────┘
+                                    │
+    ┌───────────────────────────────┴───────────────────────────────┐
+    ▼                               ▼                               ▼
+┌─────────────────────────┐   ┌─────────────────────────┐   ┌─────────────────────────┐
+│ INFRASTRUCTURE MANAGER  │   │ SERVICE MANAGER         │   │ VISITOR COMPANION       │
+│ • Registered Assets     │   │ • Service Capabilities  │   │ • Event Pass & Gate     │
+│ • Host Pipeline         │   │ • Host RFPs & Quotas    │   │ • Pre-Planned Transit   │
+│ • Request & Response    │   │ • Event Action Playbook │   │ • Live Queue Advisories │
+│ dashboard-infra.html    │   │ dashboard-service.html  │   │ dashboard-visitor.html  │
+└─────────────────────────┘   └─────────────────────────┘   └─────────────────────────┘
 ```
 
+---
+
 ### 1. Home Page (`index.html`)
+* **Interactive Stakeholder Switcher**: 1-Click tabs to instantly test any of the 4 personas (`Event Manager`, `Infrastructure Manager`, `Service Manager`, `Visitor`).
 * **Minimal Dark Travel Aesthetic**: Warm obsidian (`#121316`), matte panels, sand ochre (`#d4a373`), terracotta (`#c96a54`), forest sage (`#709775`), and slate blue (`#607d8b`). Strictly zero neons.
 * **Unified Navigation Hub**: Direct action buttons to Pre-Plans, Simulations, Current Events, Sign In, and Sign Up.
-* **4 Role Portals**:
-  1. 🎪 **Event Manager**: Operational blueprints, capacity matching, digital twins, baseline risk locking.
-  2. 🎟️ **Visitor / Spectator**: Real-time turnstile wait times, transit corridors, and hotel inventory.
-  3. 🛎️ **Service Provider**: Concessions, catering pods, medical trauma staffing, volunteer distribution.
-  4. 🚆 **Infra Provider**: Railway frequencies, parking bay allocations, expressway diversions, shuttle fleets.
 
-### 2. Role-Based Sign In & Sign Up (`signin.html` & `signup.html`)
-* Role tabs for all 4 personas with customized onboarding fields.
-* 1-Click instant demo logins for each role.
-* Integrated with Supabase Auth & session manager.
+---
 
-### 3. Pre-Plans: Existing Gallery & Authoring Workbench (`preplans.html`)
-* **Top Section (Existing Pre-Plans)**:
-  * Live gallery of existing pre-plans fetched from Supabase Cloud:
-    * *Dr. D.Y. Patil Sports Stadium (Nerul, Navi Mumbai)* — 50,000 spectators daily.
-    * *Wankhede Stadium (South Mumbai)* — 33,000 spectators daily.
-    * *Narendra Modi Stadium (Motera, Ahmedabad)* — 100,000 spectators daily.
-    * *Eden Gardens (Kolkata)*, *Wembley Stadium (London)*, *Madison Square Garden (NYC)*.
-  * Search, status filters (Baseline Locked vs. In Planning), and 1-click "Load into Radar Workspace".
-* **Bottom Section (Add New Pre-Plan)**:
-  * Natural language event prompt bar with procedural twin generator for any city worldwide.
-  * **Alternating Event Journey Timeline**: Top/bottom alternating nodes with vertical stems.
-  * **Micro-Area Digital Twin & Infrastructure Radar**: 1km–5km concentric rings directly below the timeline with interactive pins for Hotels, Railway Stations, Hospitals, Parking Bays, and Choke Points.
-  * **Stage Capacity Inspector**: Mathematical bottleneck formulas and deficit calculations.
-  * **Categorized Proactive Mitigations**: 1-click interventions across Capacity, Time, Spatial, Transportation, Accommodation, and Safety.
-  * **"Save Plan to Supabase"** button: Directly persists the plan to the Supabase database.
+### 2. Sign In & Sign Up (`signin.html` & `signup.html`)
+* **Role Selection**: Toggle between **Event Manager**, **Infrastructure Manager**, **Service Manager**, and **Visitor**.
+* **1-Click Quick Demo Login Chips**: Instant 1-click test accounts for each role.
+* **Smart Redirection**:
+  * Event Manager $\rightarrow$ `preplans.html`
+  * Infrastructure Manager $\rightarrow$ `dashboard-infra.html`
+  * Service Manager $\rightarrow$ `dashboard-service.html`
+  * Visitor $\rightarrow$ `dashboard-visitor.html`
 
-### 4. Simulations & Crowd Dynamics (`simulations.html`)
-* Crowd surge variance tolerance slider (**-20% to +50%**).
-* Interactive simulated match clock and multi-wave ingress/egress pacing.
-* **What-If Disruption Scenario Injector**:
-  * 🌧️ Monsoon Deluge / Rain Storm
-  * 🚆 Harbour Line Transit Failure (Nerul Station Choke)
-  * 🚧 Gate Turnstile Jam (Gate B Scanner Failure)
-  * 🚗 Arterial Expressway Gridlock (LP Junction Bottleneck)
-* Real-time node saturation gauges and evacuation clearance time forecaster.
+---
 
-### 5. Current Events & Live AI Dispatch (`current-events.html`)
-* Day-of-Event Real-Time Operational Cockpit:
-  * **Weather Telemetry**: Temperature, humidity, precipitation probability, heat index alert.
-  * **Crowd Influx Feed**: Live turnstile counts, ingress velocity (pax/min), bowl occupancy.
-  * **Arterial Traffic Flow**: Sion-Panvel Expressway congestion index, Nerul rail frequency.
-  * **Emergency & Medical Readiness**: Onsite trauma proximity, parking lot saturation.
-* **Automated AI Decision Engine**: Continuously evaluates correlated live factors to synthesize actionable operational directives.
-* **1-Click "Authorize & Dispatch"**: Pushes live decisions to the field log and Supabase `live_decisions` table.
+### 3. Event Manager Suite (`preplans.html`, `simulations.html`, `current-events.html`)
+* **Pre-Plans**:
+  * **Top Section**: Existing baselines gallery (DY Patil Stadium Nerul, Wankhede Stadium, Narendra Modi Stadium, Eden Gardens, Wembley, Madison Square Garden).
+  * **Bottom Section**: Full authoring workbench with natural language generator, 5km micro-area Digital Twin radar, alternating journey timeline, capacity bottleneck diagnostics, and 1-click mitigations.
+  * **Save to Supabase**: Persists operational plans and spatial nodes directly to the cloud database.
+* **Simulations**: Crowd variance tolerance slider (`-20%` to `+50%`), simulated clock, disruption scenario injectors (monsoon storm, rail freeze, gate jam, highway choke), and evacuation forecasting.
+* **Current Events**: Live environmental and city telemetry (Weather, Crowd influx, Arterial traffic, Onsite medical readiness) with autonomous AI decision directives and 1-click field dispatch.
+
+---
+
+### 4. Infrastructure Manager Portal (`dashboard-infra.html`)
+* **Data About Their Physical Assets**: Registered rail junctions (Nerul, Seawoods), arterial choke controls (LP Junction), and remote parking plazas (Wonders Park).
+* **Which Event Manager is Ready to Host an Event (Host Pipeline)**:
+  * Fixture: *4-Day Mega Cricket Championship at Dr. D.Y. Patil Stadium*
+  * Host: *Vikram Sethi (Event Master Orchestrator, Sports Authority)*
+  * Expected Attendance: *50,000 daily*
+  * Infrastructure Demands: Rail clearance (24,000 pax/hr), Shuttle frequency (65 buses), Expressway choke management.
+* **Incoming Requests & Responses from Event Hosts**:
+  * *Request 1*: Allocate 65 feeder loop buses and 3 extra rakes at 22:00 $\rightarrow$ `[Approve & Reserve Capacity]`, `[Negotiate]`, `[Decline]`.
+  * *Request 2*: LP Junction freight diversion for match express shuttles $\rightarrow$ `[Approve Green Corridor]`.
+
+---
+
+### 5. Service Manager Portal (`dashboard-service.html`)
+* **What Kind of Services They Provide (Portfolio)**:
+  * 🍔 *Infield Concessions & Beverage Kiosks* (45 satellite units, 15,000 servings/hr)
+  * 🛡️ *Perimeter Security & Magnetometer Screening* (30 optical lanes, 19,500 pax/hr)
+  * 🚑 *Tertiary Emergency Medical & ALS Triage* (12 ALS Ambulances, 4 mobile first-aid pods)
+  * 🧹 *Infield Rapid Sanitation & Waste Disposal* (120 roaming crew members)
+* **Request and Response of Services (Host RFPs)**:
+  * *RFP 1 from DY Patil Event Manager*: Deploy 35 satellite grab-and-go concession kiosks across Sectors A to H $\rightarrow$ `[Accept Contract & Deploy Units]`, `[Decline]`.
+  * *RFP 2*: Deploy 8 cooling misting tents with paramedics for heat index advisory $\rightarrow$ `[Accept & Confirm Staffing]`.
+* **What Should Be Done in an Event (Execution Playbook)**:
+  * *Ingress (10:00-13:00)*: Activate outer screening lanes; pre-chill hydration packs; position first-aid carts at Gate 4.
+  * *Mid-Match (13:00-18:00)*: Concourse F&B queue balancing; continuous trash cycles; roving grab-and-go vendors.
+  * *Inning Interval (18:00-18:45)*: Replenish ice & electrolyte stock; deploy grab-and-go hawkers into stand aisles.
+  * *Egress Dispersal (21:30-23:00)*: Open all perimeter exit gates; deploy paramedical standby to railway approach corridor.
+
+---
+
+### 6. Visitor / Spectator Companion (`dashboard-visitor.html`)
+* **Details About Their Event**:
+  * Event: *Championship Trophy: 4-Day Mega Cricket Fixture*
+  * Venue: *Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul, Navi Mumbai*
+  * Gate & Seat: *Gate 4 (West Wing) &bull; Stand C, Row 14, Seat 48*
+  * Verified Pass Code: `TKT-DYP-2026-94812`
+* **The Pre-Plans Decided for Them (Arrival & Logistics)**:
+  * 🚆 *Recommended Transit*: Board Harbour Line Local departing CSMT/Kurla at 10:48 AM $\rightarrow$ Arrive Nerul Station at 11:32 AM.
+  * 🚶 *Designated Walking Corridor*: Shaded 1.8km pedestrian green corridor from Nerul East bypass to Gate 4 (18 min walk) or free NMMT Event Shuttle from Depot Bay 2.
+  * 🏨 *Accommodation Plan*: Room block at *Nerul Sector 21 Hotel Cluster* (1.4 km from stadium).
+  * 🚗 *Parking Rule*: Infield stadium parking is 100% pass-restricted; private cars must park at Wonders Park Overflow Plaza.
+  * 🎒 *Bag Policy*: Transparent bags only; power banks allowed; free hydration pods inside.
+* **The Current Plans Decided for Them (Live Day-of-Event Updates)**:
+  * ⏱️ *Gate 4 Live Queue Wait Time*: 4 Mins (Optimal Flow — Green).
+  * 🌤️ *Current Stadium Weather*: 31.4°C &bull; Humid &bull; Heat Index Active. Misting fans active at concourse Gate 4.
+  * 📢 *Live Dynamic Advisory*: "Gate 4 attendees are advised to use the Seawoods Shuttle Loop upon match exit at 21:45 for faster rail connection."
 
 ---
 
@@ -82,7 +120,7 @@ The system has been completely restructured into an individual multi-page web pl
 * **Project ID**: `rojjfjoquejjxuziriei`
 * **Project URL**: `https://rojjfjoquejjxuziriei.supabase.co`
 * **SQL Schema Script**: [`supabase_schema.sql`](supabase_schema.sql)
-  * Contains complete tables: `profiles`, `events`, `spatial_assets`, `event_stages`, `stage_mitigations`, `simulations`, `live_telemetry`, `live_decisions`.
+  * Tables: `profiles`, `events`, `spatial_assets`, `event_stages`, `stage_mitigations`, `simulations`, `live_telemetry`, `live_decisions`, `infra_requests`, `service_requests`, `visitor_itineraries`.
   * Pre-configured Row Level Security (RLS) policies and seed data for DY Patil Stadium.
 
 ---
