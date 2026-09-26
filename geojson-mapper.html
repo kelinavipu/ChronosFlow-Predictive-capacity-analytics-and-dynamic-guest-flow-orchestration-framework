@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChronosFlow · GeoJSON Mapper</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slate: { 950: '#04070e' },
+          },
+          fontFamily: { mono: ['JetBrains Mono', 'Fira Code', 'monospace'] }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-deep:   #04070e;
+      --bg-panel:  #080c14;
+      --border:    rgba(56,189,248,0.18);
+      --cyan:      #38bdf8;
+      --emerald:   #10b981;
+      --amber:     #f59e0b;
+      --rose:      #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg-deep); color: #e2e8f0; font-family: 'JetBrains Mono', 'Fira Code', monospace; overflow: hidden; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #04070e; }
+    ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
+
+    /* ── Layout ── */
+    #app { display: flex; height: 100vh; width: 100vw; }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 300px; min-width: 260px; max-width: 340px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden; z-index: 10;
+      flex-shrink: 0;
+    }
+
+    #sidebar-header {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      background: #050810;
+    }
+
+    #sidebar-body { flex: 1; overflow-y: auto; padding: 14px 14px; }
+
+    /* ── Canvas area ── */
+    #map-wrap {
+      flex: 1; position: relative; overflow: hidden;
+      background: var(--bg-deep);
+    }
+
+    canvas#geo-canvas {
+      display: block;
+      width: 100%; height: 100%;
+      cursor: grab;
+    }
+    canvas#geo-canvas.dragging { cursor: grabbing; }
+
+    /* ── Drop zone overlay ── */
+    #drop-zone {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    #drop-zone.active { background: rgba(56,189,248,0.04); }
+
+    /* ── Info tooltip ── */
+    #feature-tooltip {
+      position: absolute;
+      background: rgba(8,12,20,0.96);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 10px;
+      max-width: 220px;
+      pointer-events: none;
+      display: none;
+      z-index: 100;
+      line-height: 1.6;
+    }
+
+    /* ── HUD badges ── */
+    #map-hud {
+      position: absolute; top: 14px; right: 14px;
+      display: flex; flex-direction: column; gap: 6px;
+      z-index: 50;
+    }
+    .hud-badge {
+      background: rgba(8,12,20,0.92);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-family: monospace;
+      color: #94a3b8;
+    }
+
+    /* ── Zoom controls ── */
+    #zoom-controls {
+      position: absolute; bottom: 18px; right: 18px;
+      display: flex; flex-direction: column; gap: 4px;
+      z-index: 50;
+    }
+    .zoom-btn {
+      width: 32px; height: 32px;
+      background: rgba(8,12,20,0.92);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--cyan); font-size: 18px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .zoom-btn:hover { background: rgba(56,189,248,0.12); }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(56,189,248,0.15);
+      border: 1px solid rgba(56,189,248,0.4);
+      color: var(--cyan);
+      border-radius: 10px; padding: 7px 14px;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      transition: background .15s;
+      font-family: monospace;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-primary:hover { background: rgba(56,189,248,0.25); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent;
+      border: 1px solid rgba(148,163,184,0.25);
+      color: #94a3b8;
+      border-radius: 10px; padding: 6px 12px;
+      font-size: 11px; cursor: pointer;
+      transition: all .15s;
+      font-family: monospace;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-ghost:hover { background: rgba(148,163,184,0.08); color: #e2e8f0; }
+
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(244,63,94,0.1);
+      border: 1px solid rgba(244,63,94,0.3);
+      color: #f87171;
+      border-radius: 10px; padding: 6px 12px;
+      font-size: 11px; cursor: pointer;
+      transition: all .15s;
+      font-family: monospace;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-danger:hover { background: rgba(244,63,94,0.2); }
+
+    /* ── Panel card ── */
+    .panel-card {
+      background: #050810;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .panel-label {
+      font-size: 9px; font-weight: 700;
+      color: var(--cyan); text-transform: uppercase; letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    /* ── Layer chips ── */
+    .layer-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; border-bottom: 1px solid rgba(56,189,248,0.06);
+      font-size: 10px;
+    }
+    .layer-row:last-child { border-bottom: none; }
+    .layer-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .layer-name { flex: 1; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .layer-count { color: #64748b; font-size: 9px; }
+
+    /* ── Stat row ── */
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 0;
+      font-size: 10px; color: #64748b;
+      border-bottom: 1px solid rgba(56,189,248,0.05);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row span:last-child { color: #e2e8f0; font-weight: 700; }
+
+    /* ── Textarea for paste ── */
+    textarea#json-paste {
+      width: 100%; height: 80px;
+      background: #030508;
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 8px;
+      color: #94a3b8; font-size: 9px;
+      padding: 8px; resize: vertical;
+      font-family: monospace;
+      outline: none;
+    }
+    textarea#json-paste:focus { border-color: var(--cyan); }
+
+    /* ── Legend type icon ── */
+    .legend-line { width: 18px; height: 2px; border-radius: 2px; flex-shrink: 0; }
+    .legend-poly { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 2px solid; }
+    .legend-pt   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Grid overlay toggle ── */
+    input[type=range] { accent-color: var(--cyan); width: 100%; }
+
+    /* ── Animated ping ── */
+    @keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
+    .ping { animation: ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
+
+    /* Drop-highlight border */
+    #map-wrap.drag-over::after {
+      content: '';
+      position: absolute; inset: 8px;
+      border: 2px dashed var(--cyan);
+      border-radius: 16px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================================================================= -->
+  <!-- SIDEBAR                                                            -->
+  <!-- ================================================================= -->
+  <aside id="sidebar">
+
+    <!-- Header -->
+    <div id="sidebar-header">
+      <div style="font-size:9px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">
+        ◈ ChronosFlow · GeoJSON Mapper
+      </div>
+      <div style="font-size:15px;font-weight:900;color:#f1f5f9;">Plot &amp; Frame Your Own Map</div>
+      <div style="font-size:9px;color:#64748b;margin-top:2px;">Canvas renderer · All GeoJSON geometry types</div>
+    </div>
+
+    <!-- Body -->
+    <div id="sidebar-body">
+
+      <!-- Load File -->
+      <div class="panel-card">
+        <div class="panel-label">① Load GeoJSON</div>
+
+        <label for="file-input" class="btn-primary" style="cursor:pointer;">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 9l5-5 5 5M12 4v12"/></svg>
+          Upload .geojson / .json
+        </label>
+        <input id="file-input" type="file" accept=".geojson,.json" style="display:none;" />
+
+        <div style="font-size:9px;color:#475569;margin:8px 0 6px;text-align:center;">— or drag &amp; drop onto the canvas —</div>
+
+        <div class="panel-label" style="margin-top:6px;">② Paste Raw GeoJSON</div>
+        <textarea id="json-paste" placeholder='{ "type": "FeatureCollection", "features": [...] }'></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn-primary" onclick="loadFromPaste()" style="flex:1;">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M8 10h8M8 14h5"/></svg>
+            Render
+          </button>
+          <button class="btn-ghost" onclick="loadSample()" style="flex:1;">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Sample
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="panel-card" id="stats-card">
+        <div class="panel-label">Map Stats</div>
+        <div id="stats-body">
+          <div style="font-size:9px;color:#475569;text-align:center;padding:8px 0;">No file loaded yet</div>
+        </div>
+      </div>
+
+      <!-- Layers -->
+      <div class="panel-card" id="layers-card">
+        <div class="panel-label">Geometry Layers</div>
+        <div id="layers-body">
+          <div style="font-size:9px;color:#475569;text-align:center;padding:8px 0;">—</div>
+        </div>
+      </div>
+
+      <!-- Style controls -->
+      <div class="panel-card">
+        <div class="panel-label">Render Style</div>
+
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+          <div style="font-size:10px;color:#94a3b8;flex:1;">Line Width</div>
+          <input type="range" id="line-width-slider" min="0.5" max="6" step="0.5" value="1.5" style="flex:2;" oninput="lineWidth=+this.value; redrawAll();" />
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;width:20px;" id="lw-val">1.5</div>
+        </div>
+
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+          <div style="font-size:10px;color:#94a3b8;flex:1;">Fill Opacity</div>
+          <input type="range" id="fill-opacity-slider" min="0" max="0.6" step="0.05" value="0.15" style="flex:2;" oninput="fillOpacity=+this.value; redrawAll();" />
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;width:20px;" id="fo-val">.15</div>
+        </div>
+
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+          <div style="font-size:10px;color:#94a3b8;flex:1;">Point Radius</div>
+          <input type="range" id="point-radius-slider" min="2" max="12" step="1" value="5" style="flex:2;" oninput="pointRadius=+this.value; redrawAll();" />
+          <div style="font-size:10px;color:var(--cyan);font-weight:700;width:20px;" id="pr-val">5</div>
+        </div>
+
+        <!-- Grid toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:10px;color:#94a3b8;">Coord Grid</div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="grid-toggle" onchange="showGrid=this.checked; redrawAll();" style="accent-color:var(--cyan);" />
+            <span style="font-size:9px;color:#64748b;">Show</span>
+          </label>
+        </div>
+
+        <!-- Labels toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:10px;color:#94a3b8;">Feature Labels</div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="labels-toggle" onchange="showLabels=this.checked; redrawAll();" style="accent-color:var(--cyan);" />
+            <span style="font-size:9px;color:#64748b;">Show</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="panel-card">
+        <div class="panel-label">Actions</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="btn-ghost" onclick="fitToBounds()">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 8V4m0 0h4M4 4l5 5M20 8V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5M20 16v4m0 0h-4m4 0l-5-5"/></svg>
+            Fit to Bounds
+          </button>
+          <button class="btn-ghost" onclick="exportPNG()">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 11l5 5 5-5M12 4v12"/></svg>
+            Export as PNG
+          </button>
+          <button class="btn-danger" onclick="clearMap()">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+            Clear Map
+          </button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="panel-card">
+        <div class="panel-label">Geometry Legend</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:10px;color:#94a3b8;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="legend-line" style="background:#38bdf8;"></div>
+            <span>LineString / MultiLineString</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="legend-poly" style="border-color:#10b981;background:rgba(16,185,129,0.12);"></div>
+            <span>Polygon / MultiPolygon</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="legend-pt" style="background:#f59e0b;"></div>
+            <span>Point / MultiPoint</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="legend-poly" style="border-color:#f43f5e;background:rgba(244,63,94,0.1);"></div>
+            <span>GeometryCollection</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ================================================================= -->
+  <!-- CANVAS MAP AREA                                                    -->
+  <!-- ================================================================= -->
+  <div id="map-wrap">
+
+    <!-- Drop zone hint -->
+    <div id="drop-zone">
+      <div style="text-align:center;pointer-events:none;">
+        <div style="font-size:48px;margin-bottom:8px;opacity:0.18;">🗺️</div>
+        <div style="font-size:13px;font-weight:900;color:rgba(56,189,248,0.4);letter-spacing:.05em;">DROP A GEOJSON FILE HERE</div>
+        <div style="font-size:10px;color:rgba(100,116,139,0.6);margin-top:4px;">or use the sidebar to upload / paste</div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <canvas id="geo-canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="map-hud">
+      <div class="hud-badge" id="hud-zoom">Zoom: 1.00×</div>
+      <div class="hud-badge" id="hud-coords">Cursor: —</div>
+      <div class="hud-badge" id="hud-features" style="color:#10b981;">0 features</div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div id="zoom-controls">
+      <button class="zoom-btn" onclick="adjustZoom(1.3)" title="Zoom In">+</button>
+      <button class="zoom-btn" onclick="fitToBounds()" title="Fit" style="font-size:11px;font-weight:900;color:#94a3b8;">⊡</button>
+      <button class="zoom-btn" onclick="adjustZoom(0.77)" title="Zoom Out">−</button>
+    </div>
+
+    <!-- Feature tooltip -->
+    <div id="feature-tooltip"></div>
+
+  </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- JAVASCRIPT ENGINE                                                  -->
+<!-- ================================================================= -->
+<script>
+// ─────────────────────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────────────────────
+let geojson     = null;
+let features    = [];
+let bounds      = null;   // { minX, minY, maxX, maxY } in GeoJSON coords
+let lineWidth   = 1.5;
+let fillOpacity = 0.15;
+let pointRadius = 5;
+let showGrid    = false;
+let showLabels  = false;
+
+// Viewport transform
+let offsetX = 0, offsetY = 0, scale = 1;
+
+// Drag state
+let isDragging = false, dragStartX = 0, dragStartY = 0, dragOffX = 0, dragOffY = 0;
+
+// Canvas
+const canvas  = document.getElementById('geo-canvas');
+const ctx     = canvas.getContext('2d');
+
+// Colour palette per feature index
+const PALETTE_LINES = ['#38bdf8','#818cf8','#34d399','#fb923c','#f472b6','#a78bfa','#22d3ee','#4ade80'];
+const PALETTE_FILLS = ['rgba(56,189,248,','rgba(129,140,248,','rgba(52,211,153,','rgba(251,146,60,','rgba(244,114,182,','rgba(167,139,250,','rgba(34,211,238,','rgba(74,222,128,'];
+
+// ─────────────────────────────────────────────────────────────────────────
+// Resize canvas to fill container
+// ─────────────────────────────────────────────────────────────────────────
+function resizeCanvas() {
+  const wrap = document.getElementById('map-wrap');
+  canvas.width  = wrap.clientWidth  * window.devicePixelRatio;
+  canvas.height = wrap.clientHeight * window.devicePixelRatio;
+  canvas.style.width  = wrap.clientWidth  + 'px';
+  canvas.style.height = wrap.clientHeight + 'px';
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  redrawAll();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ─────────────────────────────────────────────────────────────────────────
+// Coordinate projection: GeoJSON lon/lat → canvas pixels
+// ─────────────────────────────────────────────────────────────────────────
+function project([lon, lat]) {
+  if (!bounds) return [0, 0];
+  const cw = canvas.width  / window.devicePixelRatio;
+  const ch = canvas.height / window.devicePixelRatio;
+  const bw = bounds.maxX - bounds.minX || 1;
+  const bh = bounds.maxY - bounds.minY || 1;
+  const padding = 40;
+
+  const sx = ((lon - bounds.minX) / bw) * (cw - padding * 2 - 0) + padding;
+  // Flip Y (GeoJSON lat increases up, canvas Y increases down)
+  const sy = (1 - (lat - bounds.minY) / bh) * (ch - padding * 2) + padding;
+
+  return [sx * scale + offsetX, sy * scale + offsetY];
+}
+
+// Inverse: canvas px → GeoJSON lon/lat
+function unproject(cx, cy) {
+  if (!bounds) return [0, 0];
+  const cw = canvas.width  / window.devicePixelRatio;
+  const ch = canvas.height / window.devicePixelRatio;
+  const bw = bounds.maxX - bounds.minX || 1;
+  const bh = bounds.maxY - bounds.minY || 1;
+  const padding = 40;
+
+  const sx = (cx - offsetX) / scale;
+  const sy = (cy - offsetY) / scale;
+
+  const lon = ((sx - padding) / (cw - padding * 2)) * bw + bounds.minX;
+  const lat = (1 - (sy - padding) / (ch - padding * 2)) * bh + bounds.minY;
+  return [lon, lat];
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Compute bounding box across all coordinates
+// ─────────────────────────────────────────────────────────────────────────
+function collectCoords(geom, out) {
+  if (!geom) return;
+  switch (geom.type) {
+    case 'Point':              out.push(geom.coordinates); break;
+    case 'MultiPoint':
+    case 'LineString':         geom.coordinates.forEach(c => out.push(c)); break;
+    case 'MultiLineString':
+    case 'Polygon':            geom.coordinates.forEach(ring => ring.forEach(c => out.push(c))); break;
+    case 'MultiPolygon':       geom.coordinates.forEach(poly => poly.forEach(ring => ring.forEach(c => out.push(c)))); break;
+    case 'GeometryCollection': geom.geometries.forEach(g => collectCoords(g, out)); break;
+  }
+}
+
+function computeBounds(feats) {
+  const coords = [];
+  feats.forEach(f => {
+    if (f.geometry) collectCoords(f.geometry, coords);
+    else if (f.coordinates) collectCoords(f, coords); // bare geometry
+  });
+  if (!coords.length) return null;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  coords.forEach(([x, y]) => {
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (y < minY) minY = y; if (y > maxY) maxY = y;
+  });
+  // Add small margin if point cloud is degenerate
+  if (maxX - minX < 1e-8) { minX -= 0.001; maxX += 0.001; }
+  if (maxY - minY < 1e-8) { minY -= 0.001; maxY += 0.001; }
+  return { minX, minY, maxX, maxY };
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Normalise any valid GeoJSON input into a features array
+// ─────────────────────────────────────────────────────────────────────────
+function normalise(data) {
+  if (!data || !data.type) throw new Error('Invalid GeoJSON: missing "type"');
+  switch (data.type) {
+    case 'FeatureCollection':
+      return data.features || [];
+    case 'Feature':
+      return [data];
+    case 'GeometryCollection':
+      return data.geometries.map(g => ({ type: 'Feature', geometry: g, properties: {} }));
+    default:
+      // Bare geometry
+      return [{ type: 'Feature', geometry: data, properties: {} }];
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Draw a single geometry
+// ─────────────────────────────────────────────────────────────────────────
+function drawGeometry(geom, strokeColor, fillColor, lw, pr) {
+  if (!geom) return;
+  switch (geom.type) {
+    case 'Point':
+      drawPoint(geom.coordinates, strokeColor, pr);
+      break;
+    case 'MultiPoint':
+      geom.coordinates.forEach(c => drawPoint(c, strokeColor, pr));
+      break;
+    case 'LineString':
+      drawLine(geom.coordinates, strokeColor, lw);
+      break;
+    case 'MultiLineString':
+      geom.coordinates.forEach(ring => drawLine(ring, strokeColor, lw));
+      break;
+    case 'Polygon':
+      drawPolygon(geom.coordinates, strokeColor, fillColor, lw);
+      break;
+    case 'MultiPolygon':
+      geom.coordinates.forEach(poly => drawPolygon(poly, strokeColor, fillColor, lw));
+      break;
+    case 'GeometryCollection':
+      geom.geometries.forEach(g => drawGeometry(g, strokeColor, fillColor, lw, pr));
+      break;
+  }
+}
+
+function drawPoint([lon, lat], color, r) {
+  const [x, y] = project([lon, lat]);
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+function drawLine(coords, color, lw) {
+  if (coords.length < 2) return;
+  ctx.beginPath();
+  const [sx, sy] = project(coords[0]);
+  ctx.moveTo(sx, sy);
+  for (let i = 1; i < coords.length; i++) {
+    const [px, py] = project(coords[i]);
+    ctx.lineTo(px, py);
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+function drawPolygon(rings, strokeColor, fillColor, lw) {
+  if (!rings || !rings.length) return;
+  ctx.beginPath();
+  rings.forEach(ring => {
+    if (!ring.length) return;
+    const [sx, sy] = project(ring[0]);
+    ctx.moveTo(sx, sy);
+    for (let i = 1; i < ring.length; i++) {
+      const [px, py] = project(ring[i]);
+      ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  });
+  ctx.fillStyle = fillColor;
+  ctx.fill('evenodd');
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = lw;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Draw coordinate grid
+// ─────────────────────────────────────────────────────────────────────────
+function drawGrid() {
+  if (!bounds) return;
+  const cw = canvas.width  / window.devicePixelRatio;
+  const ch = canvas.height / window.devicePixelRatio;
+
+  const spanX = bounds.maxX - bounds.minX;
+  const spanY = bounds.maxY - bounds.minY;
+  const steps = 5;
+  const stepX = spanX / steps;
+  const stepY = spanY / steps;
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(56,189,248,0.08)';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([4, 6]);
+  ctx.fillStyle = 'rgba(56,189,248,0.4)';
+  ctx.font = '8px monospace';
+
+  for (let i = 0; i <= steps; i++) {
+    const lon = bounds.minX + i * stepX;
+    const [x] = project([lon, bounds.minY]);
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ch); ctx.stroke();
+    ctx.fillText(lon.toFixed(4), x + 2, ch - 6);
+  }
+  for (let i = 0; i <= steps; i++) {
+    const lat = bounds.minY + i * stepY;
+    const [, y] = project([bounds.minX, lat]);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cw, y); ctx.stroke();
+    ctx.fillText(lat.toFixed(4), 4, y - 2);
+  }
+
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Draw feature labels
+// ─────────────────────────────────────────────────────────────────────────
+function centroidOf(geom) {
+  const pts = [];
+  collectCoords(geom, pts);
+  if (!pts.length) return null;
+  const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+  const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+  return [cx, cy];
+}
+
+function drawLabels() {
+  ctx.save();
+  ctx.font = 'bold 9px monospace';
+  ctx.textAlign = 'center';
+
+  features.forEach(f => {
+    if (!f.geometry) return;
+    const label = (f.properties && (f.properties.name || f.properties.NAME || f.properties.id || f.properties.ID)) || null;
+    if (!label) return;
+    const c = centroidOf(f.geometry);
+    if (!c) return;
+    const [x, y] = project(c);
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillText(label, x + 1, y + 1);
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillText(label, x, y);
+  });
+
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Main draw function
+// ─────────────────────────────────────────────────────────────────────────
+function redrawAll() {
+  const cw = canvas.width  / window.devicePixelRatio;
+  const ch = canvas.height / window.devicePixelRatio;
+  ctx.clearRect(0, 0, cw, ch);
+
+  // Background
+  ctx.fillStyle = '#04070e';
+  ctx.fillRect(0, 0, cw, ch);
+
+  if (!features.length || !bounds) {
+    // Empty hint
+    ctx.fillStyle = 'rgba(56,189,248,0.06)';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('No GeoJSON loaded', cw / 2, ch / 2);
+    return;
+  }
+
+  if (showGrid) drawGrid();
+
+  features.forEach((f, idx) => {
+    const geom = f.geometry;
+    if (!geom) return;
+
+    const ci = idx % PALETTE_LINES.length;
+    let strokeColor, fillColor;
+
+    const type = geom.type;
+    if (type === 'Point' || type === 'MultiPoint') {
+      strokeColor = PALETTE_LINES[(ci + 3) % PALETTE_LINES.length]; // amber-ish
+    } else if (type === 'Polygon' || type === 'MultiPolygon') {
+      strokeColor = '#10b981';
+      fillColor   = `rgba(16,185,129,${fillOpacity})`;
+    } else if (type === 'LineString' || type === 'MultiLineString') {
+      strokeColor = PALETTE_LINES[ci];
+      fillColor   = 'transparent';
+    } else {
+      strokeColor = '#f43f5e';
+      fillColor   = `rgba(244,63,94,${fillOpacity})`;
+    }
+
+    drawGeometry(geom, strokeColor, fillColor, lineWidth, pointRadius);
+  });
+
+  if (showLabels) drawLabels();
+
+  // Update sliders display
+  document.getElementById('lw-val').innerText = lineWidth;
+  document.getElementById('fo-val').innerText = fillOpacity;
+  document.getElementById('pr-val').innerText = pointRadius;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Fit viewport to bounds
+// ─────────────────────────────────────────────────────────────────────────
+function fitToBounds() {
+  offsetX = 0; offsetY = 0; scale = 1;
+  redrawAll();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Zoom
+// ─────────────────────────────────────────────────────────────────────────
+function adjustZoom(factor) {
+  const cw = canvas.width  / window.devicePixelRatio;
+  const ch = canvas.height / window.devicePixelRatio;
+  const cx = cw / 2, cy = ch / 2;
+  offsetX = cx + (offsetX - cx) * factor;
+  offsetY = cy + (offsetY - cy) * factor;
+  scale  *= factor;
+  updateHUD();
+  redrawAll();
+}
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const factor = e.deltaY < 0 ? 1.12 : 0.89;
+  offsetX = mx + (offsetX - mx) * factor;
+  offsetY = my + (offsetY - my) * factor;
+  scale  *= factor;
+  updateHUD();
+  redrawAll();
+}, { passive: false });
+
+// ─────────────────────────────────────────────────────────────────────────
+// Pan
+// ─────────────────────────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  dragOffX   = offsetX;
+  dragOffY   = offsetY;
+  canvas.classList.add('dragging');
+});
+window.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  // Update cursor coords HUD
+  const [lon, lat] = unproject(mx, my);
+  if (bounds) {
+    document.getElementById('hud-coords').innerText =
+      `${lon.toFixed(5)}, ${lat.toFixed(5)}`;
+  }
+
+  // Hover tooltip
+  handleHover(mx, my, e.clientX, e.clientY);
+
+  if (!isDragging) return;
+  offsetX = dragOffX + (e.clientX - dragStartX);
+  offsetY = dragOffY + (e.clientY - dragStartY);
+  redrawAll();
+});
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  canvas.classList.remove('dragging');
+});
+
+// Touch pan/pinch
+let lastTouches = [];
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  lastTouches = Array.from(e.touches);
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    dragOffX   = offsetX;
+    dragOffY   = offsetY;
+  }
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const ts = Array.from(e.touches);
+  if (ts.length === 1 && isDragging) {
+    offsetX = dragOffX + (ts[0].clientX - dragStartX);
+    offsetY = dragOffY + (ts[0].clientY - dragStartY);
+    redrawAll();
+  } else if (ts.length === 2 && lastTouches.length === 2) {
+    const d1 = Math.hypot(lastTouches[1].clientX - lastTouches[0].clientX, lastTouches[1].clientY - lastTouches[0].clientY);
+    const d2 = Math.hypot(ts[1].clientX - ts[0].clientX, ts[1].clientY - ts[0].clientY);
+    const factor = d2 / (d1 || 1);
+    const mx = (ts[0].clientX + ts[1].clientX) / 2;
+    const my = (ts[0].clientY + ts[1].clientY) / 2;
+    const rect = canvas.getBoundingClientRect();
+    const cmx = mx - rect.left, cmy = my - rect.top;
+    offsetX = cmx + (offsetX - cmx) * factor;
+    offsetY = cmy + (offsetY - cmy) * factor;
+    scale  *= factor;
+    redrawAll();
+  }
+  lastTouches = ts;
+}, { passive: false });
+canvas.addEventListener('touchend', () => { isDragging = false; lastTouches = []; });
+
+// ─────────────────────────────────────────────────────────────────────────
+// Hover tooltip — find nearest feature
+// ─────────────────────────────────────────────────────────────────────────
+function handleHover(mx, my, clientX, clientY) {
+  const tt = document.getElementById('feature-tooltip');
+  if (!features.length || !bounds) { tt.style.display = 'none'; return; }
+
+  // Check point features first
+  for (const f of features) {
+    if (!f.geometry) continue;
+    const pts = [];
+    if (f.geometry.type === 'Point') pts.push(f.geometry.coordinates);
+    else if (f.geometry.type === 'MultiPoint') pts.push(...f.geometry.coordinates);
+    for (const c of pts) {
+      const [px, py] = project(c);
+      if (Math.hypot(px - mx, py - my) < pointRadius + 4) {
+        showTooltip(tt, f, clientX, clientY);
+        return;
+      }
+    }
+  }
+  tt.style.display = 'none';
+}
+
+function showTooltip(tt, feature, cx, cy) {
+  const props = feature.properties || {};
+  const type  = feature.geometry ? feature.geometry.type : '?';
+  const keys  = Object.keys(props).slice(0, 8);
+
+  let html = `<div style="font-size:9px;color:var(--cyan);font-weight:700;margin-bottom:4px;">${type}</div>`;
+  if (keys.length) {
+    html += keys.map(k => `<div><span style="color:#64748b;">${k}:</span> <span style="color:#e2e8f0;">${props[k]}</span></div>`).join('');
+  } else {
+    html += `<div style="color:#475569;">(no properties)</div>`;
+  }
+  tt.innerHTML = html;
+  tt.style.display = 'block';
+  const wrap = document.getElementById('map-wrap');
+  const rect = wrap.getBoundingClientRect();
+  tt.style.left = Math.min(cx - rect.left + 12, wrap.clientWidth - 230) + 'px';
+  tt.style.top  = (cy - rect.top - 20) + 'px';
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// HUD update
+// ─────────────────────────────────────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('hud-zoom').innerText = `Zoom: ${scale.toFixed(2)}×`;
+  document.getElementById('hud-features').innerText = `${features.length} feature${features.length !== 1 ? 's' : ''}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Stats & Layers sidebar
+// ─────────────────────────────────────────────────────────────────────────
+function updateSidebar(fileName) {
+  const typeCounts = {};
+  features.forEach(f => {
+    const t = (f.geometry && f.geometry.type) || 'Unknown';
+    typeCounts[t] = (typeCounts[t] || 0) + 1;
+  });
+
+  const bb = bounds ? `${bounds.minX.toFixed(4)},${bounds.minY.toFixed(4)} → ${bounds.maxX.toFixed(4)},${bounds.maxY.toFixed(4)}` : '—';
+
+  document.getElementById('stats-body').innerHTML = `
+    <div class="stat-row"><span>File</span><span>${fileName || '(pasted)'}</span></div>
+    <div class="stat-row"><span>Features</span><span>${features.length}</span></div>
+    <div class="stat-row"><span>Geometry types</span><span>${Object.keys(typeCounts).length}</span></div>
+    <div class="stat-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+      <span style="color:#64748b;">Bounding Box</span>
+      <span style="font-size:8px;color:#94a3b8;word-break:break-all;">${bb}</span>
+    </div>
+  `;
+
+  const LAYER_COLORS = {
+    'Point':             '#f59e0b',
+    'MultiPoint':        '#fbbf24',
+    'LineString':        '#38bdf8',
+    'MultiLineString':   '#7dd3fc',
+    'Polygon':           '#10b981',
+    'MultiPolygon':      '#34d399',
+    'GeometryCollection':'#f43f5e',
+    'Unknown':           '#94a3b8',
+  };
+
+  const layerHTML = Object.entries(typeCounts).map(([type, count]) =>
+    `<div class="layer-row">
+      <div class="layer-dot" style="background:${LAYER_COLORS[type] || '#94a3b8'};"></div>
+      <div class="layer-name">${type}</div>
+      <div class="layer-count">${count}×</div>
+    </div>`
+  ).join('');
+
+  document.getElementById('layers-body').innerHTML = layerHTML || '<div style="font-size:9px;color:#475569;text-align:center;padding:8px 0;">—</div>';
+  updateHUD();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Load GeoJSON data
+// ─────────────────────────────────────────────────────────────────────────
+function loadGeoJSON(data, fileName) {
+  try {
+    geojson  = data;
+    features = normalise(data);
+    bounds   = computeBounds(features);
+    offsetX  = 0; offsetY = 0; scale = 1;
+
+    if (!bounds) {
+      alert('GeoJSON loaded but no coordinates found.');
+      return;
+    }
+
+    document.getElementById('drop-zone').style.opacity = '0';
+    updateSidebar(fileName);
+    redrawAll();
+  } catch (err) {
+    alert('Error loading GeoJSON:\n' + err.message);
+  }
+}
+
+// File input
+document.getElementById('file-input').addEventListener('change', function () {
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      loadGeoJSON(JSON.parse(e.target.result), file.name);
+    } catch (err) {
+      alert('Invalid JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Paste
+function loadFromPaste() {
+  const raw = document.getElementById('json-paste').value.trim();
+  if (!raw) { alert('Paste GeoJSON into the text area first.'); return; }
+  try {
+    loadGeoJSON(JSON.parse(raw), null);
+  } catch (err) {
+    alert('Invalid JSON: ' + err.message);
+  }
+}
+
+// Drag-and-drop onto canvas area
+const mapWrap = document.getElementById('map-wrap');
+mapWrap.addEventListener('dragover', e => { e.preventDefault(); mapWrap.classList.add('drag-over'); });
+mapWrap.addEventListener('dragleave', () => mapWrap.classList.remove('drag-over'));
+mapWrap.addEventListener('drop', e => {
+  e.preventDefault();
+  mapWrap.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      loadGeoJSON(JSON.parse(ev.target.result), file.name);
+    } catch (err) {
+      alert('Invalid JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// Sample GeoJSON — a small demo polygon + linestring + points
+// ─────────────────────────────────────────────────────────────────────────
+function loadSample() {
+  const sample = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: { name: "Stadium Boundary", type: "venue" },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [73.0230, 19.0460], [73.0270, 19.0460],
+            [73.0270, 19.0410], [73.0230, 19.0410],
+            [73.0230, 19.0460]
+          ]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Access Road — West", type: "road" },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [73.0180, 19.0435], [73.0210, 19.0435],
+            [73.0230, 19.0435]
+          ]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Access Road — East", type: "road" },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [73.0270, 19.0435], [73.0300, 19.0435],
+            [73.0330, 19.0420]
+          ]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Gate 4 — West VIP", type: "gate" },
+        geometry: { type: "Point", coordinates: [73.0230, 19.0435] }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Gate 1 — East", type: "gate" },
+        geometry: { type: "Point", coordinates: [73.0270, 19.0435] }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Buffer Hub H1", type: "buffer" },
+        geometry: { type: "Point", coordinates: [73.0185, 19.0330] }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Wonders Park Buffer W2", type: "buffer" },
+        geometry: { type: "Point", coordinates: [73.0310, 19.0340] }
+      },
+      {
+        type: "Feature",
+        properties: { name: "Transit Corridor", type: "path" },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [73.0185, 19.0330], [73.0200, 19.0370],
+            [73.0220, 19.0410], [73.0230, 19.0435]
+          ]
+        }
+      }
+    ]
+  };
+  document.getElementById('json-paste').value = JSON.stringify(sample, null, 2);
+  loadGeoJSON(sample, 'sample_dypatil.geojson');
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Clear
+// ─────────────────────────────────────────────────────────────────────────
+function clearMap() {
+  geojson = null; features = []; bounds = null;
+  offsetX = 0; offsetY = 0; scale = 1;
+  document.getElementById('json-paste').value = '';
+  document.getElementById('drop-zone').style.opacity = '1';
+  document.getElementById('stats-body').innerHTML = '<div style="font-size:9px;color:#475569;text-align:center;padding:8px 0;">No file loaded yet</div>';
+  document.getElementById('layers-body').innerHTML = '<div style="font-size:9px;color:#475569;text-align:center;padding:8px 0;">—</div>';
+  document.getElementById('hud-features').innerText = '0 features';
+  document.getElementById('hud-zoom').innerText = 'Zoom: 1.00×';
+  redrawAll();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Export PNG
+// ─────────────────────────────────────────────────────────────────────────
+function exportPNG() {
+  const link = document.createElement('a');
+  link.download = 'geojson-map.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────────────────────────────────
+resizeCanvas();
+</script>
+
+</body>
+</html>
