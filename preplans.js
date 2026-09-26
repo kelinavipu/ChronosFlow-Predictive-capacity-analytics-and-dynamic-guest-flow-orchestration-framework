@@ -1172,13 +1172,18 @@ window.submitNewAsset = function(e) {
 
 // Cross-Role Procurement Handlers (Alicia orders from Srinivasan & Harry)
 // Dynamic Possession Options & Availability Checker
+let currentTrackerFilter = 'all';
+
 window.populateInfraPossessionsDropdown = async function() {
   const select = document.getElementById('order-infra-possession');
   if (!select || !window.ChronosSupabase) return;
+  const currentVal = select.value;
   const possessions = await window.ChronosSupabase.getInfraPossessions();
   if (possessions && possessions.length > 0) {
     select.innerHTML = possessions.map(p => `
-      <option value="${p.id}">${p.name} (${Number(p.landAreaSqFt).toLocaleString()} sq ft &bull; ${p.gatesCount} Gates)</option>
+      <option value="${p.id}" ${p.id === currentVal ? 'selected' : ''}>
+        ${p.name} (${Number(p.landAreaSqFt || 100000).toLocaleString()} sq ft &bull; ${p.gatesCount || 4} Gates)
+      </option>
     `).join('');
   }
   window.checkOrderAvailability();
@@ -1251,7 +1256,7 @@ window.submitOrderToSrinivasan = function() {
   const posSelect = document.getElementById('order-infra-possession');
   const startInp = document.getElementById('order-infra-start');
   const endInp = document.getElementById('order-infra-end');
-  const demand = document.getElementById('order-infra-demand')?.value || "65 Feeder Buses + 2,200 Parking Bays";
+  const demand = document.getElementById('order-infra-demand')?.value || "Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for fixture";
   const btn = document.getElementById('btn-order-infra');
   
   const posId = posSelect?.value || "pos_nerul_hub";
@@ -1266,22 +1271,25 @@ window.submitOrderToSrinivasan = function() {
     return;
   }
 
+  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
+
   const newReq = {
     id: "req_inf_" + Math.random().toString(36).substr(2, 7),
-    eventId: currentActiveEvent.id,
-    eventTitle: currentActiveEvent.title || currentActiveEvent.venueName,
+    eventId: activeEvt.id || "dypatil_nerul",
+    eventTitle: activeEvt.title || activeEvt.venueName || "Championship Trophy: 4-Day Mega Cricket Fixture",
     eventHost: "Alicia Stone (Event Master Orchestrator)",
-    venue: currentActiveEvent.venueName,
+    venue: activeEvt.venueName || "Dr. D.Y. Patil Sports Stadium",
     possessionId: posId,
     possessionName: posText,
     startDate: startDate,
     endDate: endDate,
     timeWindow: "10:00 - 23:00",
-    expectedVisitors: currentActiveEvent.expectedVisitors || 50000,
+    expectedVisitors: activeEvt.expectedVisitors || 50000,
     requestedAsset: posText,
     requestText: demand,
     allocatedCapacity: `Requested for ${startDate} to ${endDate} (10:00-23:00)`,
     status: "PENDING",
+    responseNotes: "Dispatched to Infrastructure Command. Awaiting schedule lock verification by Srinivasan R.",
     timestamp: new Date().toISOString()
   };
 
@@ -1292,20 +1300,37 @@ window.submitOrderToSrinivasan = function() {
     localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
   } catch (e) {}
 
+  // Dispatch real-time synchronization event for inter-tab reactivity
+  window.dispatchEvent(new CustomEvent('chronos:infra_sync', { detail: { newReq, action: 'order_submitted' } }));
+
   if (btn) {
     btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2 mt-2";
     btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Order Transmitted to Srinivasan's Command</span>`;
-    btn.disabled = true;
+    setTimeout(() => {
+      btn.className = "w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition mt-2";
+      btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send Infrastructure Order to Srinivasan</span>`;
+    }, 3000);
   }
 
-  alert(`Infrastructure request transmitted to Infrastructure Manager (Srinivasan R.)!\n\nTarget Ground: ${posText}\nDates: ${startDate} to ${endDate}\nStatus: Submitted to Srinivasan for Schedule Lock Verification.`);
+  // Toast feedback
+  const toast = document.getElementById('em-toast');
+  const toastMsg = document.getElementById('em-toast-msg');
+  if (toast && toastMsg) {
+    toastMsg.innerText = `✓ Infrastructure order transmitted to Srinivasan R.! Schedule lock telemetry active for "${posText}".`;
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+  }
+
+  // Refresh live tracking panel
+  window.renderEventInfraRequestsTracker();
   lucide.createIcons();
 };
 
 window.submitOrderToHarry = function() {
   const serviceType = document.getElementById('order-service-type')?.value || "transport";
   const units = document.getElementById('order-service-units')?.value || "25";
-  const btn = document.getElementById('btn-order-service');
+  const demand = document.getElementById('order-service-demand')?.value || "Deploy 35 satellite F&B hydration kiosks + 8 cooling misting tents at Gates 2, 4, 7";
+  const btn = document.getElementById('btn-order-services');
 
   const titles = {
     transport: `${units} Dedicated Feeder Shuttle Buses`,
@@ -1314,15 +1339,17 @@ window.submitOrderToHarry = function() {
     hotel: `${units} Hotel Rooms at Sector 21 Cluster`
   };
 
+  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
+
   const newServiceReq = {
     id: "req_srv_" + Math.random().toString(36).substr(2, 7),
-    eventId: currentActiveEvent.id,
-    eventTitle: currentActiveEvent.title || currentActiveEvent.venueName,
+    eventId: activeEvt.id || "dypatil_nerul",
+    eventTitle: activeEvt.title || activeEvt.venueName || "Championship Trophy: 4-Day Mega Cricket Fixture",
     eventHost: "Alicia Stone (Event Master Orchestrator)",
-    venue: currentActiveEvent.venueName,
+    venue: activeEvt.venueName || "Dr. D.Y. Patil Sports Stadium",
     serviceDomain: serviceType.toUpperCase(),
     requestTitle: titles[serviceType] || `${units} Units of Service`,
-    requirements: `Required for ${currentActiveEvent.duration} at Dr. D.Y. Patil Stadium. Hourly rate approved by Alicia.`,
+    requirements: demand,
     unitsRequested: parseInt(units),
     status: "ACCEPTED",
     timestamp: new Date().toISOString()
@@ -1338,12 +1365,447 @@ window.submitOrderToHarry = function() {
   if (btn) {
     btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2";
     btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Contract Confirmed & Staff Assigned by Harry</span>`;
-    btn.disabled = true;
+    setTimeout(() => {
+      btn.className = "w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition";
+      btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send Services RFP to Harry</span>`;
+    }, 3000);
   }
 
-  alert(`Service contract successfully issued to Service Manager (Harry Vance)!\n\nService: ${titles[serviceType]}\nUnits Allocated: ${units}\nCommercial Rates: Hourly billing locked in baseline.`);
+  // Toast feedback
+  const toast = document.getElementById('em-toast');
+  const toastMsg = document.getElementById('em-toast-msg');
+  if (toast && toastMsg) {
+    toastMsg.innerText = `✓ Service contract registered with Harry Vance! (${titles[serviceType]})`;
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+  }
+
   lucide.createIcons();
 };
+
+// =========================================================================
+// ACTIVE INFRASTRUCTURE PROCUREMENT & SCHEDULE LOCK TRACKER (CONNECTED TO SRINIVASAN)
+// =========================================================================
+window.filterEventInfraRequests = function(filter) {
+  currentTrackerFilter = filter;
+  const pills = document.querySelectorAll('.em-tracker-filter-btn');
+  pills.forEach(p => {
+    if (p.getAttribute('data-filter') === filter) {
+      p.className = "em-tracker-filter-btn px-3 py-1.5 rounded-xl btn-glacier font-bold text-xs";
+    } else {
+      p.className = "em-tracker-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs border border-sky-950";
+    }
+  });
+  window.renderEventInfraRequestsTracker(filter);
+};
+
+window.renderEventInfraRequestsTracker = async function(filter = currentTrackerFilter) {
+  const container = document.getElementById('em-procurement-tracker-container');
+  if (!container) return;
+
+  let requests = [];
+  try {
+    const stored = localStorage.getItem('chronos_infra_requests');
+    if (stored) {
+      requests = JSON.parse(stored);
+    } else if (window.ChronosSupabase) {
+      const data = await window.ChronosSupabase.getInfraData();
+      requests = data.requests || [];
+    }
+  } catch (e) {}
+
+  let possessions = [];
+  if (window.ChronosSupabase) {
+    possessions = await window.ChronosSupabase.getInfraPossessions();
+  }
+
+  // Update counts
+  const totalCount = requests.length;
+  const approvedCount = requests.filter(r => r.status === 'APPROVED').length;
+  const pendingCount = requests.filter(r => r.status === 'PENDING').length;
+  const conflictCount = requests.filter(r => r.status === 'RESTRICTED' || r.status === 'DECLINED').length;
+
+  const elAll = document.getElementById('em-tracker-count-all');
+  const elApp = document.getElementById('em-tracker-count-approved');
+  const elPen = document.getElementById('em-tracker-count-pending');
+  const elCon = document.getElementById('em-tracker-count-conflict');
+
+  if (elAll) elAll.innerText = totalCount;
+  if (elApp) elApp.innerText = approvedCount;
+  if (elPen) elPen.innerText = pendingCount;
+  if (elCon) elCon.innerText = conflictCount;
+
+  // Filter requests
+  let filtered = requests;
+  if (filter === 'APPROVED') {
+    filtered = requests.filter(r => r.status === 'APPROVED');
+  } else if (filter === 'PENDING') {
+    filtered = requests.filter(r => r.status === 'PENDING');
+  } else if (filter === 'RESTRICTED') {
+    filtered = requests.filter(r => r.status === 'RESTRICTED' || r.status === 'DECLINED');
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="p-8 rounded-2xl bg-slate-950/80 border border-sky-900/30 text-center space-y-2">
+        <i data-lucide="inbox" class="w-8 h-8 text-slate-500 mx-auto"></i>
+        <div class="text-sm font-bold text-slate-300">No Infrastructure Orders Match Filter (${filter})</div>
+        <p class="text-xs text-slate-500 max-w-md mx-auto">Submit an order using the form above to request land, perimeter gates, and parking bays from Srinivasan R.</p>
+      </div>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
+  container.innerHTML = filtered.map(req => {
+    const isApproved = req.status === 'APPROVED';
+    const isPending = req.status === 'PENDING';
+    const isConflict = req.status === 'RESTRICTED' || req.status === 'DECLINED';
+
+    const matchedPos = possessions.find(p => p.id === req.possessionId) || {
+      name: req.possessionName || req.requestedAsset || "Synthetic Sports Ground",
+      gatesCount: 3,
+      landAreaSqFt: 480000,
+      nocDocNumber: "NOC-MH-CIDCO-STAD-2026-45K"
+    };
+
+    return `
+      <div class="dark-panel rounded-2xl p-5 border ${isApproved ? 'border-emerald-500/40 bg-emerald-950/10' : isPending ? 'border-amber-500/40 bg-amber-950/10' : 'border-rose-500/40 bg-rose-950/10'} space-y-4 transition">
+        
+        <!-- Order Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/60 pb-3">
+          <div class="flex flex-wrap items-center gap-2">
+            ${isApproved ? `
+              <span class="badge-sage px-2.5 py-0.5 rounded text-[10px] font-mono font-bold flex items-center space-x-1.5 shadow-sm">
+                <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-300"></i>
+                <span>APPROVED &amp; SCHEDULE LOCKED</span>
+              </span>
+            ` : isPending ? `
+              <span class="badge-amber px-2.5 py-0.5 rounded text-[10px] font-mono font-bold flex items-center space-x-1.5 shadow-sm">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+                <span>AWAITING SRINIVASAN'S REVIEW</span>
+              </span>
+            ` : `
+              <span class="badge-coral px-2.5 py-0.5 rounded text-[10px] font-mono font-bold flex items-center space-x-1.5 shadow-sm">
+                <i data-lucide="alert-octagon" class="w-3.5 h-3.5 text-rose-300"></i>
+                <span>RESTRICTED / SCHEDULE OVERLAP</span>
+              </span>
+            `}
+            <span class="text-xs text-slate-400 font-mono">&bull; Order ID: <strong class="text-slate-200">${req.id}</strong></span>
+            <span class="text-xs text-slate-400 font-mono">&bull; ${new Date(req.timestamp).toLocaleDateString()} ${new Date(req.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+
+          <div class="text-xs font-mono text-sky-400 font-bold flex items-center space-x-1">
+            <span class="text-slate-400">Target Ground:</span>
+            <span class="text-white">${matchedPos.name || req.possessionName}</span>
+          </div>
+        </div>
+
+        <!-- Order Spec Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="md:col-span-2 space-y-1.5">
+            <h4 class="text-base font-bold text-white">${req.eventTitle}</h4>
+            <div class="text-slate-400 flex flex-wrap items-center gap-1.5">
+              <span>Host: <strong class="text-slate-200">${req.eventHost}</strong></span>
+              <span>&bull;</span>
+              <span>Venue: <strong class="text-slate-200">${req.venue}</strong></span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/70 border border-sky-950 space-y-1 mt-1">
+              <div class="text-[10px] font-mono text-slate-400 uppercase">Procured Allocation Demand</div>
+              <p class="text-slate-200 leading-relaxed text-[11px] font-mono">${req.requestText}</p>
+            </div>
+          </div>
+
+          <!-- Time Window & Capacity -->
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-sky-950 space-y-2 font-mono text-[11px]">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Locked Schedule Window</div>
+            <div class="font-bold text-sky-300">${req.startDate || '2026-09-01'} &rarr; ${req.endDate || '2026-09-04'}</div>
+            <div class="text-slate-300">Daily Operating Window: <strong class="text-white">${req.timeWindow || '10:00 - 23:00'}</strong></div>
+            <div class="text-emerald-400 font-bold flex items-center space-x-1">
+              <i data-lucide="users" class="w-3.5 h-3.5"></i>
+              <span>${req.expectedVisitors ? Number(req.expectedVisitors).toLocaleString() : '50,000'} Expected Pax</span>
+            </div>
+            <div class="pt-1.5 border-t border-sky-950/60 text-[10px] text-slate-400 flex items-center justify-between">
+              <span>Perimeter Gates:</span>
+              <span class="text-white font-bold">${matchedPos.gatesCount || 3} Ingress Gates</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry & Decision Status Banner -->
+        ${isApproved ? `
+          <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-start space-x-3">
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+            <div class="space-y-1">
+              <div class="font-bold text-emerald-200 flex items-center space-x-2">
+                <span>SCHEDULE LOCKED BY SRINIVASAN R. (INFRASTRUCTURE MANAGER)</span>
+                <span class="text-[10px] font-mono px-2 py-0.2 rounded bg-emerald-500/20 text-emerald-300">BINDING NOC ACTIVE</span>
+              </div>
+              <p class="text-[11px] text-emerald-300/90 leading-relaxed">${req.responseNotes || 'Approved and schedule locked by Srinivasan R. All conflicting reservations have been restricted for your event dates.'}</p>
+              <div class="flex flex-wrap items-center gap-3 pt-1 text-[10px] font-mono text-emerald-400">
+                <span>&bull; CIDCO NOC: ${matchedPos.nocDocNumber || 'NOC-MH-CIDCO-STAD-2026-45K'}</span>
+                <span>&bull; Security &amp; Evacuation Clearance: Certified</span>
+                <span>&bull; Direct Ingress Granted: Gates A, B, C</span>
+              </div>
+            </div>
+          </div>
+        ` : isPending ? `
+          <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-start space-x-3">
+            <i data-lucide="clock" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5 animate-pulse"></i>
+            <div class="space-y-1">
+              <div class="font-bold text-amber-200">AWAITING INFRASTRUCTURE MANAGER ACCEPTANCE</div>
+              <p class="text-[11px] text-amber-300/90 leading-relaxed">Dispatched to Srinivasan's Infrastructure Command. Time-conflict pre-check is CLEAR (0 overlap conflicts). Srinivasan will review and commit the schedule lock in his dashboard.</p>
+              <div class="text-[10px] font-mono text-amber-400/80 pt-0.5">Action pending in Srinivasan's dashboard: "Accept &amp; Lock Schedule"</div>
+            </div>
+          </div>
+        ` : `
+          <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-start space-x-3">
+            <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+            <div class="space-y-1">
+              <div class="font-bold text-rose-200">SCHEDULE CONFLICT / RESTRICTED BY SRINIVASAN</div>
+              <p class="text-[11px] text-rose-300/90 leading-relaxed">${req.responseNotes || 'Ground is currently booked by a concurrent event fixture during this window. Concurrent equipping is restricted.'}</p>
+              <div class="text-[10px] font-mono text-rose-400/80 pt-0.5">Resolution: Revise requested dates or select an alternate open ground (e.g. Nerul Hub or Wonders Park).</div>
+            </div>
+          </div>
+        `}
+
+        <!-- Actions Footer -->
+        <div class="pt-3 border-t border-sky-950/60 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div class="text-slate-400 text-[11px] flex items-center space-x-1.5">
+            <i data-lucide="file-check" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span>NOC Authority: CIDCO Navi Mumbai Fire Directorate</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openSpatialGateModal('${req.possessionId || 'pos_dypatil_ground'}')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-300 hover:text-white border border-sky-900/40 text-xs flex items-center space-x-1.5 transition">
+              <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>View Spatial Gate Blueprint &amp; NOC</span>
+            </button>
+
+            ${isPending ? `
+              <button onclick="simulateSrinivasanAccept('${req.id}')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-sky-950" title="Simulate Srinivasan clicking Accept in his dashboard">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>Instant Lock (Srinivasan)</span>
+              </button>
+              <button onclick="cancelEventInfraRequest('${req.id}')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-sky-950 text-xs transition">
+                Cancel Order
+              </button>
+            ` : isApproved ? `
+              <button onclick="exportGatePermit('${req.id}')" class="px-3.5 py-1.5 rounded-xl badge-sage font-bold text-xs flex items-center space-x-1.5">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Export Gate Clearance Permit</span>
+              </button>
+              <button onclick="simulateSrinivasanRevoke('${req.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-sky-950 text-xs transition" title="Simulate Srinivasan revoking approval">
+                Revoke Lock
+              </button>
+            ` : `
+              <button onclick="switchEMSection('em-sec-procure')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Re-Submit with Alternate Dates</span>
+              </button>
+            `}
+          </div>
+        </div>
+
+      </div>
+    `;
+  }).join('');
+
+  lucide.createIcons();
+};
+
+window.cancelEventInfraRequest = function(reqId) {
+  try {
+    const stored = localStorage.getItem('chronos_infra_requests');
+    if (!stored) return;
+    let list = JSON.parse(stored);
+    list = list.filter(r => r.id !== reqId);
+    localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
+    window.dispatchEvent(new CustomEvent('chronos:infra_sync', { detail: { reqId, action: 'order_cancelled' } }));
+    window.renderEventInfraRequestsTracker();
+    
+    const toast = document.getElementById('em-toast');
+    const toastMsg = document.getElementById('em-toast-msg');
+    if (toast && toastMsg) {
+      toastMsg.innerText = `Infrastructure order ${reqId} has been cancelled.`;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+    }
+  } catch (e) {}
+};
+
+window.simulateSrinivasanAccept = async function(reqId) {
+  if (window.ChronosSupabase) {
+    await window.ChronosSupabase.respondToInfraRequest(reqId, 'APPROVED', 'Approved and schedule locked by Srinivasan R.');
+  }
+  window.renderEventInfraRequestsTracker();
+  
+  const toast = document.getElementById('em-toast');
+  const toastMsg = document.getElementById('em-toast-msg');
+  if (toast && toastMsg) {
+    toastMsg.innerText = `✓ Srinivasan R. accepted request ${reqId}! Schedule is now LOCKED for your event.`;
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+  }
+};
+
+window.simulateSrinivasanRevoke = async function(reqId) {
+  if (window.ChronosSupabase) {
+    await window.ChronosSupabase.respondToInfraRequest(reqId, 'DECLINED', 'Revoked by Srinivasan R.');
+  }
+  window.renderEventInfraRequestsTracker();
+  
+  const toast = document.getElementById('em-toast');
+  const toastMsg = document.getElementById('em-toast-msg');
+  if (toast && toastMsg) {
+    toastMsg.innerText = `Schedule lock revoked for request ${reqId}. Possession released.`;
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+  }
+};
+
+window.openSpatialGateModal = async function(possessionId) {
+  let possessions = [];
+  if (window.ChronosSupabase) {
+    possessions = await window.ChronosSupabase.getInfraPossessions();
+  }
+  const pos = possessions.find(p => p.id === possessionId) || possessions[1] || possessions[0];
+  if (!pos) return;
+
+  const modal = document.getElementById('spatial-gate-modal');
+  if (!modal) return;
+
+  const elName = document.getElementById('modal-gate-possession-name');
+  const elNoc = document.getElementById('modal-gate-noc-number');
+  const elIssuer = document.getElementById('modal-gate-noc-issuer');
+  const elCap = document.getElementById('modal-gate-capacity');
+  const elOcr = document.getElementById('modal-gate-ocr-text');
+  const elCount = document.getElementById('modal-gate-count-badge');
+  const cardsContainer = document.getElementById('modal-gate-cards-container');
+
+  if (elName) elName.innerText = pos.name;
+  if (elNoc) elNoc.innerText = pos.nocDocNumber || "NOC-MH-CIDCO-STAD-2026-45K";
+  if (elIssuer) elIssuer.innerText = pos.nocIssuer || "CIDCO Urban Safety & Navi Mumbai Fire Directorate";
+  if (elCap) elCap.innerText = (pos.landAreaSqFt >= 400000 ? "45,000 Spectators" : "25,000 Spectators") + ` (${Number(pos.landAreaSqFt).toLocaleString()} sq ft)`;
+  if (elOcr) elOcr.innerText = pos.ocrText || `Official Document verified. Structural integrity approved for crowd evacuation. Gates and perimeter verified under CIDCO regulations.`;
+  if (elCount) elCount.innerText = `${pos.gatesCount || 3} Gates Certified`;
+
+  if (cardsContainer) {
+    if (pos.id === 'pos_dypatil_ground' || pos.gatesCount === 3) {
+      cardsContainer.innerHTML = `
+        <div class="p-3 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-emerald-400">DUMMY_GATE_A</div>
+          <div class="font-bold text-white">North Public Entry</div>
+          <div class="text-[10px] text-slate-400">14,000 pax/hr max curve &bull; 16 Turnstiles &bull; Pedestrian Loop</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-sky-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-sky-400">DUMMY_GATE_B</div>
+          <div class="font-bold text-white">West VIP Entry</div>
+          <div class="text-[10px] text-slate-400">3,500 pax/hr &bull; Pavilion Direct Ingress &bull; Heli-Approach</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-amber-400">DUMMY_GATE_C</div>
+          <div class="font-bold text-white">South Operations</div>
+          <div class="text-[10px] text-slate-400">1,800 pax/hr &bull; ALS Ambulance &amp; Fire Tender Bypass</div>
+        </div>
+      `;
+    } else {
+      cardsContainer.innerHTML = `
+        <div class="p-3 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-emerald-400">GATE 1</div>
+          <div class="font-bold text-white">Main Pedestrian Ingress</div>
+          <div class="text-[10px] text-slate-400">10,500 pax/hr &bull; Direct Station Approach</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-sky-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-sky-400">GATE 2</div>
+          <div class="font-bold text-white">VIP &amp; Media Entrance</div>
+          <div class="text-[10px] text-slate-400">2,500 pax/hr &bull; Secured Valet Approach</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30 space-y-1">
+          <div class="text-[10px] font-bold text-amber-400">GATE 3 &amp; 4</div>
+          <div class="font-bold text-white">Rapid Dispersal &amp; Transit</div>
+          <div class="text-[10px] text-slate-400">12,000 pax/hr &bull; Feeder Loop Shuttles</div>
+        </div>
+      `;
+    }
+  }
+
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+};
+
+window.closeSpatialGateModal = function() {
+  const modal = document.getElementById('spatial-gate-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+window.exportGatePermit = function(reqId) {
+  let requests = [];
+  try {
+    const stored = localStorage.getItem('chronos_infra_requests');
+    if (stored) requests = JSON.parse(stored);
+  } catch (e) {}
+  const req = requests.find(r => r.id === reqId) || { id: reqId, status: "APPROVED" };
+  
+  const permitData = {
+    permitId: "PERMIT-" + req.id.toUpperCase(),
+    status: req.status,
+    eventTitle: req.eventTitle,
+    host: req.eventHost,
+    venue: req.venue,
+    possession: req.possessionName || req.requestedAsset,
+    dates: `${req.startDate} to ${req.endDate}`,
+    timeWindow: req.timeWindow,
+    authorizedBy: "Srinivasan R. (Infrastructure Manager, CIDCO)",
+    clearanceNotes: req.responseNotes || "Approved and schedule locked.",
+    nocDocumentNumber: "NOC-MH-CIDCO-STAD-2026-45K",
+    issuedAt: new Date().toISOString()
+  };
+
+  const blob = new Blob([JSON.stringify(permitData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Permit_${req.id}_Approved.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  alert(`CIDCO Infrastructure Clearance Permit exported!\n\nPermit ID: PERMIT-${req.id.toUpperCase()}\nStatus: APPROVED & SCHEDULE LOCKED\nAuthorized by: Srinivasan R.`);
+};
+
+// Real-Time Inter-Tab Storage Synchronization
+window.addEventListener('storage', (e) => {
+  if (e.key === 'chronos_infra_requests' || e.key === 'chronos_infra_possessions') {
+    if (typeof window.renderEventInfraRequestsTracker === 'function') {
+      window.renderEventInfraRequestsTracker();
+    }
+    if (typeof window.populateInfraPossessionsDropdown === 'function') {
+      window.populateInfraPossessionsDropdown();
+    }
+  }
+});
+
+window.addEventListener('chronos:infra_sync', () => {
+  if (typeof window.renderEventInfraRequestsTracker === 'function') {
+    window.renderEventInfraRequestsTracker();
+  }
+  if (typeof window.populateInfraPossessionsDropdown === 'function') {
+    window.populateInfraPossessionsDropdown();
+  }
+});
+
+// Periodic High-Responsiveness Sync Polling (every 3 seconds when on procurement screen)
+setInterval(() => {
+  const procureSec = document.getElementById('em-sec-procure');
+  if (procureSec && !procureSec.classList.contains('hidden')) {
+    if (typeof window.renderEventInfraRequestsTracker === 'function') {
+      window.renderEventInfraRequestsTracker(currentTrackerFilter);
+    }
+  }
+}, 3000);
 
 // =========================================================================
 // 8. SCI-FI EVENT LIFECYCLE MISSION CONTROL ENGINE (PRE, PRESENT, POST)

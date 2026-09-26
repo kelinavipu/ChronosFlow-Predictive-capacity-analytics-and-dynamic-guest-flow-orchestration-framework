@@ -785,6 +785,22 @@ const ChronosSupabase = {
           return p;
         });
         localStorage.setItem('chronos_infra_possessions', JSON.stringify(updatedPossessions));
+      } else if ((newStatus === 'DECLINED' || newStatus === 'RESTRICTED') && matchedReq && matchedReq.possessionId) {
+        const possessions = await this.getInfraPossessions();
+        const updatedPossessions = possessions.map(p => {
+          if (p.id === matchedReq.possessionId) {
+            const bookings = (p.activeBookings || []).filter(b => b.eventId !== matchedReq.eventId);
+            return { ...p, activeBookings: bookings };
+          }
+          return p;
+        });
+        localStorage.setItem('chronos_infra_possessions', JSON.stringify(updatedPossessions));
+      }
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('chronos:infra_sync', { 
+          detail: { requestId, status: newStatus, notes, timestamp: new Date().toISOString() } 
+        }));
       }
     } catch (e) {}
     return { success: true };

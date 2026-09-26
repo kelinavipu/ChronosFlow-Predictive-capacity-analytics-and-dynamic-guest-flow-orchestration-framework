@@ -570,6 +570,64 @@
 
           </div>
         </div>
+
+        <!-- ACTIVE INFRASTRUCTURE & SERVICE PROCUREMENT TRACKER (CONNECTED TO SRINIVASAN & HARRY) -->
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-950/60 pb-4">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">BIDIRECTIONAL TELEMETRY</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sage">SRINIVASAN &bull; INFRA COMMAND</span>
+              </div>
+              <h3 class="text-lg font-bold text-white mt-0.5 flex items-center space-x-2">
+                <i data-lucide="layers" class="w-5 h-5 text-sky-400"></i>
+                <span>Active Infrastructure Procurement &amp; Schedule Lock Tracker</span>
+              </h3>
+              <p class="text-xs text-slate-400">Real-time schedule locks, CIDCO NOC clearances, and perimeter gate allocations authorized by Srinivasan R.</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-mono text-xs shadow-inner">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="font-bold">LIVE TELEMETRY ACTIVE</span>
+              </div>
+              <button onclick="renderEventInfraRequestsTracker()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-sky-900/40 text-xs transition" title="Refresh Telemetry">
+                <i data-lucide="refresh-cw" class="w-4 h-4 text-sky-400"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Pills & Enforcement Banner -->
+          <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex flex-wrap items-center gap-1.5" id="em-tracker-filter-pills">
+              <button onclick="filterEventInfraRequests('all')" class="em-tracker-filter-btn px-3 py-1.5 rounded-xl btn-glacier font-bold text-xs" data-filter="all">
+                All Orders (<span id="em-tracker-count-all">0</span>)
+              </button>
+              <button onclick="filterEventInfraRequests('APPROVED')" class="em-tracker-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs border border-sky-950" data-filter="APPROVED">
+                Locked &amp; Approved (<span id="em-tracker-count-approved">0</span>)
+              </button>
+              <button onclick="filterEventInfraRequests('PENDING')" class="em-tracker-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs border border-sky-950" data-filter="PENDING">
+                Awaiting Srinivasan (<span id="em-tracker-count-pending">0</span>)
+              </button>
+              <button onclick="filterEventInfraRequests('RESTRICTED')" class="em-tracker-filter-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white text-xs border border-sky-950" data-filter="RESTRICTED">
+                Restricted / Overlap (<span id="em-tracker-count-conflict">0</span>)
+              </button>
+            </div>
+
+            <div class="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Locked schedules are binding across Navi Mumbai Traffic Police &amp; NMMT</span>
+            </div>
+          </div>
+
+          <!-- Dynamic List of Orders -->
+          <div id="em-procurement-tracker-container" class="space-y-4">
+            <!-- Rendered by JavaScript -->
+          </div>
+        </div>
       </section>
 
       <!-- ===================================================================== -->
@@ -1318,6 +1376,98 @@
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL D: SPATIAL GATE CLEARANCE & CIDCO NOC PERMIT MODAL                 -->
+  <!-- ========================================================================= -->
+  <div id="spatial-gate-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass-panel rounded-3xl p-6 sm:p-7 max-w-2xl w-full border border-sky-400/40 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scroll">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-sky-950 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="p-2.5 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-mono uppercase text-emerald-400 font-bold tracking-wider">OFFICIAL CIDCO NOC &amp; GATE CLEARANCE</span>
+            <h3 id="modal-gate-possession-name" class="text-base font-black text-white">D. Y. Patil Stadium (Synthetic Hackathon Ground)</h3>
+          </div>
+        </div>
+        <button onclick="closeSpatialGateModal()" class="p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-sky-950">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- NOC Certificate & Authority Details -->
+      <div class="p-4 rounded-2xl bg-slate-950/90 border border-emerald-500/30 space-y-2 text-xs font-mono">
+        <div class="flex justify-between items-center text-emerald-400 font-bold">
+          <span class="flex items-center space-x-1.5">
+            <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+            <span id="modal-gate-noc-title">NOC CERTIFICATE VERIFIED</span>
+          </span>
+          <span class="px-2 py-0.5 rounded badge-sage text-[10px]">ACTIVE &amp; ENFORCEABLE</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] text-slate-300">
+          <div>CIDCO Ref: <strong class="text-white font-mono" id="modal-gate-noc-number">NOC-MH-CIDCO-STAD-2026-45K</strong></div>
+          <div>Issuer: <strong class="text-white" id="modal-gate-noc-issuer">Navi Mumbai Fire &amp; Urban Safety Directorate</strong></div>
+          <div>Certified Capacity: <strong class="text-emerald-300 font-mono" id="modal-gate-capacity">45,000 Spectators</strong></div>
+          <div>Jurisdiction: <strong class="text-white">Sector 7, Nerul, Navi Mumbai</strong></div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/80 border border-sky-950 text-[10px] text-slate-400 leading-relaxed" id="modal-gate-ocr-text">
+          OCR Clearance: Structural integrity, crowd evacuation flow rates, and perimeter ingress points cleared for 45,000 maximum simultaneous occupancy.
+        </div>
+      </div>
+
+      <!-- Allocated Gates Matrix -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-xs font-mono">
+          <span class="font-bold text-white uppercase tracking-wider text-[11px]">Allocated Perimeter Evacuation Gates</span>
+          <span class="text-sky-400 font-bold" id="modal-gate-count-badge">3 Gates Operational</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono" id="modal-gate-cards-container">
+          <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-1">
+            <div class="text-[10px] font-bold text-emerald-400">DUMMY_GATE_A</div>
+            <div class="font-bold text-white">North Public Entry</div>
+            <div class="text-[10px] text-slate-400">14,000 pax/hr max curve &bull; 16 Turnstiles</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-1">
+            <div class="text-[10px] font-bold text-sky-400">DUMMY_GATE_B</div>
+            <div class="font-bold text-white">West VIP Entry</div>
+            <div class="text-[10px] text-slate-400">3,500 pax/hr &bull; Pavilion Direct Ingress</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-1">
+            <div class="text-[10px] font-bold text-amber-400">DUMMY_GATE_C</div>
+            <div class="font-bold text-white">South Operations</div>
+            <div class="text-[10px] text-slate-400">1,800 pax/hr &bull; ALS Ambulance Corridor</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spatial Twin Cross-Link -->
+      <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2 text-slate-300">
+          <i data-lucide="radar" class="w-4 h-4 text-sky-400"></i>
+          <span>Synthetic Spatial GeoJSON ingested with 15 tactical features</span>
+        </div>
+        <a href="synthetic-stadium-site.geojson" download="synthetic-stadium-site.geojson" class="px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 hover:text-white text-[11px] font-mono border border-sky-400/20">
+          Download GeoJSON
+        </a>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-2 flex justify-between items-center">
+        <button onclick="closeSpatialGateModal(); switchEMSection('em-sec-twin');" class="px-4 py-2 rounded-xl glass-pill text-xs font-bold text-sky-300 font-mono">
+          Inspect in 5KM Satellite Twin &rarr;
+        </button>
+        <button onclick="closeSpatialGateModal()" class="px-5 py-2.5 rounded-xl btn-glacier text-xs font-bold font-mono">
+          Close Permit
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Preplans Engine & Section Switcher Scripts -->
   <script src="preplans.js"></script>
   <script>
@@ -1352,6 +1502,7 @@
         breadcrumb.innerText = "CROSS-ROLE PROCUREMENT";
         title.innerText = "Order Infrastructure & Services (Srinivasan & Harry)";
         if (window.populateInfraPossessionsDropdown) window.populateInfraPossessionsDropdown();
+        if (window.renderEventInfraRequestsTracker) window.renderEventInfraRequestsTracker();
       } else if (sectionId === 'em-sec-twin') {
         breadcrumb.innerText = "5KM SATELLITE DIGITAL TWIN";
         title.innerText = "High-Resolution Satellite Twin & Geospatial Sensor Grid";
@@ -1421,6 +1572,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       syncEMProfileUI();
       if (window.populateInfraPossessionsDropdown) window.populateInfraPossessionsDropdown();
+      if (window.renderEventInfraRequestsTracker) window.renderEventInfraRequestsTracker();
     });
   </script>
 </body>

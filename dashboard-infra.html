@@ -1775,6 +1775,21 @@
       await window.ChronosSupabase.respondToInfraRequest(reqId, status, notes);
       await renderRequestsList();
       await renderPossessionsList();
+
+      // Real-time toast feedback
+      const toast = document.getElementById('infra-toast');
+      const toastMsg = document.getElementById('infra-toast-msg');
+      if (toast && toastMsg) {
+        if (status === 'APPROVED') {
+          toastMsg.innerText = `✓ Schedule successfully LOCKED for fixture! Inter-role confirmation transmitted to Event Master (Alicia Stone).`;
+        } else if (status === 'DECLINED' || status === 'RESTRICTED') {
+          toastMsg.innerText = `✕ Request set to ${status}. Ground schedule released & synchronized with Event Master.`;
+        } else {
+          toastMsg.innerText = `Request status updated to ${status}.`;
+        }
+        toast.classList.remove('hidden');
+        setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+      }
     }
 
     // Interactive Test to simulate a May 5-8 overlapping request on DY Patil Ground
@@ -1805,10 +1820,33 @@
         localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
       } catch (e) {}
 
+      window.dispatchEvent(new CustomEvent('chronos:infra_sync', { detail: { type: 'simulated_conflict' } }));
+
       alert("Simulated conflicting request generated:\n\nEvent: Navi Mumbai Summer Music Arena Festival\nRequested Dates: May 5 to May 8, 2026\nRequested Ground: DY Patil Sports Ground & Western Arena\n\nNotice that this ground is already locked from May 1 to May 12 for the National Football Championship! Inspect the conflict alert now.");
 
       renderRequestsList();
     }
+
+    // Real-Time Inter-Tab Storage Synchronization
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'chronos_infra_requests' || e.key === 'chronos_infra_possessions') {
+        renderRequestsList();
+        renderPossessionsList();
+      }
+    });
+
+    window.addEventListener('chronos:infra_sync', () => {
+      renderRequestsList();
+      renderPossessionsList();
+    });
+
+    // High-responsiveness sync interval (every 3 seconds)
+    setInterval(() => {
+      const reqSec = document.getElementById('sec-requests');
+      if (reqSec && !reqSec.classList.contains('hidden')) {
+        renderRequestsList();
+      }
+    }, 3000);
 
     document.addEventListener('DOMContentLoaded', loadInfraDashboard);
   </script>
