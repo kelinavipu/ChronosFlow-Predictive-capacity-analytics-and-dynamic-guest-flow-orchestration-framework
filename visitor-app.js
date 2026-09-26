@@ -1141,19 +1141,23 @@ function initGatekeeper() {
       const parsed = JSON.parse(saved);
       if (parsed && parsed.lat && parsed.lng && parsed.name) {
         setGatekeeperCoordinates(parsed.lat, parsed.lng, 'Saved Calibration');
-        const unlockBtn = document.getElementById('btn-gk-unlock');
-        if (unlockBtn) {
-          unlockBtn.disabled = false;
-          unlockBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:opacity-95 text-slate-950 font-black text-xs font-mono flex items-center justify-center space-x-2 shadow-2xl shadow-emerald-500/30 cursor-pointer active:scale-95 transition";
-          unlockBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-slate-950"></i><span>ENTER WITH SAVED: ${parsed.name.toUpperCase()} &rarr;</span>`;
-          lucide.createIcons();
-        }
       }
     }
   } catch (e) {}
 
   // 4. Request hardware GPS sensor immediately
   gatekeeperRequestGPS();
+
+  // 5. Failsafe: Ensure phone users are NEVER trapped on gatekeeper screen if HTTP permissions are blocked
+  setTimeout(() => {
+    if (!isGatekeeperUnlocked) {
+      if (!gatekeeperLocation) {
+        const def = activeEvent.defaultOrigin || { lat: 19.0310, lng: 73.0150, label: "Nerul Sector 19" };
+        setGatekeeperCoordinates(def.lat, def.lng, 'Auto Calibrated');
+      }
+      gatekeeperUnlockApp();
+    }
+  }, 1800);
 }
 
 function initGatekeeperMap() {
@@ -1506,8 +1510,8 @@ function renderGatekeeperQuickChips() {
     const d = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(0);
     return `
       <button 
-        onclick="setGatekeeperCoordinates(${loc.lat}, ${loc.lng}, 'Preset Chip')"
-        class="px-2 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-sky-900/40 text-[9px] font-mono transition"
+        onclick="setGatekeeperCoordinates(${loc.lat}, ${loc.lng}, 'Preset Chip'); gatekeeperUnlockApp();"
+        class="px-2 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-sky-900/40 text-[9px] font-mono transition"
       >
         📍 ${loc.name} (${d}km)
       </button>
