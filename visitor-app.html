@@ -325,6 +325,47 @@
     <!-- ========================================================================= -->
     <div id="mobile-viewport" class="flex-1 overflow-y-auto no-scrollbar relative p-4 space-y-4">
       
+      <!-- ========================================================================= -->
+      <!-- DECISION FACTOR ENGINE & CAPACITY THROTTLE (DY PATIL: STRENGTH 2 / 5)     -->
+      <!-- ========================================================================= -->
+      <div id="decision-factor-hud" class="p-3.5 rounded-2xl bg-slate-900/95 border border-sky-400/40 shadow-xl space-y-2.5 font-mono text-xs backdrop-blur-md">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            </span>
+            <span class="text-[10px] uppercase font-bold text-cyan-300 tracking-wider">DECISION FACTOR ENGINE</span>
+          </div>
+
+          <div class="flex items-center space-x-1.5">
+            <span class="text-[9px] text-slate-400 uppercase">Strength:</span>
+            <div class="flex items-center space-x-1 bg-slate-950 px-2 py-0.5 rounded-lg border border-sky-800">
+              <button onclick="decrementStrength()" class="text-sky-400 hover:text-white font-black px-1 text-xs" title="Decrease Strength">-</button>
+              <span id="df-strength-val" class="font-bold text-white text-[11px]">2</span>
+              <button onclick="incrementStrength()" class="text-sky-400 hover:text-white font-black px-1 text-xs" title="Increase Strength">+</button>
+            </div>
+            <span class="text-[9px] px-1.5 py-0.5 rounded badge-sand font-bold" id="df-ratio-pill">2/5 Ingress</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Decision Verdict Box for Selected Visitor -->
+        <div id="df-verdict-box" class="p-2.5 rounded-xl border flex items-start space-x-2 text-[11px] transition">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 5 Tracked Visitors Selector -->
+        <div class="space-y-1 pt-1 border-t border-sky-950">
+          <div class="flex justify-between items-center text-[10px] text-slate-400">
+            <span>Select Visitor Handset (5 Active):</span>
+            <span id="df-summary-counts" class="text-emerald-400 font-bold">2 Admitted &bull; 3 Rerouted</span>
+          </div>
+          <div class="grid grid-cols-5 gap-1 pt-0.5" id="df-visitor-selector-chips">
+            <!-- 5 Clickable visitor chips injected by JS -->
+          </div>
+        </div>
+      </div>
+
       <!-- TAB 1: SMART TICKET / DIGITAL PASS -->
       <section id="tab-sec-pass" class="tab-content space-y-4">
         

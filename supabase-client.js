@@ -996,6 +996,196 @@ const ChronosSupabase = {
         liveAdvisory: "Gate 4 attendees are advised to use the Seawoods Shuttle Loop upon match exit at 21:45 for faster rail connection."
       }
     };
+  },
+
+  // 7. DECISION FACTOR CAPACITY & DYNAMIC REROUTING ENGINE
+  getDecisionFactorState() {
+    try {
+      const stored = localStorage.getItem('chronos_decision_factor_state');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+
+    const defaultState = {
+      venue: "dypatil_nerul",
+      venueName: "Dr. D.Y. Patil Sports Stadium",
+      strengthLimit: 2,
+      totalVisitors: 5,
+      admittedCount: 2,
+      reroutedCount: 3,
+      decisionFactors: [
+        { name: "Proximity & GPS Distance", weight: 0.45, desc: "Shorter distance to Gate 4 turnstiles prioritized" },
+        { name: "Pass Priority & Tier", weight: 0.35, desc: "VIP / Reserved tiers vetted for main bowl access" },
+        { name: "Estimated Time of Arrival (ETA)", weight: 0.20, desc: "Lower ETA cleared before choke threshold" }
+      ],
+      visitors: [
+        {
+          id: "vis_01",
+          name: "George Miller",
+          avatar: "GM",
+          tier: "VIP Pass",
+          lat: 19.0405,
+          lng: 73.0220,
+          originLabel: "Nerul Sector 19",
+          distanceKm: 0.4,
+          etaMinutes: 5,
+          decisionScore: 94,
+          rank: 1,
+          assignedDestination: "DY Patil Stadium - Gate A (North Public)",
+          destLat: 19.0436,
+          destLng: 73.0248,
+          status: "ADMITTED",
+          rerouted: false,
+          reason: "Decision Factor: Priority 1 (Proximity 0.4km + VIP Tier). Admitted within Strength Limit (1/2)."
+        },
+        {
+          id: "vis_02",
+          name: "Sarah Chen",
+          avatar: "SC",
+          tier: "General Admission",
+          lat: 19.0345,
+          lng: 73.0185,
+          originLabel: "Nerul Railway West Plaza",
+          distanceKm: 1.1,
+          etaMinutes: 12,
+          decisionScore: 82,
+          rank: 2,
+          assignedDestination: "DY Patil Stadium - Gate B (West Ingress)",
+          destLat: 19.0436,
+          destLng: 73.0248,
+          status: "ADMITTED",
+          rerouted: false,
+          reason: "Decision Factor: Priority 2 (Proximity 1.1km + 12m ETA). Admitted within Strength Limit (2/2 - Cap Reached)."
+        },
+        {
+          id: "vis_03",
+          name: "Rahul Sharma",
+          avatar: "RS",
+          tier: "General Admission",
+          lat: 19.0250,
+          lng: 73.0120,
+          originLabel: "Palm Beach Corridor",
+          distanceKm: 2.6,
+          etaMinutes: 22,
+          decisionScore: 61,
+          rank: 3,
+          assignedDestination: "Nerul Multi-Modal Hub Fan Zone & Buffer Grounds",
+          destLat: 19.0330,
+          destLng: 73.0185,
+          status: "REROUTED",
+          rerouted: true,
+          reason: "Decision Factor: Strength Limit (2) Exceeded. Rerouted to Nerul Multi-Modal Hub Buffer to prevent turnstile crush."
+        },
+        {
+          id: "vis_04",
+          name: "Emily Watson",
+          avatar: "EW",
+          tier: "Family Pass",
+          lat: 19.0180,
+          lng: 73.0150,
+          originLabel: "Seawoods Grand Central Plaza",
+          distanceKm: 3.2,
+          etaMinutes: 28,
+          decisionScore: 48,
+          rank: 4,
+          assignedDestination: "Wonders Park Open Exhibition & Staging Grounds",
+          destLat: 19.0340,
+          destLng: 73.0310,
+          status: "REROUTED",
+          rerouted: true,
+          reason: "Decision Factor: Strength Limit (2) Exceeded. Diverted via Seawoods loop to Wonders Park Staging Arena."
+        },
+        {
+          id: "vis_05",
+          name: "Amit Patel",
+          avatar: "AP",
+          tier: "General Admission",
+          lat: 19.0550,
+          lng: 73.0380,
+          originLabel: "Sion-Panvel Expressway Junction",
+          distanceKm: 4.1,
+          etaMinutes: 35,
+          decisionScore: 35,
+          rank: 5,
+          assignedDestination: "Auxiliary Gate C Overspill Bypass",
+          destLat: 19.0445,
+          destLng: 73.0260,
+          status: "REROUTED",
+          rerouted: true,
+          reason: "Decision Factor: Strength Limit (2) Exceeded. Highway feeder held at auxiliary service lane."
+        }
+      ]
+    };
+
+    try {
+      localStorage.setItem('chronos_decision_factor_state', JSON.stringify(defaultState));
+    } catch (e) {}
+
+    return defaultState;
+  },
+
+  setDecisionFactorStrength(newStrength) {
+    const strength = Math.max(1, Math.min(5, parseInt(newStrength) || 2));
+    const current = this.getDecisionFactorState();
+    
+    // Sort visitors by decisionScore descending
+    const sorted = [...current.visitors].sort((a, b) => b.decisionScore - a.decisionScore);
+    
+    let admittedCount = 0;
+    let reroutedCount = 0;
+    
+    const updatedVisitors = sorted.map((v, idx) => {
+      if (idx < strength) {
+        admittedCount++;
+        return {
+          ...v,
+          rank: idx + 1,
+          status: "ADMITTED",
+          rerouted: false,
+          assignedDestination: idx === 0 ? "DY Patil Stadium - Gate A (North Public)" : "DY Patil Stadium - Gate B (West Ingress)",
+          destLat: 19.0436,
+          destLng: 73.0248,
+          reason: `Decision Factor: Rank #${idx + 1} (Score: ${v.decisionScore}). Ingress cleared within Strength Limit (${idx + 1}/${strength}).`
+        };
+      } else {
+        reroutedCount++;
+        const rerouteDestinations = [
+          { name: "Nerul Multi-Modal Hub Fan Zone & Buffer Grounds", lat: 19.0330, lng: 73.0185 },
+          { name: "Wonders Park Open Exhibition & Staging Grounds", lat: 19.0340, lng: 73.0310 },
+          { name: "Auxiliary Gate C Overspill Bypass", lat: 19.0445, lng: 73.0260 },
+          { name: "Seawoods Sector 40 Park-and-Ride Buffer", lat: 19.0200, lng: 73.0160 }
+        ];
+        const dest = rerouteDestinations[(idx - strength) % rerouteDestinations.length];
+        return {
+          ...v,
+          rank: idx + 1,
+          status: "REROUTED",
+          rerouted: true,
+          assignedDestination: dest.name,
+          destLat: dest.lat,
+          destLng: dest.lng,
+          reason: `Decision Factor: Strength Limit (${strength}) Exceeded. Rerouted to ${dest.name} to balance crowd pressure.`
+        };
+      }
+    });
+
+    const newState = {
+      ...current,
+      strengthLimit: strength,
+      admittedCount,
+      reroutedCount,
+      visitors: updatedVisitors,
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('chronos_decision_factor_state', JSON.stringify(newState));
+    } catch (e) {}
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('chronos:decision_factor_sync', { detail: newState }));
+    }
+
+    return newState;
   }
 };
 

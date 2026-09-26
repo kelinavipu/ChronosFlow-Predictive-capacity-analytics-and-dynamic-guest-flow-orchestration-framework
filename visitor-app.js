@@ -276,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
   startMobileClock();
   parseUrlParamsAndInitialize();
   initGatekeeper();
+  initDecisionFactor();
   lucide.createIcons();
 });
 
@@ -334,6 +335,198 @@ function parseUrlParamsAndInitialize() {
 
   applyPassToUI();
 }
+
+// =========================================================================
+// 3.5 DECISION FACTOR CAPACITY & DYNAMIC REROUTING ENGINE (DY PATIL STRENGTH: 2 / 5)
+// =========================================================================
+let decisionState = null;
+let activeVisitorIndex = 0;
+
+window.initDecisionFactor = function() {
+  if (window.ChronosSupabase && typeof window.ChronosSupabase.getDecisionFactorState === 'function') {
+    decisionState = window.ChronosSupabase.getDecisionFactorState();
+  } else {
+    decisionState = {
+      venue: "dypatil_nerul",
+      venueName: "Dr. D.Y. Patil Sports Stadium",
+      strengthLimit: 2,
+      totalVisitors: 5,
+      admittedCount: 2,
+      reroutedCount: 3,
+      visitors: []
+    };
+  }
+  renderDecisionFactorUI();
+  applyVisitorProfile(activeVisitorIndex, false);
+};
+
+window.renderDecisionFactorUI = function() {
+  if (!decisionState) return;
+
+  const strengthValEl = document.getElementById('df-strength-val');
+  const ratioPillEl = document.getElementById('df-ratio-pill');
+  const summaryCountsEl = document.getElementById('df-summary-counts');
+  const verdictBoxEl = document.getElementById('df-verdict-box');
+  const chipsContainer = document.getElementById('df-visitor-selector-chips');
+
+  if (strengthValEl) strengthValEl.innerText = decisionState.strengthLimit;
+  if (ratioPillEl) ratioPillEl.innerText = `${decisionState.admittedCount}/${decisionState.totalVisitors} Ingress`;
+  if (summaryCountsEl) {
+    summaryCountsEl.innerHTML = `<span class="text-emerald-400 font-bold">${decisionState.admittedCount} Admitted</span> &bull; <span class="text-amber-400 font-bold">${decisionState.reroutedCount} Rerouted</span>`;
+  }
+
+  // Render 5 Visitor Chips
+  if (chipsContainer && decisionState.visitors) {
+    chipsContainer.innerHTML = decisionState.visitors.map((v, idx) => {
+      const isSelected = idx === activeVisitorIndex;
+      const isAdmitted = v.status === 'ADMITTED';
+      return `
+        <button 
+          onclick="selectVisitorProfile(${idx})" 
+          class="px-1 py-1.5 rounded-xl border text-[10px] font-mono flex flex-col items-center justify-center transition active:scale-95 ${
+            isSelected 
+              ? (isAdmitted ? 'bg-emerald-500/25 border-emerald-400 text-white font-bold shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400' : 'bg-amber-500/25 border-amber-400 text-white font-bold shadow-lg shadow-amber-500/20 ring-1 ring-amber-400')
+              : (isAdmitted ? 'bg-slate-950 hover:bg-emerald-950/40 text-slate-300 border-emerald-500/30' : 'bg-slate-950 hover:bg-amber-950/40 text-slate-400 border-amber-500/30')
+          }"
+          title="${v.name}: ${v.status} (${v.decisionScore}/100)"
+        >
+          <span class="text-[9px] font-bold truncate max-w-[48px]">${v.name.split(' ')[0]}</span>
+          <span class="text-[8px] ${isAdmitted ? 'text-emerald-400' : 'text-amber-400'} font-bold flex items-center space-x-0.5">
+            <span>${isAdmitted ? '🟢' : '🔀'}</span>
+            <span>${v.decisionScore}</span>
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  // Render Verdict Box for currently active visitor
+  if (verdictBoxEl && decisionState.visitors && decisionState.visitors[activeVisitorIndex]) {
+    const curVis = decisionState.visitors[activeVisitorIndex];
+    const isAdmitted = curVis.status === 'ADMITTED';
+
+    if (isAdmitted) {
+      verdictBoxEl.className = "p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-start space-x-2 text-[11px]";
+      verdictBoxEl.innerHTML = `
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+        <div class="space-y-0.5 flex-1">
+          <div class="font-bold text-emerald-200 flex items-center justify-between">
+            <span>INGRESS APPROVED &bull; DY PATIL STADIUM</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">SLOT ${curVis.rank}/${decisionState.strengthLimit}</span>
+          </div>
+          <p class="text-[10px] text-emerald-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong> (Proximity: ${curVis.distanceKm}km &bull; ${curVis.tier}). Ingress cleared directly to ${curVis.assignedDestination}.</p>
+        </div>
+      `;
+    } else {
+      verdictBoxEl.className = "p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 flex items-start space-x-2 text-[11px]";
+      verdictBoxEl.innerHTML = `
+        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+        <div class="space-y-0.5 flex-1">
+          <div class="font-bold text-amber-200 flex items-center justify-between">
+            <span>STRENGTH LIMIT REACHED (2) &bull; REROUTED</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">EXCESS #${curVis.rank - decisionState.strengthLimit} OF ${decisionState.reroutedCount}</span>
+          </div>
+          <p class="text-[10px] text-amber-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong>. Decision Factor dynamically rerouted pass to <strong class="text-white">${curVis.assignedDestination}</strong> to balance concourse pressure.</p>
+          <div class="pt-1 flex items-center space-x-2">
+            <button onclick="switchMobileTab('nav')" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 text-[9px] font-bold flex items-center space-x-1">
+              <span>Inspect Rerouted Vector on Satellite Map</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  lucide.createIcons();
+};
+
+window.selectVisitorProfile = function(index) {
+  if (!decisionState || !decisionState.visitors[index]) return;
+  activeVisitorIndex = index;
+  applyVisitorProfile(index, true);
+  renderDecisionFactorUI();
+};
+
+window.applyVisitorProfile = function(index, notify = false) {
+  if (!decisionState || !decisionState.visitors[index]) return;
+  const vis = decisionState.visitors[index];
+
+  // Update active pass state
+  activePass.user = vis.name;
+  activePass.tier = vis.tier;
+  activePass.ticket = `TKT-DYP-2026-000${index + 1}`;
+  
+  if (vis.status === 'ADMITTED') {
+    activePass.gate = index === 0 ? "GATE 4" : "GATE 2";
+    activePass.stand = "EAST STAND C";
+    activePass.seat = `ROW 14, #${80 + index}`;
+  } else {
+    activePass.gate = vis.assignedDestination.includes("Nerul Hub") ? "HUB GATE 1" : vis.assignedDestination.includes("Wonders") ? "WONDERS GATE 2" : "AUX GATE C";
+    activePass.stand = "FAN ZONE BUFFER";
+    activePass.seat = "FLEX PASS";
+  }
+
+  // Update Location
+  georgeLocation.lat = vis.lat;
+  georgeLocation.lng = vis.lng;
+  georgeLocation.label = vis.originLabel;
+
+  // Sync to Pass UI
+  applyPassToUI();
+
+  // If map initialized, re-render
+  if (mobileMap) {
+    renderMobileMap();
+  }
+
+  if (notify) {
+    showMobileToast(vis.status === 'ADMITTED' 
+      ? `🟢 Handset switched to ${vis.name}: Ingress Cleared at DY Patil!` 
+      : `🔀 Handset switched to ${vis.name}: Rerouted to ${vis.assignedDestination}`);
+  }
+};
+
+window.incrementStrength = function() {
+  if (!decisionState) return;
+  const newStrength = Math.min(5, decisionState.strengthLimit + 1);
+  if (window.ChronosSupabase) {
+    decisionState = window.ChronosSupabase.setDecisionFactorStrength(newStrength);
+  }
+  renderDecisionFactorUI();
+  applyVisitorProfile(activeVisitorIndex, false);
+  showMobileToast(`Venue Strength updated to ${newStrength}! Real-time rerouting recalculated.`);
+};
+
+window.decrementStrength = function() {
+  if (!decisionState) return;
+  const newStrength = Math.max(1, decisionState.strengthLimit - 1);
+  if (window.ChronosSupabase) {
+    decisionState = window.ChronosSupabase.setDecisionFactorStrength(newStrength);
+  }
+  renderDecisionFactorUI();
+  applyVisitorProfile(activeVisitorIndex, false);
+  showMobileToast(`Venue Strength throttled to ${newStrength}! Excess visitors rerouted.`);
+};
+
+// Real-Time Inter-Tab Storage Synchronization
+window.addEventListener('storage', (e) => {
+  if (e.key === 'chronos_decision_factor_state') {
+    try {
+      decisionState = JSON.parse(e.newValue);
+      renderDecisionFactorUI();
+      applyVisitorProfile(activeVisitorIndex, false);
+    } catch (err) {}
+  }
+});
+
+window.addEventListener('chronos:decision_factor_sync', (e) => {
+  if (e.detail) {
+    decisionState = e.detail;
+    renderDecisionFactorUI();
+    applyVisitorProfile(activeVisitorIndex, false);
+  }
+});
 
 function applyPassToUI() {
   // 1. Mobile Header
@@ -1481,44 +1674,105 @@ function initOrUpdateMobileMap() {
     });
   }
 
-  // Update Stadium Destination Marker
+  // Check Decision Factor Reroute State for Active Visitor
+  const curVis = (decisionState && decisionState.visitors && decisionState.visitors[activeVisitorIndex]) ? decisionState.visitors[activeVisitorIndex] : null;
+  const isRerouted = curVis && curVis.status === 'REROUTED';
+
+  const destCoords = isRerouted ? [curVis.destLat, curVis.destLng] : [activeEvent.lat, activeEvent.lng];
+  const destBadge = isRerouted ? 'REROUTE HUB' : activePass.gate;
+  const destThemeColor = isRerouted ? '#f59e0b' : '#34d399';
+  const destIconSymbol = isRerouted ? '🔀' : '🏟️';
+  const destTitle = isRerouted ? curVis.assignedDestination : `${activeEvent.venue} (${activePass.gate})`;
+
+  // Update Destination Marker
   if (stadiumMarker) {
     mobileMap.removeLayer(stadiumMarker);
   }
-  const stadiumIcon = L.divIcon({
+  const destIcon = L.divIcon({
     className: 'mobile-map-pin',
     html: `
       <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
-        <div style="width:30px; height:30px; border-radius:10px; background:#080c14; border:2px solid #34d399; color:#34d399; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 0 14px #34d399;">
-          🏟️
+        <div style="width:32px; height:32px; border-radius:10px; background:#080c14; border:2px solid ${destThemeColor}; color:${destThemeColor}; display:flex; align-items:center; justify-content:center; font-size:15px; box-shadow:0 0 14px ${destThemeColor};">
+          ${destIconSymbol}
         </div>
-        <div style="font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:#080c14; padding:2px 5px; border-radius:4px; margin-top:2px; white-space:nowrap; border:1px solid #34d399;">
-          ${activePass.gate}
+        <div style="font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:#080c14; padding:2px 6px; border-radius:4px; margin-top:2px; white-space:nowrap; border:1px solid ${destThemeColor};">
+          ${destBadge}
         </div>
       </div>
     `,
-    iconSize: [80, 44],
-    iconAnchor: [40, 22]
+    iconSize: [110, 48],
+    iconAnchor: [55, 24]
   });
-  stadiumMarker = L.marker([activeEvent.lat, activeEvent.lng], { icon: stadiumIcon }).addTo(mobileMap);
+  stadiumMarker = L.marker(destCoords, { icon: destIcon }).addTo(mobileMap).bindPopup(`<strong>${destTitle}</strong>`);
 
-  // Dynamic Transit Route Polyline (Electric Cyan Vector)
+  // Dynamic Transit Route Polyline (Amber if Rerouted, Cyan if Admitted)
   if (routePolyline) {
     mobileMap.removeLayer(routePolyline);
   }
 
-  // Live Location Vector: Purely from user's verified present coordinates to stadium gate
   const routePoints = [
     [georgeLocation.lat, georgeLocation.lng],
-    [activeEvent.lat, activeEvent.lng]
+    destCoords
   ];
 
   routePolyline = L.polyline(routePoints, {
-    color: '#38bdf8',
+    color: isRerouted ? '#f59e0b' : '#38bdf8',
     weight: 4,
     opacity: 0.95,
     dashArray: '8, 8'
   }).addTo(mobileMap);
+
+  // Update Nav Subtitle & Live Distance
+  const navSub = document.getElementById('nav-route-sub');
+  if (navSub) {
+    navSub.innerText = isRerouted 
+      ? `⚠️ Throttled: Dynamic Reroute to ${curVis.assignedDestination}`
+      : `Live navigation from your location to DY Patil Gate 4`;
+  }
+
+  const liveDist = document.getElementById('live-distance-km');
+  const d = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, destCoords[0], destCoords[1]);
+  if (liveDist) liveDist.innerText = d.toFixed(1);
+
+  // Update Turn-by-Turn Guidance Card
+  const transitContainer = document.getElementById('transit-steps-container');
+  if (transitContainer) {
+    if (isRerouted) {
+      transitContainer.innerHTML = `
+        <div class="flex items-start space-x-2">
+          <span class="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold shrink-0 text-[10px]">1</span>
+          <div>
+            <strong class="text-white">ChronosFlow Dynamic Reroute Activated</strong>
+            <p class="text-[11px] text-amber-300/90">DY Patil strength limit of 2 reached. Ingress diverted to buffer hub.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-2">
+          <span class="w-5 h-5 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold shrink-0 text-[10px]">2</span>
+          <div>
+            <strong class="text-white">Proceed to ${curVis.assignedDestination}</strong>
+            <p class="text-[11px] text-slate-400">${d.toFixed(1)} km transit vector via dedicated overflow shuttle corridor.</p>
+          </div>
+        </div>
+      `;
+    } else {
+      transitContainer.innerHTML = `
+        <div class="flex items-start space-x-2">
+          <span class="w-5 h-5 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold shrink-0 text-[10px]">1</span>
+          <div>
+            <strong class="text-white">Board Suburban Rail Corridor</strong>
+            <p class="text-[11px] text-slate-400">Transit hub direct to Stadium Terminal</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-2">
+          <span class="w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold shrink-0 text-[10px]">2</span>
+          <div>
+            <strong class="text-white">Alight at DY Patil Gate 4 Turnstiles</strong>
+            <p class="text-[11px] text-slate-400">Optical scanner barrier release ready (Capacity: 2/2 Filled).</p>
+          </div>
+        </div>
+      `;
+    }
+  }
 
   // Staged Feeder Bus Marker
   if (busMarker) {
@@ -1563,13 +1817,17 @@ function fitMapToRoute() {
   if (!mobileMap) return;
   mobileMap.invalidateSize();
 
-  const d = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, activeEvent.lat, activeEvent.lng);
+  const curVis = (decisionState && decisionState.visitors && decisionState.visitors[activeVisitorIndex]) ? decisionState.visitors[activeVisitorIndex] : null;
+  const isRerouted = curVis && curVis.status === 'REROUTED';
+  const destCoords = isRerouted ? [curVis.destLat, curVis.destLng] : [activeEvent.lat, activeEvent.lng];
+
+  const d = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, destCoords[0], destCoords[1]);
   if (d < 0.6) {
     mobileMap.setView([georgeLocation.lat, georgeLocation.lng], 16);
   } else {
     const bounds = L.latLngBounds([
       [georgeLocation.lat, georgeLocation.lng],
-      [activeEvent.lat, activeEvent.lng]
+      destCoords
     ]);
     mobileMap.fitBounds(bounds, {
       padding: [45, 45],

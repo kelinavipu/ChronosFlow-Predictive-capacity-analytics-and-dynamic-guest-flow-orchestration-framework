@@ -2938,6 +2938,123 @@ function showToast(msg) {
   }
 }
 
+// =========================================================================
+// 12. DECISION FACTOR CAPACITY & DYNAMIC REROUTING COMMAND (DY PATIL STRENGTH: 2 / 5)
+// =========================================================================
+window.renderEMDecisionFactorUI = function() {
+  if (!window.ChronosSupabase || typeof window.ChronosSupabase.getDecisionFactorState !== 'function') return;
+
+  const state = window.ChronosSupabase.getDecisionFactorState();
+  if (!state) return;
+
+  const strengthNumEl = document.getElementById('em-df-strength-num');
+  const strengthCaptionEl = document.getElementById('em-df-strength-caption');
+  const totalEl = document.getElementById('em-df-metric-total');
+  const admittedEl = document.getElementById('em-df-metric-admitted');
+  const reroutedEl = document.getElementById('em-df-metric-rerouted');
+  const tableBody = document.getElementById('em-df-visitors-table-body');
+
+  if (strengthNumEl) strengthNumEl.innerText = state.strengthLimit;
+  if (strengthCaptionEl) strengthCaptionEl.innerText = `Strict Throttle: ${state.strengthLimit} Pax`;
+  if (totalEl) totalEl.innerText = `${state.totalVisitors} Visitors`;
+  if (admittedEl) admittedEl.innerText = `${state.admittedCount} Visitors`;
+  if (reroutedEl) reroutedEl.innerText = `${state.reroutedCount} Visitors`;
+
+  if (tableBody && state.visitors) {
+    tableBody.innerHTML = state.visitors.map((v, idx) => {
+      const isAdmitted = v.status === 'ADMITTED';
+      return `
+        <tr class="hover:bg-slate-900/60 transition ${isAdmitted ? 'bg-emerald-950/10' : 'bg-amber-950/10'}">
+          <td class="py-2.5 px-3 font-bold ${isAdmitted ? 'text-emerald-400' : 'text-amber-400'}">
+            #${v.rank || idx + 1}
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-white flex items-center space-x-1.5">
+              <span>${v.name}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded font-mono ${isAdmitted ? 'badge-sage' : 'badge-amber'}">${v.tier}</span>
+            </div>
+            <div class="text-[10px] text-slate-400">ID: ${v.id}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="text-white">${v.distanceKm} km &bull; ETA ${v.etaMinutes}m</div>
+            <div class="text-[10px] text-slate-400 truncate max-w-[140px]">${v.originLabel}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="flex items-center space-x-2">
+              <span class="font-black text-cyan-300">${v.decisionScore}</span>
+              <div class="w-12 h-1.5 rounded-full bg-slate-950 overflow-hidden">
+                <div class="h-full ${isAdmitted ? 'bg-emerald-400' : 'bg-amber-400'}" style="width: ${v.decisionScore}%"></div>
+              </div>
+            </div>
+          </td>
+          <td class="py-2.5 px-3">
+            ${isAdmitted ? `
+              <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold badge-sage">
+                <i data-lucide="check-check" class="w-3 h-3 text-emerald-300"></i>
+                <span>ADMITTED (${v.rank}/${state.strengthLimit})</span>
+              </span>
+            ` : `
+              <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold badge-coral">
+                <i data-lucide="shuffle" class="w-3 h-3 text-rose-300"></i>
+                <span>REROUTED (${v.rank - state.strengthLimit}/${state.reroutedCount})</span>
+              </span>
+            `}
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="font-bold ${isAdmitted ? 'text-white' : 'text-amber-300'} truncate max-w-[200px] flex items-center space-x-1">
+              <span>${isAdmitted ? '🏟️' : '🔀'}</span>
+              <span>${v.assignedDestination}</span>
+            </div>
+            <div class="text-[10px] text-slate-400">${isAdmitted ? 'Ingress: Turnstiles Cleared' : 'Buffer Zone / Shaded Staging'}</div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  lucide.createIcons();
+};
+
+window.incrementEMStrength = function() {
+  if (!window.ChronosSupabase) return;
+  const current = window.ChronosSupabase.getDecisionFactorState();
+  const next = Math.min(5, current.strengthLimit + 1);
+  const updated = window.ChronosSupabase.setDecisionFactorStrength(next);
+  renderEMDecisionFactorUI();
+  showToast(`Venue Strength Limit increased to ${next} Pax! Admitted: ${updated.admittedCount}, Rerouted: ${updated.reroutedCount}.`);
+};
+
+window.decrementEMStrength = function() {
+  if (!window.ChronosSupabase) return;
+  const current = window.ChronosSupabase.getDecisionFactorState();
+  const next = Math.max(1, current.strengthLimit - 1);
+  const updated = window.ChronosSupabase.setDecisionFactorStrength(next);
+  renderEMDecisionFactorUI();
+  showToast(`Venue Strength Limit throttled to ${next} Pax! Admitted: ${updated.admittedCount}, Rerouted: ${updated.reroutedCount}.`);
+};
+
+window.recalculateEMDecisionFactor = function() {
+  if (!window.ChronosSupabase) return;
+  const current = window.ChronosSupabase.getDecisionFactorState();
+  const updated = window.ChronosSupabase.setDecisionFactorStrength(current.strengthLimit);
+  renderEMDecisionFactorUI();
+  showToast(`Decision Factor scores recalculated across 5 incoming visitors.`);
+};
+
+// Inter-Tab Storage Synchronization
+window.addEventListener('storage', (e) => {
+  if (e.key === 'chronos_decision_factor_state') {
+    renderEMDecisionFactorUI();
+  }
+});
+
+window.addEventListener('chronos:decision_factor_sync', () => {
+  renderEMDecisionFactorUI();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   initPreplansPage();
+  if (window.renderEMDecisionFactorUI) {
+    window.renderEMDecisionFactorUI();
+  }
 });
