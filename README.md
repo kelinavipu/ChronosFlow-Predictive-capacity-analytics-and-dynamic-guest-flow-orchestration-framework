@@ -2,130 +2,104 @@
 
 > **"The Event Manager describes the event. The system designs, simulates, and orchestrates the operational plan."**
 
-ChronosFlow (codenamed **ORCHESTRA**) is an intelligent pre-planning and hospitality orchestration framework engineered for mega-events, stadium fixtures, cultural festivals, and global summits. The system transforms natural language narratives into structured operational baselines, micro-area digital twin radars, and predictive timeline sequences with automated bottleneck diagnosis and proactive mitigations.
+ChronosFlow (codenamed **ORCHESTRA**) is a comprehensive multi-phase intelligence platform engineered for mega-event hospitality, crowd flow dynamics, and spatial capacity orchestration.
 
 ---
 
-## 🧭 System Architecture & Workflow
+## 🏛️ Comprehensive Multi-Page Platform Architecture
 
-ChronosFlow operates across an end-to-end operational lifecycle:
+The system has been completely restructured into an individual multi-page web platform featuring role-based portals and cloud database synchronization:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                          CHRONOSFLOW OPERATIONAL PIPELINE                              │
+│                        CHRONOSFLOW COMPLETE PLATFORM MAP                               │
 └───────────────────────────────────┬────────────────────────────────────────────────────┘
                                     │
-       ┌────────────────────────────┼────────────────────────────┐
-       ▼                            ▼                            ▼
-┌─────────────────────────┐  ┌─────────────────────────┐  ┌─────────────────────────┐
-│ 1. PRE-PLANNING         │  │ 2. PRESENT / SIMULATION │  │ 3. POST-EVENT           │
-│ Months / Weeks Out      │  │ Live Day-of-Event Ops   │  │ Retrospective Analysis  │
-├─────────────────────────┤  ├─────────────────────────┤  ├─────────────────────────┤
-│ • Natural Language Parse│  │ • Live Surge Simulation │  │ • Actual vs Planned     │
-│ • Digital Twin Radar    │  │ • Bottleneck Detection  │  │ • Evacuation Clearance  │
-│ • Alternating Timeline  │  │ • Incident Dispatch     │  │ • Choke Point Forensics │
-│ • Capacity Diagnostics  │  │ • Transit Re-routing    │  │ • Operational Debrief   │
-│ • Proactive Mitigations │  │ • Real-time Telemetry   │  │ • Institutional Memory  │
-└─────────────────────────┘  └─────────────────────────┘  └─────────────────────────┘
+    ┌──────────────┬────────────────┼────────────────┬────────────────┬──────────────┐
+    ▼              ▼                ▼                ▼                ▼              ▼
+┌────────┐   ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────┐   ┌────────┐
+│ HOME   │   │ SIGN IN   │    │ SIGN UP   │    │PRE-PLANS  │    │SIMULATIONS│   │ LIVE   │
+│ PAGE   │   │ (4 Roles) │    │ (4 Roles) │    │(Baselines+│    │(Stress-   │   │ CURRENT│
+│        │   │           │    │           │    │ Add New)  │    │ Testing)  │   │ EVENTS │
+│index.  │   │signin.    │    │signup.    │    │preplans.  │    │simulations│   │current-│
+│html    │   │html       │    │html       │    │html       │    │.html      │   │events. │
+└────────┘   └───────────┘    └───────────┘    └───────────┘    └───────────┘   └────────┘
 ```
 
-### 1. Pre-Planning (Phase 0 — Current Release)
-* **Natural Language Event Understanding**: Planners enter event briefs in plain text. The parser extracts attendees, dates, venue coordinates, transit shares, and schedules.
-* **Micro-Area Digital Twin & Infrastructure Radar**: 5 km radial catchment zone mapping rail hubs, hotel inventories, arterial expressways, and medical centers directly below the event timeline.
-* **Alternating Journey Timeline**: Visualizes key operational stages (Transit Arrival, Ingress Security, Ticketing, Seating, Concessions, Egress) with top/bottom alternating nodes and direct radar coupling.
-* **Capacity Diagnostics Engine**: Explicit mathematical formulas detailing required vs. available throughput, queue accumulation rates, and unmitigated risk impacts.
-* **Categorized 1-Click Mitigations**: Actionable interventions across Capacity, Timing, Spatial, Transportation, Accommodation, and Safety.
+### 1. Home Page (`index.html`)
+* **Minimal Dark Travel Aesthetic**: Warm obsidian (`#121316`), matte panels, sand ochre (`#d4a373`), terracotta (`#c96a54`), forest sage (`#709775`), and slate blue (`#607d8b`). Strictly zero neons.
+* **Unified Navigation Hub**: Direct action buttons to Pre-Plans, Simulations, Current Events, Sign In, and Sign Up.
+* **4 Role Portals**:
+  1. 🎪 **Event Manager**: Operational blueprints, capacity matching, digital twins, baseline risk locking.
+  2. 🎟️ **Visitor / Spectator**: Real-time turnstile wait times, transit corridors, and hotel inventory.
+  3. 🛎️ **Service Provider**: Concessions, catering pods, medical trauma staffing, volunteer distribution.
+  4. 🚆 **Infra Provider**: Railway frequencies, parking bay allocations, expressway diversions, shuttle fleets.
 
-### 2. Present / Simulation (Phase 1)
-* **Crowd Dynamics Stress-Testing**: Interactive variance testing (-20% to +50%) and 4-wave ingress/egress curves.
-* **Failure Scenario Emulation**: Gate failures, transit line delays, or sudden weather shocks.
-* **Real-time Dispatch Integration**: Live sensor feeds and turnstile telemetry.
+### 2. Role-Based Sign In & Sign Up (`signin.html` & `signup.html`)
+* Role tabs for all 4 personas with customized onboarding fields.
+* 1-Click instant demo logins for each role.
+* Integrated with Supabase Auth & session manager.
 
-### 3. Post-Event Analysis (Phase 2)
-* **Variance & Clearance Auditing**: Total egress clearance times vs. planned safety baselines.
-* **Bottleneck Forensics**: Identification of service chokes to refine future planning templates.
+### 3. Pre-Plans: Existing Gallery & Authoring Workbench (`preplans.html`)
+* **Top Section (Existing Pre-Plans)**:
+  * Live gallery of existing pre-plans fetched from Supabase Cloud:
+    * *Dr. D.Y. Patil Sports Stadium (Nerul, Navi Mumbai)* — 50,000 spectators daily.
+    * *Wankhede Stadium (South Mumbai)* — 33,000 spectators daily.
+    * *Narendra Modi Stadium (Motera, Ahmedabad)* — 100,000 spectators daily.
+    * *Eden Gardens (Kolkata)*, *Wembley Stadium (London)*, *Madison Square Garden (NYC)*.
+  * Search, status filters (Baseline Locked vs. In Planning), and 1-click "Load into Radar Workspace".
+* **Bottom Section (Add New Pre-Plan)**:
+  * Natural language event prompt bar with procedural twin generator for any city worldwide.
+  * **Alternating Event Journey Timeline**: Top/bottom alternating nodes with vertical stems.
+  * **Micro-Area Digital Twin & Infrastructure Radar**: 1km–5km concentric rings directly below the timeline with interactive pins for Hotels, Railway Stations, Hospitals, Parking Bays, and Choke Points.
+  * **Stage Capacity Inspector**: Mathematical bottleneck formulas and deficit calculations.
+  * **Categorized Proactive Mitigations**: 1-click interventions across Capacity, Time, Spatial, Transportation, Accommodation, and Safety.
+  * **"Save Plan to Supabase"** button: Directly persists the plan to the Supabase database.
 
----
+### 4. Simulations & Crowd Dynamics (`simulations.html`)
+* Crowd surge variance tolerance slider (**-20% to +50%**).
+* Interactive simulated match clock and multi-wave ingress/egress pacing.
+* **What-If Disruption Scenario Injector**:
+  * 🌧️ Monsoon Deluge / Rain Storm
+  * 🚆 Harbour Line Transit Failure (Nerul Station Choke)
+  * 🚧 Gate Turnstile Jam (Gate B Scanner Failure)
+  * 🚗 Arterial Expressway Gridlock (LP Junction Bottleneck)
+* Real-time node saturation gauges and evacuation clearance time forecaster.
 
-## ⚡ Core Features
-
-### 1. Minimal Travel-Inspired Dark Interface
-* Calibrated warm obsidian (`#121316`), matte panels, and hairlines.
-* Grounded travel palette: warm sand ochre, terracotta, forest sage, and slate blue.
-* Strictly zero harsh neons or eye-fatiguing glows.
-* 100% SVG vector iconography via [Lucide Icons](https://lucide.dev) (zero emojis).
-
-### 2. Universal Venue Coverage & Procedural Digital Twin
-* Pre-configured catalog presets:
-  * DY Patil Stadium (Nerul, Navi Mumbai)
-  * Wankhede Stadium (Churchgate, Mumbai)
-  * Narendra Modi Stadium (Motera, Ahmedabad)
-  * Eden Gardens (Kolkata)
-  * Bharat Mandapam (Pragati Maidan, New Delhi)
-  * Wembley Stadium (London, UK)
-  * Madison Square Garden (New York, USA)
-* **Custom Venue Generator**: Dynamically synthesizes an authentic spatial micro-twin for any coordinate or venue name worldwide.
-
-### 3. Alternating Event Journey Timeline
-* Positioned directly above the Digital Twin Radar.
-* Alternating top/bottom stage cards with hairline stems and anchor nodes.
-* Bidirectional sync: clicking any stage highlights the corresponding spatial asset on the radar.
-
-### 4. Transparent Capacity Formulas & Diagnostics
-* Explicit display of capacity calculations:
-  * *Required Throughput* = `Attendees × Peak Factor ÷ Window`
-  * *Deficit* = `Required - Available`
-  * *Queue Build-up* = `Deficit Rate × Duration`
-* Clear root-cause analysis and unmitigated consequences.
-
-### 5. Baseline Plan Export & Lock
-* Lock the operational baseline to freeze parameters before deployment.
-* 1-Click export to structured JSON containing venue metadata, journey stages, capacity metrics, applied mitigations, and locked status.
+### 5. Current Events & Live AI Dispatch (`current-events.html`)
+* Day-of-Event Real-Time Operational Cockpit:
+  * **Weather Telemetry**: Temperature, humidity, precipitation probability, heat index alert.
+  * **Crowd Influx Feed**: Live turnstile counts, ingress velocity (pax/min), bowl occupancy.
+  * **Arterial Traffic Flow**: Sion-Panvel Expressway congestion index, Nerul rail frequency.
+  * **Emergency & Medical Readiness**: Onsite trauma proximity, parking lot saturation.
+* **Automated AI Decision Engine**: Continuously evaluates correlated live factors to synthesize actionable operational directives.
+* **1-Click "Authorize & Dispatch"**: Pushes live decisions to the field log and Supabase `live_decisions` table.
 
 ---
 
-## 🚀 Quick Start Guide
+## 🗄️ Supabase Cloud Integration
 
-### Option 1: Direct Browser Launch
-Open [`index.html`](index.html) directly in any modern browser. Zero build steps, npm installs, or external servers required.
+* **Project ID**: `rojjfjoquejjxuziriei`
+* **Project URL**: `https://rojjfjoquejjxuziriei.supabase.co`
+* **SQL Schema Script**: [`supabase_schema.sql`](supabase_schema.sql)
+  * Contains complete tables: `profiles`, `events`, `spatial_assets`, `event_stages`, `stage_mitigations`, `simulations`, `live_telemetry`, `live_decisions`.
+  * Pre-configured Row Level Security (RLS) policies and seed data for DY Patil Stadium.
 
-### Option 2: Python Local Server
+---
+
+## 🚀 How to Run
+
+### Direct Browser Launch (Zero Dependencies)
+Simply open [`index.html`](index.html) in any web browser.
+
+### Local Python Server
 ```bash
 python server.py
 ```
-Launches a lightweight local server at `http://localhost:8000` and opens your default browser.
-
-### Option 3: Node.js / NPX
-```bash
-npx serve .
-```
-
----
-
-## 🗄️ Database Architecture (Phase Roadmap)
-
-ChronosFlow is architected for integration with [Supabase](https://supabase.com) (PostgreSQL + Realtime WebSockets):
-
-* `events`: Master event profiles, venue metadata, locked baseline flags.
-* `spatial_assets`: Geo-coordinates, distance rings, capacity limits, transit modes.
-* `event_stages`: Stage identifiers, time windows, demand vs. available capacity.
-* `stage_mitigations`: Categorized preventive interventions and applied statuses.
-* `simulation_scenarios`: Stress-test variance parameters and wave profiles.
-* `live_telemetry`: Real-time turnstile counts, corridor density, incident alerts.
-* `post_event_reports`: Egress clearance logs, SLA metrics, variance reports.
-
----
-
-## 💻 Tech Stack
-
-* **Frontend**: Vanilla HTML5, Tailwind CSS (utility baseline), Custom Minimal Travel Dark Theme (`styles.css`).
-* **Icons**: [Lucide Icons](https://lucide.dev) (SVG vectors).
-* **Scripting**: Vanilla ES6+ JavaScript (`app.js`), zero framework dependencies.
-* **GIS Radar**: Procedural SVG Digital Twin with concentric distance rings and animated radial sweep.
-* **Export**: Structured Operational Baseline JSON.
+Starts a local web server at `http://localhost:8000` and automatically launches your browser.
 
 ---
 
 ## 👥 Credits
 
-Developed by **Team 8** — Mega-Event Hospitality & Crowd Flow Orchestration Framework.
+Developed by **Team 8** for Mega-Event Hospitality & Dynamic Crowd Flow Orchestration.

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Events & Live AI Dispatch — ChronosFlow</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
+
+    <!-- Header & Live Fixture Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          <span class="flex h-2.5 w-2.5 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c96a54] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#c96a54]"></span>
+          </span>
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-terracotta">PHASE 2 &bull; LIVE OPS</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Current Events: Live Command & AI Dispatch</h1>
+        </div>
+        <p class="text-xs text-[#9e9b93]">
+          Real-time event telemetry aggregated from weather, crowd density, and arterial transit sensors to generate automated operational decisions.
+        </p>
+      </div>
+
+      <!-- Active Live Fixture Selector -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 p-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs">
+          <span class="text-[#9e9b93] font-bold text-[11px] uppercase pl-1">Live Venue:</span>
+          <select id="live-event-select" onchange="switchLiveEvent(this.value)" class="bg-[#22242b] text-[#d4a373] font-bold px-2.5 py-1 rounded-lg border border-[#2a2c35] outline-none cursor-pointer">
+            <option value="dypatil_nerul">Dr. D.Y. Patil Stadium (Nerul, Navi Mumbai)</option>
+            <option value="wankhede_mumbai">Wankhede Stadium (South Mumbai)</option>
+            <option value="narendra_modi">Narendra Modi Stadium (Ahmedabad)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- REAL-TIME DATA TELEMETRY FEEDS (Weather, Crowd, Traffic, Incidents)       -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Factor 1: Live Weather Feed -->
+      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-xs font-bold text-[#607d8b]">
+            <i data-lucide="cloud-sun" class="w-4 h-4"></i>
+            <span>Weather Telemetry</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#709775] flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#709775] animate-pulse"></span>
+            <span>Live Feed</span>
+          </span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-1">
+          <div>
+            <div id="weather-temp" class="text-3xl font-extrabold text-[#ede8e1]">31.4°C</div>
+            <div id="weather-desc" class="text-xs text-[#9e9b93] mt-0.5">Partly Cloudy &bull; Humid</div>
+          </div>
+          <div class="text-right text-xs font-mono">
+            <div class="text-[#d4a373]">Rain: <strong id="weather-rain">24%</strong></div>
+            <div class="text-[#9e9b93]">Wind: 14 km/h SW</div>
+          </div>
+        </div>
+
+        <div class="p-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[11px] text-[#cc7744] flex items-center space-x-1.5">
+          <i data-lucide="sun" class="w-3.5 h-3.5 shrink-0"></i>
+          <span>Heat Index: High (Hydration Advisory Recommended)</span>
+        </div>
+      </div>
+
+      <!-- Factor 2: Real-Time Crowd Density -->
+      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-xs font-bold text-[#d4a373]">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Crowd Influx Feed</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#d4a373]">78.6% Seated</span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-1">
+          <div>
+            <div id="crowd-count" class="text-3xl font-extrabold text-[#ede8e1]">43,240</div>
+            <div class="text-xs text-[#9e9b93] mt-0.5">Capacity: 55,000 Seats</div>
+          </div>
+          <div class="text-right text-xs font-mono">
+            <div class="text-[#709775]">+480 pax/min</div>
+            <div class="text-[#9e9b93]">Peak Wave 3</div>
+          </div>
+        </div>
+
+        <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
+          <div class="bg-[#d4a373] h-full" style="width: 78.6%;"></div>
+        </div>
+      </div>
+
+      <!-- Factor 3: Arterial Traffic & Transit -->
+      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-xs font-bold text-[#cc7744]">
+            <i data-lucide="car" class="w-4 h-4"></i>
+            <span>Arterial Traffic Flow</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#c96a54]">Severe Choke</span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-1">
+          <div>
+            <div class="text-3xl font-extrabold text-[#c96a54]">8.4 / 10</div>
+            <div class="text-xs text-[#9e9b93] mt-0.5">Sion-Panvel Hwy (LP Junc)</div>
+          </div>
+          <div class="text-right text-xs font-mono">
+            <div class="text-[#c96a54]">+22 min delay</div>
+            <div class="text-[#9e9b93]">Palm Beach: Fluid</div>
+          </div>
+        </div>
+
+        <div class="p-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[11px] text-[#ede8e1] flex items-center justify-between">
+          <span class="text-[#9e9b93]">Nerul Rail Frequency:</span>
+          <span class="font-mono font-bold text-[#709775]">3 min headway</span>
+        </div>
+      </div>
+
+      <!-- Factor 4: Parking & Medical Readyness -->
+      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-xs font-bold text-[#709775]">
+            <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+            <span>Emergency & Parking</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#709775]">Readiness 100%</span>
+        </div>
+
+        <div class="space-y-1.5 pt-1 text-xs">
+          <div class="flex justify-between">
+            <span class="text-[#9e9b93]">DY Patil Onsite Trauma:</span>
+            <span class="font-mono font-bold text-[#709775]">&lt; 2 min green corridor</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#9e9b93]">Stadium Parking:</span>
+            <span class="font-mono font-bold text-[#c96a54]">94% FULL</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#9e9b93]">Wonders Park Overflow:</span>
+            <span class="font-mono font-bold text-[#709775]">46% Available</span>
+          </div>
+        </div>
+
+        <div class="p-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[11px] text-[#d4a373] flex items-center space-x-1.5">
+          <i data-lucide="activity" class="w-3.5 h-3.5 shrink-0"></i>
+          <span>12 ALS Ambulances on Active Perimeter</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- AI REAL-TIME DECISION SYNTHESIS & DISPATCH ENGINE                         -->
+    <!-- (Output & Decisions based on weather, crowd, traffic, etc.)               -->
+    <!-- ========================================================================= -->
+    <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2a2c35] pb-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">Autonomous Intelligence Engine</span>
+            <span class="w-2 h-2 rounded-full bg-[#709775] animate-ping"></span>
+          </div>
+          <h2 class="text-xl font-bold text-[#ede8e1]">Real-Time Operational Decisions & Dispatches</h2>
+          <p class="text-xs text-[#9e9b93] mt-0.5">
+            Automated operational decisions computed continuously by correlating live weather, crowd rates, and highway congestion.
+          </p>
+        </div>
+
+        <button onclick="triggerDecisionCycle()" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>Re-compute Directives</span>
+        </button>
+      </div>
+
+      <!-- Decision Cards Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="live-decisions-grid">
+        
+        <!-- Decision 1: Traffic + Crowd Factor -->
+        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded badge-terracotta">TRAFFIC & CROWD</span>
+              <span class="text-[11px] font-mono text-[#c96a54] font-bold">URGENT &bull; HIGH</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#ede8e1]">Divert Private Vehicles to Wonders Park & Activate Shuttles</h3>
+            <p class="text-xs text-[#9e9b93] leading-relaxed">
+              <strong>Cause:</strong> LP Junction delay reached +22 mins with North Parking at 94% saturation.<br>
+              <strong>Directive:</strong> Reroute incoming private cars via Palm Beach Road to Wonders Park remote lot (1,500 slots free). Dispatch 15 continuous feeder buses to Gate 4.
+            </p>
+          </div>
+          <button onclick="dispatchDecision(this, 'Traffic Diversion to Wonders Park', 'TRAFFIC')" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Authorize & Dispatch</span>
+          </button>
+        </div>
+
+        <!-- Decision 2: Weather Factor -->
+        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded badge-amber">WEATHER & SAFETY</span>
+              <span class="text-[11px] font-mono text-[#cc7744] font-bold">ACTIONABLE</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#ede8e1]">Deploy Concourse Hydration Stations & Misting Fans</h3>
+            <p class="text-xs text-[#9e9b93] leading-relaxed">
+              <strong>Cause:</strong> Ambient temperature 31.4°C with 78% relative humidity causing elevated heat stress index.<br>
+              <strong>Directive:</strong> Deploy 8 auxiliary water refill units and misting cooling tents across Gates 2, 4, and 7 concourses.
+            </p>
+          </div>
+          <button onclick="dispatchDecision(this, 'Deploy Hydration Units', 'WEATHER')" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Authorize & Dispatch</span>
+          </button>
+        </div>
+
+        <!-- Decision 3: Egress & Transit Surge Factor -->
+        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-bold font-mono px-2 py-0.5 rounded badge-slate">TRANSIT PACING</span>
+              <span class="text-[11px] font-mono text-[#709775] font-bold">PROACTIVE</span>
+            </div>
+            <h3 class="text-sm font-bold text-[#ede8e1]">Request 3 Unscheduled Central Railway Harbour Trains</h3>
+            <p class="text-xs text-[#9e9b93] leading-relaxed">
+              <strong>Cause:</strong> Post-match egress projection anticipates 26,000 spectators converging on Nerul station between 21:45-22:45.<br>
+              <strong>Directive:</strong> Issue early coordination request to CSMT Control Office for 3 express 12-car rakes on Harbour Line from Nerul.
+            </p>
+          </div>
+          <button onclick="dispatchDecision(this, 'Request Extra Trains from CSMT', 'TRANSIT')" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Authorize & Dispatch</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Dispatched Actions Activity Log -->
+      <div class="space-y-3 pt-4 border-t border-[#2a2c35]">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold uppercase tracking-wider text-[#9e9b93]">Operational Dispatch Log (Cloud Sync)</span>
+          <span class="text-[10px] font-mono text-[#709775]">Logged to Supabase `live_decisions`</span>
+        </div>
+
+        <div id="dispatch-log-container" class="space-y-2 text-xs font-mono">
+          <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] flex items-center justify-between text-[#9e9b93]">
+            <span class="flex items-center space-x-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#709775]"></span>
+              <strong class="text-[#ede8e1]">12:15 PM</strong>
+              <span>Gate 3 Turnstile Optical Scanner Jam Cleared by Field Team B</span>
+            </span>
+            <span class="text-[10px] text-[#709775]">RESOLVED</span>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] flex items-center justify-between text-[#9e9b93]">
+            <span class="flex items-center space-x-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#d4a373]"></span>
+              <strong class="text-[#ede8e1]">11:40 AM</strong>
+              <span>NMMT Nerul Bus Depot dispatched 10 auxiliary CNG shuttles to Seawoods Grand Central</span>
+            </span>
+            <span class="text-[10px] text-[#d4a373]">DISPATCHED</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Live Operations Logic -->
+  <script>
+    async function dispatchDecision(btn, title, category) {
+      btn.disabled = true;
+      btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-1.5";
+      btn.innerHTML = `<i data-lucide="check-check" class="w-3.5 h-3.5"></i><span>Dispatched & Synced</span>`;
+
+      // Log to Supabase
+      const decisionObj = {
+        eventId: document.getElementById('live-event-select').value,
+        title: title,
+        text: `Authorized by ${window.ChronosSupabase.getCurrentUser().fullName} for immediate execution.`,
+        category: category,
+        urgency: 'HIGH'
+      };
+
+      await window.ChronosSupabase.logLiveDecision(decisionObj);
+
+      // Add to UI log
+      const logContainer = document.getElementById('dispatch-log-container');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const newEntry = document.createElement('div');
+      newEntry.className = "p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] flex items-center justify-between text-[#9e9b93]";
+      newEntry.innerHTML = `
+        <span class="flex items-center space-x-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#709775]"></span>
+          <strong class="text-[#ede8e1]">${timeStr}</strong>
+          <span>${title}</span>
+        </span>
+        <span class="text-[10px] text-[#709775]">DISPATCHED</span>
+      `;
+      logContainer.prepend(newEntry);
+      lucide.createIcons();
+    }
+
+    function triggerDecisionCycle() {
+      alert("Real-time decision engine re-computed against latest sensor telemetry (weather, crowd, traffic). All recommendations are up to date.");
+    }
+
+    function switchLiveEvent(val) {
+      alert(`Switched operational command telemetry to ${val.replace('_', ' ').toUpperCase()}`);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavbar('current-events');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

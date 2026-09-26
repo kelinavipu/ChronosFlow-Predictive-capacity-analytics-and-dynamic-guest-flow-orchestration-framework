@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Plans & Spatial Digital Twins — ChronosFlow</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Supabase JS Client & App Service -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <!-- Minimal Dark Travel Theme -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-12">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#22242b] text-[#d4a373] border border-[#2a2c35]">PHASE 0</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Event Pre-Planning & Spatial Twins</h1>
+        </div>
+        <p class="text-xs text-[#9e9b93] mt-1">
+          Review verified operational baselines, explore 5km micro-area infrastructure twins, and author new event plans.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="#add-new-plan-section" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Author New Pre-Plan</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: EXISTING PRE-PLANS (Show Existing Ones First)                  -->
+    <!-- ========================================================================= -->
+    <section class="space-y-4" id="existing-preplans-section">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="folder-kanban" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>Existing Pre-Planning Baselines</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Saved operational baselines in Supabase Cloud and local repository storage</p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="flex items-center space-x-2 text-xs">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="plan-search-input" 
+              oninput="filterExistingPlans()" 
+              placeholder="Search by venue or city..." 
+              class="px-3 py-1.5 pl-8 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] placeholder-[#6b6862] text-xs outline-none focus:border-[#d4a373]"
+            >
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#6b6862] absolute left-2.5 top-2.5"></i>
+          </div>
+          <select id="plan-status-filter" onchange="filterExistingPlans()" class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] text-xs outline-none cursor-pointer">
+            <option value="all">All Statuses</option>
+            <option value="locked">Baseline Locked</option>
+            <option value="planning">In Planning</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Pre-Plans Cards Grid (Loaded Dynamically) -->
+      <div id="existing-plans-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by preplans.js -->
+        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] text-center py-12">
+          <span class="text-xs text-[#9e9b93]">Loading operational baselines from Supabase...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: ADD NEW PRE-PLAN (Put Add New Below)                           -->
+    <!-- ========================================================================= -->
+    <section class="space-y-6 pt-6 border-t border-[#2a2c35]" id="add-new-plan-section">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">Workbench</span>
+          <h2 class="text-xl font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="compass" class="w-5 h-5 text-[#d4a373]"></i>
+            <span>Author New Pre-Plan & Digital Twin</span>
+          </h2>
+          <p class="text-xs text-[#9e9b93]">Describe any event in plain text or pick a venue preset to generate a micro-area spatial twin</p>
+        </div>
+
+        <button onclick="saveCurrentPlanToSupabase()" id="btn-save-plan" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
+          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+          <span>Save Plan to Supabase</span>
+        </button>
+      </div>
+
+      <!-- Natural Language Event Authoring Bar -->
+      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Event Narrative Brief</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <textarea 
+              id="event-narrative-input" 
+              rows="2" 
+              class="flex-1 px-4 py-2.5 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs leading-relaxed placeholder-[#6b6862]"
+              placeholder="e.g. Conduct a 4-day cricket championship at Dr. D.Y. Patil Stadium in Nerul from 1st September to 4th September with 50,000 spectators attending each day..."
+            ></textarea>
+            <button onclick="parseAndGenerateTwin()" class="px-5 py-2.5 rounded-xl btn-sand font-bold text-xs shrink-0 flex items-center justify-center space-x-1.5 self-end sm:self-auto">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Generate Twin & Timeline</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Venue Quick Selector Chips -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#2a2c35] text-xs">
+          <span class="text-[11px] text-[#9e9b93] font-semibold mr-1">Presets:</span>
+          <button onclick="loadVenuePreset('dypatil_nerul')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            DY Patil Stadium (Nerul)
+          </button>
+          <button onclick="loadVenuePreset('wankhede_mumbai')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            Wankhede Stadium (Mumbai)
+          </button>
+          <button onclick="loadVenuePreset('narendra_modi')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            Narendra Modi Stadium (Ahmedabad)
+          </button>
+          <button onclick="loadVenuePreset('eden_gardens')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            Eden Gardens (Kolkata)
+          </button>
+          <button onclick="loadVenuePreset('wembley_london')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            Wembley Stadium (London)
+          </button>
+          <button onclick="loadVenuePreset('madison_sq_garden')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
+            Madison Sq Garden (NYC)
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Event Snapshot Summary -->
+      <div id="active-event-summary" class="dark-panel rounded-2xl p-5 border border-[#2a2c35]">
+        <!-- Rendered by preplans.js -->
+      </div>
+
+      <!-- Alternating Event Journey Timeline -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-[#ede8e1] flex items-center space-x-2">
+              <i data-lucide="clock" class="w-4 h-4 text-[#d4a373]"></i>
+              <span>Alternating Operational Journey Timeline</span>
+            </h3>
+            <p class="text-[11px] text-[#9e9b93]">Alternating top & bottom stage nodes coupled with the physical radar below</p>
+          </div>
+          <span class="text-[10px] font-mono text-[#d4a373] bg-[#22242b] px-2 py-0.5 rounded border border-[#2a2c35]">Synchronized with Radar</span>
+        </div>
+
+        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] overflow-x-auto">
+          <div id="timeline-container" class="min-w-[800px] py-6 relative">
+            <!-- Alternating Timeline rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Micro-Area Digital Twin & Infrastructure Radar (Positioned DIRECTLY Below Timeline) -->
+      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2a2c35] pb-4">
+          <div>
+            <h3 id="digital-twin-title" class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
+              <i data-lucide="radar" class="w-5 h-5 text-[#d4a373]"></i>
+              <span>Nerul Micro-Area Spatial Twin (DY Patil Stadium)</span>
+            </h3>
+            <p id="digital-twin-subtitle" class="text-xs text-[#9e9b93] mt-0.5">
+              Geospatial infrastructure mapped within 5km radius: hotels, railway hubs, trauma centers, and highway corridors.
+            </p>
+          </div>
+
+          <!-- Radar Filter Buttons -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs">
+            <button onclick="filterTwinNodes('all')" class="twin-filter-btn px-2.5 py-1 rounded-lg btn-sand font-bold text-[11px]" data-cat="all">All</button>
+            <button onclick="filterTwinNodes('rail')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="rail">Rail</button>
+            <button onclick="filterTwinNodes('hotel')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="hotel">Hotels</button>
+            <button onclick="filterTwinNodes('hospital')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="hospital">Hospitals</button>
+            <button onclick="filterTwinNodes('parking')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="parking">Parking</button>
+            <button onclick="filterTwinNodes('choke')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="choke">Choke Points</button>
+            <button onclick="openAddAssetModal()" class="px-2.5 py-1 rounded-lg badge-sand font-bold text-[11px] flex items-center space-x-1 ml-1">
+              <i data-lucide="plus" class="w-3 h-3"></i>
+              <span>Add Pin</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Radar Canvas & Inspector Split -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left: Radar Screen (8 Cols) -->
+          <div class="lg:col-span-8">
+            <div class="digital-twin-canvas" id="radar-canvas-container">
+              <div class="radar-grid-bg"></div>
+              <div class="radar-ring radar-ring-1"><span class="radar-ring-label">1.0 km</span></div>
+              <div class="radar-ring radar-ring-2"><span class="radar-ring-label">2.0 km</span></div>
+              <div class="radar-ring radar-ring-3"><span class="radar-ring-label">3.5 km</span></div>
+              <div class="radar-ring radar-ring-4"><span class="radar-ring-label">5.0 km</span></div>
+              <div class="radar-beam"></div>
+
+              <!-- Arterial Expressway & Feeder Rail Guides -->
+              <div class="map-arterial-line" style="top: 36%; left: 8%; width: 84%; transform: rotate(18deg);" title="Primary Feeder Arterial Expressway"></div>
+              <div class="map-rail-line" style="top: 10%; left: 28%; height: 80%; width: 3px; transform: rotate(4deg);" title="Suburban Rail Feeder"></div>
+
+              <!-- Dynamic Map Pins Layer -->
+              <div id="radar-pins-layer"></div>
+            </div>
+            
+            <div class="flex items-center justify-between text-[11px] text-[#9e9b93] mt-2 px-1">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+                Click any infrastructure node to inspect capacity and linked operational stage
+              </span>
+              <span id="twin-gps-coord" class="font-mono text-[#d4a373]">GPS: 19.0330° N, 73.0297° E (Nerul)</span>
+            </div>
+          </div>
+
+          <!-- Right: Telemetry & Spatial Envelopes (4 Cols) -->
+          <div class="lg:col-span-4 space-y-4">
+            <!-- Selected Pin Telemetry Card -->
+            <div id="selected-pin-telemetry" class="dark-subpanel rounded-xl p-4 border border-[#2a2c35]">
+              <!-- Rendered by preplans.js -->
+            </div>
+
+            <!-- Micro-Area Operational Envelopes -->
+            <div class="p-4 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-3 text-xs">
+              <div class="text-xs font-bold uppercase tracking-wider text-[#9e9b93] flex items-center justify-between">
+                <span>Spatial Capacity Envelopes</span>
+                <span class="text-[#d4a373] font-mono text-[10px]">Active Baseline</span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[#ede8e1] flex items-center gap-1.5">
+                    <i data-lucide="hotel" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+                    Nearby Beds (4km)
+                  </span>
+                  <span class="font-mono font-bold text-[#c96a54]">1,850 Rooms <span class="text-[10px] text-[#c96a54] font-normal">(-10.6k gap)</span></span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[#ede8e1] flex items-center gap-1.5">
+                    <i data-lucide="train" class="w-3.5 h-3.5 text-[#607d8b]"></i>
+                    Rail Clearance
+                  </span>
+                  <span class="font-mono font-bold text-[#709775]">46,000 pax/hr</span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[#ede8e1] flex items-center gap-1.5">
+                    <i data-lucide="car" class="w-3.5 h-3.5 text-[#cc7744]"></i>
+                    Parking Capacity
+                  </span>
+                  <span class="font-mono font-bold text-[#d4a373]">4,800 slots <span class="text-[10px] text-[#9e9b93] font-normal">(park & ride)</span></span>
+                </div>
+
+                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[#ede8e1] flex items-center gap-1.5">
+                    <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-[#c96a54]"></i>
+                    Trauma Proximity
+                  </span>
+                  <span class="font-mono font-bold text-[#709775]">&lt; 3 min green corridor</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Stage Capacity Inspector with Explicit Formulas -->
+      <div id="stage-inspector-section" class="dark-panel rounded-2xl p-6 border border-[#2a2c35]">
+        <!-- Rendered by preplans.js -->
+      </div>
+
+      <!-- Categorized Proactive Mitigations -->
+      <div id="mitigations-section" class="dark-panel rounded-2xl p-6 border border-[#2a2c35]">
+        <!-- Rendered by preplans.js -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Modal: Add Custom Asset to Twin -->
+  <div id="add-asset-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden p-4">
+    <div class="dark-panel rounded-2xl max-w-md w-full p-6 border border-[#2a2c35] space-y-4">
+      <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
+        <h4 class="text-sm font-bold text-[#ede8e1]">Add Physical Asset to Digital Twin</h4>
+        <button onclick="closeAddAssetModal()" class="text-[#9e9b93] hover:text-[#ede8e1]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="add-asset-form" onsubmit="submitNewAsset(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#9e9b93] mb-1">Asset Name</label>
+          <input id="asset-name" type="text" required placeholder="e.g. Belapur Transit Shuttles" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-[#9e9b93] mb-1">Category</label>
+            <select id="asset-category" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              <option value="hotel">Hotel / Lodging</option>
+              <option value="rail">Railway / Transit</option>
+              <option value="hospital">Hospital / Emergency</option>
+              <option value="parking">Parking / Staging</option>
+              <option value="choke">Choke / Bottleneck</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#9e9b93] mb-1">Distance</label>
+            <input id="asset-dist" type="text" required placeholder="e.g. 2.5 km" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#9e9b93] mb-1">Capacity / Spec</label>
+          <input id="asset-capacity" type="text" required placeholder="e.g. 15,000 pax/hr / 200 Beds" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+        </div>
+        <div class="flex justify-end space-x-2 pt-2 border-t border-[#2a2c35]">
+          <button type="button" onclick="closeAddAssetModal()" class="px-3 py-1.5 rounded-lg text-[#9e9b93] hover:text-[#ede8e1]">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 rounded-lg btn-sand font-bold">Add to Radar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Preplans Script Logic -->
+  <script src="preplans.js"></script>
+</body>
+</html>

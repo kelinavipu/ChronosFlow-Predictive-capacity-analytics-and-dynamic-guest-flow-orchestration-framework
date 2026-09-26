@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crowd Simulations & Stress-Testing — ChronosFlow</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#22242b] text-[#709775] border border-[#2a2c35]">PHASE 1</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Crowd Dynamics & Stress Simulations</h1>
+        </div>
+        <p class="text-xs text-[#9e9b93] mt-1">
+          Simulate multi-wave crowd surges, inject real-world disruption shocks, and stress-test physical bottleneck thresholds.
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <!-- Event Switcher -->
+        <div class="flex items-center space-x-2 p-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs">
+          <span class="text-[#9e9b93] font-bold text-[11px] uppercase pl-1">Baseline:</span>
+          <select id="sim-event-select" onchange="changeSimEvent(this.value)" class="bg-[#22242b] text-[#d4a373] font-bold px-2.5 py-1 rounded-lg border border-[#2a2c35] outline-none cursor-pointer">
+            <option value="dypatil_nerul">DY Patil Stadium (Nerul) - 50k</option>
+            <option value="wankhede_mumbai">Wankhede Stadium (Churchgate) - 33k</option>
+            <option value="narendra_modi">Narendra Modi Stadium (Motera) - 100k</option>
+          </select>
+        </div>
+
+        <button onclick="saveSimulationToCloud()" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
+          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+          <span>Save Sim Run</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Simulation Controls & Playback Bar -->
+    <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-6">
+      
+      <!-- Top Row: Clock & Playback -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2a2c35]">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-[#22242b] border border-[#2a2c35] flex items-center justify-center text-[#709775]">
+            <i data-lucide="play-circle" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-[#9e9b93]">Simulated Match Clock</div>
+            <div id="sim-clock-display" class="font-mono text-xl font-bold text-[#ede8e1]">12:30 PM (Ingress Surge)</div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs font-bold">
+          <button onclick="toggleSimulationPlay()" id="btn-sim-play" class="px-4 py-2 rounded-xl btn-sand flex items-center space-x-1.5">
+            <i data-lucide="play" class="w-4 h-4" id="play-icon"></i>
+            <span id="play-text">Start Simulation</span>
+          </button>
+          <button onclick="stepSimulation()" class="px-3 py-2 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35]">
+            Step +15m
+          </button>
+          <button onclick="resetSimulation()" class="px-3 py-2 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#9e9b93] hover:text-[#ede8e1] border border-[#2a2c35]">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Stress-Testing Variance Slider -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div class="md:col-span-4 space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-[#9e9b93]">Attendance Shock Variance</span>
+            <span id="variance-val-badge" class="font-mono font-bold text-xs text-[#d4a373] px-2 py-0.5 rounded bg-[#22242b] border border-[#2a2c35]">+15%</span>
+          </div>
+          <p class="text-[11px] text-[#9e9b93] leading-snug">
+            Stress-test turnstiles and transit lines against unexpected attendance surges beyond ticketed allocation.
+          </p>
+        </div>
+
+        <div class="md:col-span-8 space-y-2">
+          <input 
+            type="range" 
+            id="sim-variance-slider" 
+            min="-20" 
+            max="50" 
+            value="15" 
+            oninput="handleVarianceChange(this.value)"
+            class="w-full accent-[#d4a373] cursor-pointer"
+          >
+          <div class="flex justify-between text-[10px] font-mono text-[#9e9b93]">
+            <span>-20% (Low Influx)</span>
+            <span>0% (Baseline Target)</span>
+            <span>+25% (High Pressure)</span>
+            <span class="text-[#c96a54] font-bold">+50% (Max Stress)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- What-If Disruption Scenario Injector -->
+      <div class="space-y-3 pt-4 border-t border-[#2a2c35]">
+        <div class="text-xs font-bold uppercase text-[#9e9b93]">Inject Disruption Scenarios</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          
+          <button onclick="injectDisruption('rain')" id="disrupt-rain" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#607d8b] transition">
+            <div class="flex items-center space-x-2 text-[#607d8b] font-bold mb-1">
+              <i data-lucide="cloud-rain" class="w-4 h-4"></i>
+              <span>Monsoon Deluge</span>
+            </div>
+            <p class="text-[11px] text-[#9e9b93]">Reduces walking pace 35%; crowds rush covered concourses.</p>
+          </button>
+
+          <button onclick="injectDisruption('rail')" id="disrupt-rail" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#c96a54] transition">
+            <div class="flex items-center space-x-2 text-[#c96a54] font-bold mb-1">
+              <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+              <span>Transit Delay (Nerul)</span>
+            </div>
+            <p class="text-[11px] text-[#9e9b93]">30-min rail signal failure; 14,000 passengers stranded.</p>
+          </button>
+
+          <button onclick="injectDisruption('gate')" id="disrupt-gate" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#cc7744] transition">
+            <div class="flex items-center space-x-2 text-[#cc7744] font-bold mb-1">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i>
+              <span>Gate B Scanner Jam</span>
+            </div>
+            <p class="text-[11px] text-[#9e9b93]">Optical scanners offline; queues back up 400 meters.</p>
+          </button>
+
+          <button onclick="injectDisruption('highway')" id="disrupt-highway" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#d4a373] transition">
+            <div class="flex items-center space-x-2 text-[#d4a373] font-bold mb-1">
+              <i data-lucide="truck" class="w-4 h-4"></i>
+              <span>LP Junction Choke</span>
+            </div>
+            <p class="text-[11px] text-[#9e9b93]">Freight gridlock halts express shuttles and VIP buses.</p>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Telemetry Gauges & Bottleneck Heatmap Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left: Real-Time Bottleneck Radar Gauges (7 Cols) -->
+      <div class="lg:col-span-7 dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+        <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
+          <h3 class="text-base font-bold text-[#ede8e1] flex items-center space-x-2">
+            <i data-lucide="activity" class="w-4 h-4 text-[#709775]"></i>
+            <span>Node Saturation Telemetry</span>
+          </h3>
+          <span class="text-xs font-mono text-[#d4a373]">Live Dynamic Load</span>
+        </div>
+
+        <!-- 4 Key Saturation Gauges -->
+        <div class="space-y-3 text-xs">
+          
+          <!-- Nerul Rail Station -->
+          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+            <div class="flex justify-between font-bold">
+              <span class="text-[#ede8e1] flex items-center space-x-1.5">
+                <i data-lucide="train" class="w-4 h-4 text-[#607d8b]"></i>
+                <span>Nerul Station Platform Density</span>
+              </span>
+              <span id="gauge-rail-pct" class="font-mono text-[#709775]">68% Capacity</span>
+            </div>
+            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
+              <div id="bar-rail" class="bg-[#709775] h-full transition-all duration-300" style="width: 68%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-[#9e9b93]">
+              <span>Throughput: <strong id="gauge-rail-val" class="text-[#ede8e1]">16,320 / 24,000 pax/hr</strong></span>
+              <span id="gauge-rail-status" class="text-[#709775]">Fluid Flow</span>
+            </div>
+          </div>
+
+          <!-- Outer Security Gate 4 -->
+          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+            <div class="flex justify-between font-bold">
+              <span class="text-[#ede8e1] flex items-center space-x-1.5">
+                <i data-lucide="shield" class="w-4 h-4 text-[#d4a373]"></i>
+                <span>Gate 4 Perimeter Screening Lanes</span>
+              </span>
+              <span id="gauge-gate-pct" class="font-mono text-[#cc7744]">88% Capacity</span>
+            </div>
+            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
+              <div id="bar-gate" class="bg-[#cc7744] h-full transition-all duration-300" style="width: 88%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-[#9e9b93]">
+              <span>Queue Length: <strong id="gauge-gate-queue" class="text-[#ede8e1]">22 mins (Choke Risk)</strong></span>
+              <span class="text-[#cc7744]">Approaching Saturation</span>
+            </div>
+          </div>
+
+          <!-- LP Junction Arterial Highway -->
+          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+            <div class="flex justify-between font-bold">
+              <span class="text-[#ede8e1] flex items-center space-x-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-[#c96a54]"></i>
+                <span>LP Junction (Sion-Panvel Expressway)</span>
+              </span>
+              <span id="gauge-hwy-pct" class="font-mono text-[#c96a54]">94% Congested</span>
+            </div>
+            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
+              <div id="bar-hwy" class="bg-[#c96a54] h-full transition-all duration-300" style="width: 94%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-[#9e9b93]">
+              <span>Delay Index: <strong id="gauge-hwy-delay" class="text-[#ede8e1]">+18 mins delay</strong></span>
+              <span class="text-[#c96a54]">Severe Gridlock</span>
+            </div>
+          </div>
+
+          <!-- Stadium Bowl Clearance -->
+          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+            <div class="flex justify-between font-bold">
+              <span class="text-[#ede8e1] flex items-center space-x-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-[#d4a373]"></i>
+                <span>Stadium Bowl Spectator Occupancy</span>
+              </span>
+              <span id="gauge-stadium-pct" class="font-mono text-[#ede8e1]">78% Filled</span>
+            </div>
+            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
+              <div id="bar-stadium" class="bg-[#d4a373] h-full transition-all duration-300" style="width: 78%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-[#9e9b93]">
+              <span>In-Bowl Attendees: <strong id="gauge-stadium-count" class="text-[#ede8e1]">42,900 / 55,000</strong></span>
+              <span class="text-[#709775]">Orderly Seating</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: Evacuation Forecasting & Dynamic Dispatch Directives (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        
+        <!-- Evacuation Clearance Meter -->
+        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+          <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
+            <h4 class="text-sm font-bold text-[#ede8e1] uppercase tracking-wider">Evacuation Clearance Forecast</h4>
+            <span class="text-[10px] font-mono text-[#d4a373]">Safety Standard: &lt; 45m</span>
+          </div>
+
+          <div class="text-center py-2 space-y-1">
+            <div id="evac-time-display" class="font-mono text-4xl font-extrabold text-[#c96a54]">52 Mins</div>
+            <p id="evac-status-text" class="text-xs text-[#c96a54]">
+              Warning: Exceeds safe benchmark by 7 minutes due to LP Junction gridlock.
+            </p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-xs space-y-2">
+            <div class="flex justify-between">
+              <span class="text-[#9e9b93]">Planned Safe Clearance:</span>
+              <span class="font-mono font-bold text-[#709775]">38 Mins</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[#9e9b93]">Simulation Delay Factor:</span>
+              <span class="font-mono font-bold text-[#c96a54]">+14 Mins</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Automated AI Simulation Mitigation Directives -->
+        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+          <div class="flex items-center justify-between border-b border-[#2a2c35] pb-2">
+            <h4 class="text-sm font-bold text-[#ede8e1]">Dynamic AI Directives</h4>
+            <span class="text-[10px] font-mono text-[#709775]">Active Feedback</span>
+          </div>
+
+          <div id="sim-directives-list" class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-1">
+              <div class="font-bold text-[#d4a373]">Reroute Shuttles to Palm Beach Highway</div>
+              <p class="text-[11px] text-[#9e9b93]">Diverts 45 feeder buses away from LP Junction choke point, saving 12 minutes in turn-around time.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-1">
+              <div class="font-bold text-[#709775]">Activate Gate C Overflow Lanes</div>
+              <p class="text-[11px] text-[#9e9b93]">Splits Gate 4 crowd to Gate C, dropping wait times from 22 minutes to 8 minutes.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Simulation Engine Logic -->
+  <script>
+    let isPlaying = false;
+    let simTimer = null;
+    let simMinute = 0; // 0 = 10:00 AM, 360 = 4:00 PM, 600 = 8:00 PM, 780 = 11:00 PM
+    let variance = 15;
+    let activeDisruptions = new Set();
+
+    function toggleSimulationPlay() {
+      isPlaying = !isPlaying;
+      const btn = document.getElementById('btn-sim-play');
+      const icon = document.getElementById('play-icon');
+      const text = document.getElementById('play-text');
+
+      if (isPlaying) {
+        btn.className = "px-4 py-2 rounded-xl bg-[#c96a54] text-white font-bold flex items-center space-x-1.5";
+        text.innerText = "Pause";
+        simTimer = setInterval(stepSimulation, 1200);
+      } else {
+        btn.className = "px-4 py-2 rounded-xl btn-sand font-bold flex items-center space-x-1.5";
+        text.innerText = "Resume";
+        clearInterval(simTimer);
+      }
+      lucide.createIcons();
+    }
+
+    function stepSimulation() {
+      simMinute += 15;
+      if (simMinute > 720) simMinute = 0;
+      updateSimulationUI();
+    }
+
+    function resetSimulation() {
+      isPlaying = false;
+      clearInterval(simTimer);
+      simMinute = 150; // 12:30 PM default
+      activeDisruptions.clear();
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('border-[#d4a373]'));
+      updateSimulationUI();
+      const btn = document.getElementById('btn-sim-play');
+      btn.className = "px-4 py-2 rounded-xl btn-sand font-bold flex items-center space-x-1.5";
+      document.getElementById('play-text').innerText = "Start Simulation";
+      lucide.createIcons();
+    }
+
+    function handleVarianceChange(val) {
+      variance = parseInt(val);
+      document.getElementById('variance-val-badge').innerText = (variance > 0 ? `+${variance}%` : `${variance}%`);
+      updateSimulationUI();
+    }
+
+    function injectDisruption(type) {
+      const btn = document.getElementById(`disrupt-${type}`);
+      if (activeDisruptions.has(type)) {
+        activeDisruptions.delete(type);
+        btn.classList.remove('border-[#d4a373]');
+      } else {
+        activeDisruptions.add(type);
+        btn.classList.add('border-[#d4a373]');
+      }
+      updateSimulationUI();
+    }
+
+    function updateSimulationUI() {
+      // Calculate simulated clock
+      const totalMinutes = 600 + simMinute; // Start at 10:00 AM (600 mins from midnight)
+      const hours = Math.floor(totalMinutes / 60) % 24;
+      const mins = totalMinutes % 60;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const dispHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+      const timeStr = `${dispHours}:${mins < 10 ? '0' : ''}${mins} ${ampm}`;
+
+      let phaseLabel = "Morning Transit Ingress";
+      if (hours >= 14 && hours < 21) phaseLabel = "Match in Progress";
+      else if (hours >= 21) phaseLabel = "Egress & Dispersal Surge";
+
+      document.getElementById('sim-clock-display').innerText = `${timeStr} (${phaseLabel})`;
+
+      // Dynamic calculations based on variance + disruptions
+      let railPct = 65 + (variance * 0.4);
+      let gatePct = 75 + (variance * 0.5);
+      let hwyPct = 70 + (variance * 0.6);
+      let evacTime = 38 + Math.round(variance * 0.4);
+
+      if (activeDisruptions.has('rain')) {
+        gatePct += 15;
+        evacTime += 12;
+      }
+      if (activeDisruptions.has('rail')) {
+        railPct = 98;
+        evacTime += 18;
+      }
+      if (activeDisruptions.has('gate')) {
+        gatePct = 96;
+      }
+      if (activeDisruptions.has('highway')) {
+        hwyPct = 98;
+        evacTime += 14;
+      }
+
+      railPct = Math.min(100, Math.max(10, Math.round(railPct)));
+      gatePct = Math.min(100, Math.max(10, Math.round(gatePct)));
+      hwyPct = Math.min(100, Math.max(10, Math.round(hwyPct)));
+
+      // Update gauges
+      document.getElementById('gauge-rail-pct').innerText = `${railPct}% Capacity`;
+      document.getElementById('bar-rail').style.width = `${railPct}%`;
+      document.getElementById('gauge-rail-status').innerText = railPct > 85 ? "Severe Congestion" : "Fluid Flow";
+
+      document.getElementById('gauge-gate-pct').innerText = `${gatePct}% Capacity`;
+      document.getElementById('bar-gate').style.width = `${gatePct}%`;
+      document.getElementById('gauge-gate-queue').innerText = `${Math.round(gatePct * 0.35)} mins wait`;
+
+      document.getElementById('gauge-hwy-pct').innerText = `${hwyPct}% Congested`;
+      document.getElementById('bar-hwy').style.width = `${hwyPct}%`;
+
+      document.getElementById('evac-time-display').innerText = `${evacTime} Mins`;
+      document.getElementById('evac-status-text').innerText = evacTime > 45 
+        ? `Warning: Exceeds safe benchmark by ${evacTime - 45} mins due to combined shock factors.`
+        : "Optimal: All spectator zones clear within international safety window (< 45m).";
+    }
+
+    async function saveSimulationToCloud() {
+      const payload = {
+        eventId: document.getElementById('sim-event-select').value,
+        scenario: activeDisruptions.size > 0 ? Array.from(activeDisruptions).join(', ') : 'Standard Dynamic Surge',
+        variance: variance,
+        evacuationTime: parseInt(document.getElementById('evac-time-display').innerText) || 45,
+        bottlenecks: {
+          rail: document.getElementById('gauge-rail-pct').innerText,
+          gate: document.getElementById('gauge-gate-pct').innerText,
+          highway: document.getElementById('gauge-hwy-pct').innerText
+        }
+      };
+
+      await window.ChronosSupabase.saveSimulationRun(payload);
+      alert("Simulation metrics and stress results saved to Supabase Cloud!");
+    }
+
+    function changeSimEvent(val) {
+      updateSimulationUI();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavbar('simulations');
+      updateSimulationUI();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

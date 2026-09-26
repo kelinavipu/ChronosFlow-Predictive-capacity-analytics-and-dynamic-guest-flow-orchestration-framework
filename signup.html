@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — ChronosFlow Stakeholder Registration</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+
+  <!-- Global Shared Navbar -->
+  <div id="global-navbar"></div>
+
+  <!-- Sign Up Form Container -->
+  <main class="flex-1 flex items-center justify-center p-4 sm:p-8">
+    <div class="dark-panel rounded-3xl p-6 sm:p-10 border border-[#2a2c35] max-w-lg w-full shadow-2xl space-y-6">
+      
+      <!-- Brand & Header -->
+      <div class="text-center space-y-1.5">
+        <div class="w-12 h-12 rounded-2xl bg-[#22242b] border border-[#2a2c35] flex items-center justify-center text-[#d4a373] mx-auto mb-3">
+          <i data-lucide="user-plus" class="w-6 h-6"></i>
+        </div>
+        <h1 class="text-2xl font-black text-[#ede8e1]">Register Operational Account</h1>
+        <p class="text-xs text-[#9e9b93]">Join the ChronosFlow network to coordinate mega-events</p>
+      </div>
+
+      <!-- Role Selection Pills -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-[#9e9b93] uppercase tracking-wider">Select Role</label>
+        <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+          <button type="button" onclick="selectSignupRole('event_manager')" class="signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center space-x-2 transition" data-role="event_manager">
+            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            <span>Event Manager</span>
+          </button>
+          
+          <button type="button" onclick="selectSignupRole('visitor')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="visitor">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>Visitor</span>
+          </button>
+
+          <button type="button" onclick="selectSignupRole('service_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="service_provider">
+            <i data-lucide="utensils" class="w-4 h-4"></i>
+            <span>Service Provider</span>
+          </button>
+
+          <button type="button" onclick="selectSignupRole('infra_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="infra_provider">
+            <i data-lucide="train" class="w-4 h-4"></i>
+            <span>Infra Provider</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" onsubmit="handleSignUp(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Full Name</label>
+            <input 
+              type="text" 
+              id="signup-name" 
+              required 
+              placeholder="e.g. Vikram Sethi" 
+              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Email Address</label>
+            <input 
+              type="email" 
+              id="signup-email" 
+              required 
+              placeholder="e.g. vikram@mumbai-cricket.org" 
+              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
+            >
+          </div>
+        </div>
+
+        <!-- Dynamic Role Field -->
+        <div id="dynamic-role-field">
+          <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1" id="dynamic-field-label">Organization / Sports Board</label>
+          <input 
+            type="text" 
+            id="signup-org" 
+            required 
+            placeholder="e.g. Navi Mumbai Sports Council" 
+            class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
+          >
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Password</label>
+            <input 
+              type="password" 
+              id="signup-password" 
+              required 
+              placeholder="••••••••••••" 
+              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Confirm Password</label>
+            <input 
+              type="password" 
+              id="signup-confirm-password" 
+              required 
+              placeholder="••••••••••••" 
+              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
+            >
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs text-[#9e9b93] pt-1">
+          <input type="checkbox" id="terms" required class="rounded bg-[#1a1b20] border-[#2a2c35] text-[#d4a373] focus:ring-0">
+          <label for="terms">I agree to the ChronosFlow operational data protocol</label>
+        </div>
+
+        <button type="submit" id="signup-submit-btn" class="w-full py-3 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 shadow-lg transition">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Create Account & Enter Grid</span>
+        </button>
+      </form>
+
+      <!-- Link to Sign In -->
+      <div class="text-center text-xs text-[#9e9b93] pt-2 border-t border-[#2a2c35]">
+        Already have an account? 
+        <a href="signin.html" id="link-signin" class="font-bold text-[#d4a373] hover:underline">Sign In here</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentRole = 'event_manager';
+
+    const roleFieldConfig = {
+      event_manager: { label: "Organization / Sports Authority", placeholder: "e.g. Navi Mumbai Sports Council" },
+      visitor: { label: "Arrival Mode & Origin City", placeholder: "e.g. Suburban Rail from Thane / Dadar" },
+      service_provider: { label: "Service Domain (F&B / Medical / Security)", placeholder: "e.g. Infield Concessions & Rapid Triage" },
+      infra_provider: { label: "Agency (Railways / Highway / Police)", placeholder: "e.g. Central Railway / Navi Mumbai Traffic Police" }
+    };
+
+    function selectSignupRole(role) {
+      currentRole = role;
+      document.querySelectorAll('.signup-role-pill').forEach(btn => {
+        if (btn.getAttribute('data-role') === role) {
+          btn.className = "signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center space-x-2 transition";
+        } else {
+          btn.className = "signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition";
+        }
+      });
+
+      const conf = roleFieldConfig[role];
+      if (conf) {
+        document.getElementById('dynamic-field-label').innerText = conf.label;
+        document.getElementById('signup-org').placeholder = conf.placeholder;
+      }
+      document.getElementById('link-signin').href = `signin.html?role=${role}`;
+    }
+
+    async function handleSignUp(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const org = document.getElementById('signup-org').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match. Please re-enter.");
+        return;
+      }
+
+      const btn = document.getElementById('signup-submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-2">&bull;</span> Registering...`;
+
+      await window.ChronosSupabase.signUp({
+        fullName: name,
+        email,
+        organization: org,
+        password,
+        role: currentRole
+      });
+
+      alert(`Account successfully created for ${name} (${currentRole.replace('_', ' ').toUpperCase()})! Redirecting to Pre-Planning...`);
+      window.location.href = "preplans.html";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavbar('signup');
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      if (roleParam && roleFieldConfig[roleParam]) {
+        selectSignupRole(roleParam);
+      }
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

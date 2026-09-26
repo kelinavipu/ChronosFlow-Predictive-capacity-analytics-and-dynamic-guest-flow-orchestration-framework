@@ -450,7 +450,8 @@ html, body {
   z-index: 50;
 }
 
-.twin-pin-icon-wrap {
+.twin-pin-icon-wrap,
+.twin-pin-inner {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -464,7 +465,8 @@ html, body {
 }
 
 /* Pin Categories */
-.pin-stadium .twin-pin-icon-wrap {
+.pin-stadium .twin-pin-icon-wrap,
+.pin-stadium .twin-pin-inner {
   background: var(--color-sand);
   color: #121316;
   border-color: #ffffff;
@@ -472,32 +474,38 @@ html, body {
   height: 38px;
 }
 
-.pin-rail .twin-pin-icon-wrap {
+.pin-rail .twin-pin-icon-wrap,
+.pin-rail .twin-pin-inner {
   border-color: var(--color-slate-blue);
   color: var(--color-slate-blue);
 }
 
-.pin-hotel .twin-pin-icon-wrap {
+.pin-hotel .twin-pin-icon-wrap,
+.pin-hotel .twin-pin-inner {
   border-color: #a27b5c;
   color: #a27b5c;
 }
 
-.pin-hospital .twin-pin-icon-wrap {
+.pin-hospital .twin-pin-icon-wrap,
+.pin-hospital .twin-pin-inner {
   border-color: var(--color-terracotta);
   color: var(--color-terracotta);
 }
 
-.pin-parking .twin-pin-icon-wrap {
+.pin-parking .twin-pin-icon-wrap,
+.pin-parking .twin-pin-inner {
   border-color: var(--color-sand);
   color: var(--color-sand);
 }
 
-.pin-choke .twin-pin-icon-wrap {
+.pin-choke .twin-pin-icon-wrap,
+.pin-choke .twin-pin-inner {
   border-color: var(--color-amber-clay);
   color: var(--color-amber-clay);
 }
 
-.twin-pin.active-pin .twin-pin-icon-wrap {
+.twin-pin.active-pin .twin-pin-icon-wrap,
+.twin-pin.active-pin .twin-pin-inner {
   box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.35);
   border-color: var(--color-sand);
 }
