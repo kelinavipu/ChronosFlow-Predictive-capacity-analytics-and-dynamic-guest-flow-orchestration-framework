@@ -1,104 +1,53 @@
 /* =========================================================================
-   CHRONOSFLOW / PRAVAAH DESIGN SYSTEM STYLESHEET
-   Reference: UI Design Reference (Light default + Night Control-Room)
+   ORCHESTRA — MINIMAL DARK TRAVEL & HOSPITALITY DESIGN SYSTEM
+   Vibe: Calm, minimal travel itinerary, warm luxury expedition dispatch
+   NO NEONS: Earthy, warm obsidian, sand, terracotta, sage, slate blue
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap');
-
-/* =========================================================================
-   1. COLOR TOKENS & TYPOGRAPHY MAPPINGS
-   ========================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   /* Fonts */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-deva: 'Noto Sans Devanagari', var(--font-sans);
 
-  /* LIGHT THEME (Default — Warm Parchment & Deep Forest Ink) */
-  --color-ink: #f5f2ec;
-  --color-ink-deep: #ede8dd;
-  --color-panel: #ffffff;
-  --color-panel-2: #f6f3ec;
-  --color-line: #e6e1d7;
-  --color-line-soft: #efebe2;
-  --color-text: #143a35;
-  --color-dim: #5b6f6b;
-  --color-dimmer: #93a19d;
+  /* Travel Dark Palette (Earthy, Warm Obsidian, Matte) */
+  --color-ink: #121316;              /* Deep Warm Obsidian */
+  --color-ink-deep: #17181e;         /* Map & Radar Canvas Background */
+  --color-panel: #1a1b20;            /* Matte Card Background */
+  --color-panel-2: #22242b;          /* Secondary Rows, Inputs, Sub-panels */
+  --color-line: #2a2c35;             /* Subtle Card Border */
+  --color-line-soft: #23252d;        /* Gentle Row Divider */
   
-  --color-brass: #0f766e;
-  --color-brass-dim: #b7d6cf;
-  --color-brass-glow: #0b4f4a;
+  --color-text: #ede8e1;             /* Warm Linen Primary Text */
+  --color-dim: #9e9b93;              /* Sand Gray Secondary Text */
+  --color-dimmer: #6b6862;           /* Muted Stone Eyebrows */
   
-  --color-accent: #e8912d;
-  --color-accent-dim: #f2cb98;
-  --color-accent-glow: #c97a22;
+  /* Travel Accent Tones (NO NEONS) */
+  --color-sand: #d4a373;             /* Warm Sand / Travel Ochre (Primary Accent) */
+  --color-sand-dim: #4a3e31;         /* Muted Sand Border */
+  --color-sand-glow: #e2b78d;        /* Hover Accent */
   
-  --color-danger: #e5484d;
-  --color-danger-soft: #c23b3f;
-  --color-safe: #2fa37a;
-
-  /* Tone Washes (Light) */
-  --tone-brass: #f0faf7;
-  --tone-brass-strong: #e3f1ec;
-  --tone-brass-strong-hover: #d8ece5;
-  --tone-danger: #fde6e6;
-  --tone-danger-strong: #fbd9d9;
-  --tone-danger-urgent: #f8c9c9;
-  --tone-safe: #e3f6ee;
-
-  /* Shadow & Motion */
-  --shadow-card: 0 10px 30px -12px rgba(20, 58, 53, 0.25);
+  --color-terracotta: #c96a54;       /* Warm Terracotta / Clay (Danger / Gap) */
+  --color-terracotta-soft: #2d1c18;  /* Subtle Terracotta Background */
+  
+  --color-sage: #709775;             /* Muted Forest Sage (Safe / Adequate) */
+  --color-sage-soft: #1d2b20;        /* Subtle Sage Background */
+  
+  --color-slate-blue: #607d8b;       /* River Slate Blue (Transit / Rail) */
+  --color-slate-blue-soft: #1c262c;  /* Subtle Blue Background */
+  
+  --color-amber-clay: #cc7744;       /* Burnt Amber (Attention / Choke) */
+  --color-amber-soft: #2d1e16;       /* Subtle Amber Background */
+  
+  /* Shadows & Motion */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.25);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-
-  /* Density Ramp (Theme-Invariant) */
-  --color-d0: #35555f; /* empty */
-  --color-d1: #3f7a6b; /* calm */
-  --color-d2: #9aa24b; /* busy / getting busy */
-  --color-d3: #c79338; /* crowded */
-  --color-d4: #cc5f2c; /* dangerously tight (>= CRUSH 4.0/m²) */
-  --color-d5: #b02d1e; /* jam (>= JAM 5.8/m²) */
-}
-
-/* NIGHT THEME (Control-Room Palette — Preserved Byte-for-Byte) */
-:root[data-theme='dark'] {
-  --color-ink: #101715;
-  --color-ink-deep: #0b1110;
-  --color-panel: #16201e;
-  --color-panel-2: #1b2624;
-  --color-line: #26322f;
-  --color-line-soft: #1f2a28;
-  --color-text: #dce5e1;
-  --color-dim: #7a8a85;
-  --color-dimmer: #586662;
-  
-  --color-brass: #c9a961;
-  --color-brass-dim: #8e7742;
-  --color-brass-glow: #e8c87a;
-  
-  --color-accent: #c9a961;
-  --color-accent-dim: #8e7742;
-  --color-accent-glow: #e8c87a;
-  
-  --color-danger: #e0634f;
-  --color-danger-soft: #f0a594;
-  --color-safe: #6fb39a;
-
-  /* Tone Washes (Night) */
-  --tone-brass: #1d1c14;
-  --tone-brass-strong: #1b1a12;
-  --tone-brass-strong-hover: #211f16;
-  --tone-danger: #221512;
-  --tone-danger-strong: #211310;
-  --tone-danger-urgent: #241612;
-  --tone-safe: #122019;
-
-  --shadow-card: none;
 }
 
 /* =========================================================================
-   2. GLOBAL BASE & RESET
+   GLOBAL BASE & RESET
    ========================================================================= */
 
 * {
@@ -111,14 +60,13 @@ html, body {
   font-family: var(--font-sans);
   background-color: var(--color-ink);
   color: var(--color-text);
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Scrollbars */
+/* Minimal Scrollbars */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-ink);
@@ -132,7 +80,7 @@ html, body {
 }
 
 /* =========================================================================
-   3. CORE UTILITY CLASSES (§4)
+   CORE UTILITY CLASSES
    ========================================================================= */
 
 .num {
@@ -155,84 +103,14 @@ html, body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brass);
+  outline: 2px solid var(--color-sand);
   outline-offset: 2px;
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
-
-.font-deva {
-  font-family: var(--font-deva);
-}
-
-.font-mono {
-  font-family: var(--font-mono);
-}
-
 /* =========================================================================
-   4. MOTION & ENTRANCES (§3)
+   PANELS & CARDS (Minimal, Matte, Warm)
    ========================================================================= */
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadein {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulseDanger {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.45);
-  }
-  50% {
-    box-shadow: 0 0 0 7px rgba(229, 72, 77, 0);
-  }
-}
-
-@keyframes busyBar {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.rise {
-  animation: rise 0.5s var(--ease-out-quart) both;
-}
-
-.fadein {
-  animation: fadein 0.6s ease both;
-}
-
-.pulse-danger {
-  animation: pulseDanger 2s infinite;
-}
-
-.busy-bar {
-  animation: busyBar 1.6s infinite ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rise, .fadein, .pulse-danger, .busy-bar {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-/* =========================================================================
-   5. SHARED UI PRIMITIVES & PANELS
-   ========================================================================= */
-
-/* Dark & Light Unified Panels */
 .dark-panel, .panel-card {
   background-color: var(--color-panel);
   border: 1px solid var(--color-line);
@@ -248,208 +126,85 @@ html, body {
   border-radius: 0.75rem;
 }
 
-/* Standard Buttons (§6) */
-.btn-solid {
-  background-color: var(--color-brass);
-  color: #ffffff;
+/* Minimal Buttons */
+.btn-sand {
+  background-color: var(--color-sand);
+  color: #121316;
   font-weight: 700;
   border: 1px solid transparent;
   transition: all 0.15s ease;
 }
-:root[data-theme='dark'] .btn-solid {
-  color: #101715;
-}
-.btn-solid:hover {
-  background-color: var(--color-brass-glow);
+.btn-sand:hover {
+  background-color: var(--color-sand-glow);
 }
 
 .btn-ghost {
-  background-color: var(--color-panel);
+  background-color: var(--color-panel-2);
   border: 1px solid var(--color-line);
   color: var(--color-text);
   font-weight: 600;
   transition: all 0.15s ease;
 }
 .btn-ghost:hover {
-  background-color: var(--color-panel-2);
-  border-color: var(--color-brass-dim);
+  border-color: var(--color-sand-dim);
+  color: var(--color-sand);
 }
 
-.btn-quiet {
-  background: transparent;
-  color: var(--color-dim);
-  font-weight: 600;
-  border: none;
-}
-.btn-quiet:hover {
-  color: var(--color-text);
+/* Badges (Subtle, Muted Travel Hues — NO NEONS) */
+.badge-sand {
+  background-color: rgba(212, 163, 115, 0.12);
+  border: 1px solid rgba(212, 163, 115, 0.3);
+  color: var(--color-sand);
 }
 
-.btn-danger {
-  background-color: var(--tone-danger);
-  border: 1px solid var(--color-danger);
-  color: var(--color-danger);
-  font-weight: 700;
-}
-.btn-danger:hover {
-  background-color: var(--tone-danger-strong);
+.badge-sage {
+  background-color: var(--color-sage-soft);
+  border: 1px solid rgba(112, 151, 117, 0.35);
+  color: var(--color-sage);
 }
 
-/* Badges & Pills */
-.badge-brass {
-  background-color: var(--tone-brass);
-  border: 1px solid var(--color-brass-dim);
-  color: var(--color-brass);
+.badge-terracotta {
+  background-color: var(--color-terracotta-soft);
+  border: 1px solid rgba(201, 106, 84, 0.35);
+  color: var(--color-terracotta);
 }
 
-.badge-danger {
-  background-color: var(--tone-danger);
-  border: 1px solid var(--color-danger-soft);
-  color: var(--color-danger);
+.badge-slate {
+  background-color: var(--color-slate-blue-soft);
+  border: 1px solid rgba(96, 125, 139, 0.35);
+  color: var(--color-slate-blue);
 }
 
-.badge-safe {
-  background-color: var(--tone-safe);
-  border: 1px solid var(--color-safe);
-  color: var(--color-safe);
+.badge-amber {
+  background-color: var(--color-amber-soft);
+  border: 1px solid rgba(204, 119, 68, 0.35);
+  color: var(--color-amber-clay);
 }
 
-.badge-accent {
-  background-color: var(--color-panel-2);
-  border: 1px solid var(--color-accent-dim);
-  color: var(--color-accent);
-}
-
-/* Backward compatibility for legacy neon badge classes */
-.badge-neon-teal {
-  background-color: var(--tone-brass);
-  border: 1px solid var(--color-brass-dim);
-  color: var(--color-brass);
+/* Legacy Badge Class Aliases (Softened to match travel palette) */
+.badge-neon-teal, .badge-neon-emerald {
+  background-color: var(--color-sage-soft);
+  border: 1px solid rgba(112, 151, 117, 0.35);
+  color: var(--color-sage);
 }
 .badge-neon-amber {
-  background-color: var(--color-panel-2);
-  border: 1px solid var(--color-accent-dim);
-  color: var(--color-accent);
+  background-color: var(--color-amber-soft);
+  border: 1px solid rgba(204, 119, 68, 0.35);
+  color: var(--color-amber-clay);
 }
 .badge-neon-rose {
-  background-color: var(--tone-danger);
-  border: 1px solid var(--color-danger-soft);
-  color: var(--color-danger);
+  background-color: var(--color-terracotta-soft);
+  border: 1px solid rgba(201, 106, 84, 0.35);
+  color: var(--color-terracotta);
 }
 .badge-neon-cyan {
-  background-color: var(--color-panel-2);
-  border: 1px solid var(--color-brass-dim);
-  color: var(--color-brass);
-}
-.badge-neon-emerald {
-  background-color: var(--tone-safe);
-  border: 1px solid var(--color-safe);
-  color: var(--color-safe);
-}
-
-/* Spec-Sheet Row Primitive */
-.spec-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--color-line-soft);
-}
-.spec-row:last-child {
-  border-bottom: none;
+  background-color: var(--color-slate-blue-soft);
+  border: 1px solid rgba(96, 125, 139, 0.35);
+  color: var(--color-slate-blue);
 }
 
 /* =========================================================================
-   6. THE OPERATIONAL TRIAD: SYNTROPY • PLENUM • CHRONOS STYLES
-   ========================================================================= */
-
-.triad-nav-btn {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--color-dim);
-}
-.triad-nav-btn:hover {
-  color: var(--color-text);
-}
-.triad-nav-btn.active-tab {
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  color: var(--color-text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-:root[data-theme='dark'] .triad-nav-btn.active-tab {
-  background: #1e293b;
-  border-color: #334155;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* 1. SYNTROPY (The Order Creator) */
-.dept-card-syntropy {
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s ease;
-}
-.dept-card-syntropy:hover {
-  border-color: var(--color-brass);
-  box-shadow: 0 10px 25px -8px rgba(15, 118, 110, 0.22);
-  transform: translateY(-2px);
-}
-.badge-syntropy {
-  background: var(--tone-brass);
-  color: var(--color-brass);
-  border: 1px solid var(--color-brass-dim);
-}
-.dept-indicator-syntropy {
-  border-left: 4px solid var(--color-brass);
-}
-
-/* 2. PLENUM (The Space Master) */
-.dept-card-plenum {
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s ease;
-}
-.dept-card-plenum:hover {
-  border-color: var(--color-d1);
-  box-shadow: 0 10px 25px -8px rgba(63, 122, 107, 0.22);
-  transform: translateY(-2px);
-}
-.badge-plenum {
-  background: var(--color-panel-2);
-  color: var(--color-d0);
-  border: 1px solid var(--color-line);
-}
-:root[data-theme='dark'] .badge-plenum {
-  color: #6fb39a;
-}
-.dept-indicator-plenum {
-  border-left: 4px solid var(--color-d1);
-}
-
-/* 3. CHRONOS (The Time Synchronization Hub) */
-.dept-card-chronos {
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s ease;
-}
-.dept-card-chronos:hover {
-  border-color: var(--color-accent);
-  box-shadow: 0 10px 25px -8px rgba(232, 145, 45, 0.22);
-  transform: translateY(-2px);
-}
-.badge-chronos {
-  background: var(--color-panel-2);
-  color: var(--color-accent);
-  border: 1px solid var(--color-accent-dim);
-}
-.dept-indicator-chronos {
-  border-left: 4px solid var(--color-accent);
-}
-
-/* =========================================================================
-   7. TIMELINE SECTION (Alternating Nodes Matching User Sketch)
+   TIMELINE SECTION (Alternating Nodes Matching Sketch)
    ========================================================================= */
 
 .timeline-container {
@@ -460,13 +215,13 @@ html, body {
   min-height: 480px;
 }
 
-/* Central Continuous Rail */
+/* Central Rail */
 .timeline-rail {
   position: absolute;
   top: 50%;
   left: 20px;
   right: 20px;
-  height: 4px;
+  height: 3px;
   background: var(--color-line);
   transform: translateY(-50%);
   border-radius: 9999px;
@@ -483,7 +238,6 @@ html, body {
   z-index: 20;
 }
 
-/* Individual Stage Node */
 .timeline-node-item {
   position: relative;
   display: flex;
@@ -494,34 +248,35 @@ html, body {
   user-select: none;
 }
 
-/* Central Anchor Dot on the Rail */
-.timeline-anchor-dot {
+/* Central Anchor Dot */
+.timeline-anchor-dot, .node-anchor-dot {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--color-panel);
-  border: 3px solid var(--color-line);
+  border: 2px solid var(--color-line);
   z-index: 30;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
-.timeline-node-item:hover .timeline-anchor-dot {
-  border-color: var(--color-brass);
-  transform: translate(-50%, -50%) scale(1.25);
-  box-shadow: 0 0 12px var(--color-brass-dim);
+.timeline-node-item:hover .timeline-anchor-dot,
+.timeline-node-item:hover .node-anchor-dot {
+  border-color: var(--color-sand);
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
-.timeline-node-item.active-stage .timeline-anchor-dot {
-  background: var(--color-brass);
+.timeline-node-item.active-stage .timeline-anchor-dot,
+.timeline-node-item.active .node-anchor-dot {
+  background: var(--color-sand);
   border-color: var(--color-panel);
-  box-shadow: 0 0 0 3px var(--color-brass);
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.3);
 }
 
-/* Vertical Stems Linking Rail to Content Cards */
+/* Vertical Stems */
 .timeline-stem {
   position: absolute;
   left: 50%;
@@ -533,11 +288,12 @@ html, body {
 }
 
 .timeline-node-item:hover .timeline-stem,
-.timeline-node-item.active-stage .timeline-stem {
-  background: var(--color-brass);
+.timeline-node-item.active-stage .timeline-stem,
+.timeline-node-item.active .timeline-stem {
+  background: var(--color-sand);
 }
 
-/* TOP NODES (Even Index) */
+/* TOP NODES */
 .timeline-node-item.node-top {
   margin-bottom: 220px;
 }
@@ -546,7 +302,7 @@ html, body {
   height: 60px;
 }
 
-/* BOTTOM NODES (Odd Index) */
+/* BOTTOM NODES */
 .timeline-node-item.node-bottom {
   margin-top: 220px;
 }
@@ -555,27 +311,28 @@ html, body {
   height: 60px;
 }
 
-/* Stage Content Card */
-.timeline-card {
+/* Stage Card */
+.timeline-card, .node-card {
   width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
   background: var(--color-panel);
   border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.2s ease;
   text-align: center;
 }
 
-.timeline-node-item:hover .timeline-card {
-  border-color: var(--color-brass-dim);
-  transform: translateY(-3px);
+.timeline-node-item:hover .timeline-card,
+.timeline-node-item:hover .node-card {
+  border-color: var(--color-sand-dim);
+  transform: translateY(-2px);
 }
 
-.timeline-node-item.active-stage .timeline-card {
-  border-color: var(--color-brass);
-  background: var(--tone-brass);
-  box-shadow: 0 8px 24px -6px rgba(15, 118, 110, 0.25);
+.timeline-node-item.active-stage .timeline-card,
+.timeline-node-item.active .node-card {
+  border-color: var(--color-sand);
+  background: rgba(212, 163, 115, 0.08);
 }
 
 /* Time Pill */
@@ -592,7 +349,7 @@ html, body {
 }
 
 /* =========================================================================
-   8. MICRO-AREA DIGITAL TWIN & GIS RADAR (§7)
+   MICRO-AREA DIGITAL TWIN & INFRASTRUCTURE RADAR (Minimal Travel Look)
    ========================================================================= */
 
 .digital-twin-canvas {
@@ -603,29 +360,16 @@ html, body {
   border: 1px solid var(--color-line);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Subtle Grid Background */
-.radar-grid-bg {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(to right, var(--color-line-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-line-soft) 1px, transparent 1px);
-  background-size: 40px 40px;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-/* Concentric Distance Rings */
+/* Muted Distance Rings */
 .radar-ring {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px dashed var(--color-line);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
   pointer-events: none;
 }
 
@@ -641,13 +385,13 @@ html, body {
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-dimmer);
   background: var(--color-ink-deep);
   padding: 0 4px;
 }
 
-/* Radar Sweep Beam */
+/* Subtle, Calm Sweep Beam (Warm Sand - NO NEONS) */
 .radar-beam {
   position: absolute;
   top: 50%;
@@ -655,13 +399,10 @@ html, body {
   width: 250px;
   height: 250px;
   transform-origin: top left;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(15, 118, 110, 0.12) 60deg, transparent 75deg);
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(212, 163, 115, 0.08) 50deg, transparent 65deg);
   border-radius: 50%;
-  animation: radarSweep 8s linear infinite;
+  animation: radarSweep 10s linear infinite;
   pointer-events: none;
-}
-:root[data-theme='dark'] .radar-beam {
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(201, 169, 97, 0.15) 60deg, transparent 75deg);
 }
 
 @keyframes radarSweep {
@@ -669,31 +410,30 @@ html, body {
   to { transform: rotate(360deg); }
 }
 
-/* Arterial Highway Corridor */
+/* Arterial Road Corridor */
 .map-arterial-line {
   position: absolute;
-  height: 6px;
-  background: var(--color-brass-dim);
-  opacity: 0.7;
+  height: 4px;
+  background: rgba(212, 163, 115, 0.35);
   border-radius: 9999px;
   pointer-events: none;
 }
 
-/* Railway Corridor */
+/* Railway Line */
 .map-rail-line {
   position: absolute;
   background: repeating-linear-gradient(
     to bottom,
-    var(--color-dim) 0px,
-    var(--color-dim) 6px,
-    transparent 6px,
-    transparent 12px
+    var(--color-slate-blue) 0px,
+    var(--color-slate-blue) 5px,
+    transparent 5px,
+    transparent 10px
   );
-  opacity: 0.65;
+  opacity: 0.55;
   pointer-events: none;
 }
 
-/* Map Pins */
+/* Map Pin Tokens */
 .twin-pin {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -706,7 +446,7 @@ html, body {
 }
 
 .twin-pin:hover {
-  transform: translate(-50%, -50%) scale(1.2);
+  transform: translate(-50%, -50%) scale(1.18);
   z-index: 50;
 }
 
@@ -718,58 +458,54 @@ html, body {
   align-items: center;
   justify-content: center;
   background: var(--color-panel);
-  border: 2px solid var(--color-line);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border: 1.5px solid var(--color-line);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   transition: all 0.2s ease;
 }
 
 /* Pin Categories */
 .pin-stadium .twin-pin-icon-wrap {
-  background: var(--color-brass);
-  color: #ffffff;
-  border-color: var(--color-panel);
-  width: 40px;
-  height: 40px;
-}
-:root[data-theme='dark'] .pin-stadium .twin-pin-icon-wrap {
-  color: #101715;
+  background: var(--color-sand);
+  color: #121316;
+  border-color: #ffffff;
+  width: 38px;
+  height: 38px;
 }
 
 .pin-rail .twin-pin-icon-wrap {
-  border-color: var(--color-d0);
-  color: var(--color-d0);
+  border-color: var(--color-slate-blue);
+  color: var(--color-slate-blue);
 }
 
 .pin-hotel .twin-pin-icon-wrap {
-  border-color: #8b5cf6;
-  color: #8b5cf6;
+  border-color: #a27b5c;
+  color: #a27b5c;
 }
 
 .pin-hospital .twin-pin-icon-wrap {
-  border-color: var(--color-danger);
-  color: var(--color-danger);
+  border-color: var(--color-terracotta);
+  color: var(--color-terracotta);
 }
 
 .pin-parking .twin-pin-icon-wrap {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-color: var(--color-sand);
+  color: var(--color-sand);
 }
 
 .pin-choke .twin-pin-icon-wrap {
-  border-color: var(--color-d4);
-  color: var(--color-d4);
-  animation: pulseDanger 2s infinite;
+  border-color: var(--color-amber-clay);
+  color: var(--color-amber-clay);
 }
 
 .twin-pin.active-pin .twin-pin-icon-wrap {
-  box-shadow: 0 0 0 4px var(--color-brass-dim);
-  border-color: var(--color-brass);
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.35);
+  border-color: var(--color-sand);
 }
 
 .twin-pin-label {
   margin-top: 4px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text);
   background: var(--color-panel);
   padding: 2px 6px;
@@ -777,13 +513,9 @@ html, body {
   white-space: nowrap;
   border: 1px solid var(--color-line);
   pointer-events: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* =========================================================================
-   9. VENUE SEARCH AUTOCOMPLETE DROPDOWN
-   ========================================================================= */
-
+/* Autocomplete Dropdown */
 .venue-search-dropdown {
   position: absolute;
   top: 100%;
@@ -793,7 +525,7 @@ html, body {
   background: var(--color-panel);
   border: 1px solid var(--color-line);
   border-radius: 12px;
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   max-height: 280px;
   overflow-y: auto;
   z-index: 60;
@@ -818,19 +550,23 @@ html, body {
 }
 
 .venue-suggestion-item.active-suggestion {
-  background: var(--tone-brass);
-  border-left: 3px solid var(--color-brass);
+  background: rgba(212, 163, 115, 0.1);
+  border-left: 3px solid var(--color-sand);
 }
 
 /* =========================================================================
-   10. TOKEN ADAPTERS FOR SEAMLESS LIGHT & NIGHT CONTRAST
+   COLOR TOKEN OVERRIDES TO ENSURE CLEAN CONTRAST ACROSS ALL ELEMENTS
    ========================================================================= */
 
-.text-white, .text-slate-100, .text-slate-200 {
+.text-white, .text-slate-100 {
   color: var(--color-text) !important;
 }
 
-.text-slate-300, .text-slate-400 {
+.text-slate-200, .text-slate-300 {
+  color: #d1ccc2 !important;
+}
+
+.text-slate-400 {
   color: var(--color-dim) !important;
 }
 
@@ -838,36 +574,37 @@ html, body {
   color: var(--color-dimmer) !important;
 }
 
-.text-teal-400, .text-teal-300, .text-teal-500 {
-  color: var(--color-brass) !important;
+.text-teal-400, .text-teal-300, .text-teal-500, .text-purple-400, .text-purple-300 {
+  color: var(--color-sand) !important;
+}
+
+.text-cyan-400, .text-cyan-300 {
+  color: var(--color-slate-blue) !important;
 }
 
 .text-amber-400, .text-amber-300 {
-  color: var(--color-accent) !important;
+  color: var(--color-amber-clay) !important;
 }
 
 .text-rose-400, .text-rose-300 {
-  color: var(--color-danger) !important;
+  color: var(--color-terracotta) !important;
 }
 
 .text-emerald-400, .text-emerald-300 {
-  color: var(--color-safe) !important;
+  color: var(--color-sage) !important;
 }
 
-.bg-teal-500 {
-  background-color: var(--color-brass) !important;
-  color: #ffffff !important;
-}
-:root[data-theme='dark'] .bg-teal-500 {
-  color: #101715 !important;
+.bg-teal-500, .bg-purple-500 {
+  background-color: var(--color-sand) !important;
+  color: #121316 !important;
 }
 
-.bg-teal-500\/10, .bg-teal-500\/20 {
-  background-color: var(--tone-brass) !important;
+.bg-teal-500\/10, .bg-teal-500\/20, .bg-purple-500\/10, .bg-purple-500\/20 {
+  background-color: rgba(212, 163, 115, 0.1) !important;
 }
 
-.border-teal-500, .border-teal-500\/30, .border-teal-500\/40 {
-  border-color: var(--color-brass-dim) !important;
+.border-teal-500, .border-teal-500\/30, .border-teal-500\/40, .border-purple-500\/30 {
+  border-color: var(--color-sand-dim) !important;
 }
 
 .border-slate-800, .border-slate-700, .border-slate-700\/80, .border-slate-800\/80 {
@@ -882,19 +619,11 @@ html, body {
   background-color: var(--color-ink) !important;
 }
 
-/* Range Input Styled for Theme */
+/* Range Input Styled for Travel Aesthetic */
 input[type="range"] {
-  accent-color: var(--color-brass);
+  accent-color: var(--color-sand);
 }
 
-/* Headings with Editorial Serif Option */
-h1, h2, h3 {
-  letter-spacing: -0.015em;
+.progress-fill {
+  transition: width 0.3s ease;
 }
-
-.heading-display {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-}
-

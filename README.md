@@ -1,165 +1,131 @@
 # ChronosFlow — Predictive Capacity Analytics & Dynamic Guest Flow Orchestration Framework
 
-> **"The Event Manager describes the event. The system helps design, simulate, and orchestrate the operational plan."**
+> **"The Event Manager describes the event. The system designs, simulates, and orchestrates the operational plan."**
 
-ChronosFlow (codenamed **ORCHESTRA**) is a comprehensive intelligence platform engineered for mega-event hospitality, crowd flow dynamics, and spatial capacity orchestration. Designed for stadiums, expo grounds, cultural festivals, and global summits, the system transforms unstructured natural language narratives into structured operational baselines, micro-area digital twins, and predictive timeline sequences.
+ChronosFlow (codenamed **ORCHESTRA**) is an intelligent pre-planning and hospitality orchestration framework engineered for mega-events, stadium fixtures, cultural festivals, and global summits. The system transforms natural language narratives into structured operational baselines, micro-area digital twin radars, and predictive timeline sequences with automated bottleneck diagnosis and proactive mitigations.
 
 ---
 
-## 🏛️ The Triad Architecture: Syntropy • Plenum • Chronos
+## 🧭 System Architecture & Workflow
 
-ChronosFlow is built upon three foundational operational pillars:
+ChronosFlow operates across an end-to-end operational lifecycle:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        CHRONOSFLOW OPERATIONAL ARCHITECTURE                            │
+│                          CHRONOSFLOW OPERATIONAL PIPELINE                              │
 └───────────────────────────────────┬────────────────────────────────────────────────────┘
                                     │
        ┌────────────────────────────┼────────────────────────────┐
        ▼                            ▼                            ▼
 ┌─────────────────────────┐  ┌─────────────────────────┐  ┌─────────────────────────┐
-│ 1. SYNTROPY             │  │ 2. PLENUM               │  │ 3. CHRONOS              │
-│ The Order Creator       │  │ The Space Master        │  │ The Time Hub            │
+│ 1. PRE-PLANNING         │  │ 2. PRESENT / SIMULATION │  │ 3. POST-EVENT           │
+│ Months / Weeks Out      │  │ Live Day-of-Event Ops   │  │ Retrospective Analysis  │
 ├─────────────────────────┤  ├─────────────────────────┤  ├─────────────────────────┤
-│ • High-science & design │  │ • Industrial & spatial  │  │ • Tactical & precision  │
-│ • "Order out of chaos"  │  │ • 100% capacity balance │  │ • Split-second pacing   │
-│ • Syntropy Crowd Labs   │  │ • The Plenum Node       │  │ • Chronos Flow Dynamics │
-│ • Flow Orchestration    │  │ • Spatial Intelligence  │  │ • Tactical Intelligence │
-│ • Capacity Intelligence │  │ • Capacity Group        │  │ • Event Synchrony       │
+│ • Natural Language Parse│  │ • Live Surge Simulation │  │ • Actual vs Planned     │
+│ • Digital Twin Radar    │  │ • Bottleneck Detection  │  │ • Evacuation Clearance  │
+│ • Alternating Timeline  │  │ • Incident Dispatch     │  │ • Choke Point Forensics │
+│ • Capacity Diagnostics  │  │ • Transit Re-routing    │  │ • Operational Debrief   │
+│ • Proactive Mitigations │  │ • Real-time Telemetry   │  │ • Institutional Memory  │
 └─────────────────────────┘  └─────────────────────────┘  └─────────────────────────┘
 ```
 
-### 1. 🌌 Syntropy — The Order Creator
-* **Vibe**: High-science, elite orchestration, intelligent design.
-* **Why it works**: In physics, *entropy* is the natural slide of a system into disorder (exactly what a 50,000+ crowd does if unmanaged). **Syntropy** is the mathematical opposite—the spontaneous creation of order, harmony, and alignment out of chaos.
-* **Departments**:
-  * `Syntropy Crowd Labs`
-  * `Syntropy Flow Orchestration`
-  * `Project Syntropy: Capacity Intelligence`
-* **Core Responsibilities**: Natural language event ingestion, automated requirement extraction, service vs. available capacity matching, diagnostic bottleneck formulas, and proactive 1-click mitigation measures.
+### 1. Pre-Planning (Phase 0 — Current Release)
+* **Natural Language Event Understanding**: Planners enter event briefs in plain text. The parser extracts attendees, dates, venue coordinates, transit shares, and schedules.
+* **Micro-Area Digital Twin & Infrastructure Radar**: 5 km radial catchment zone mapping rail hubs, hotel inventories, arterial expressways, and medical centers directly below the event timeline.
+* **Alternating Journey Timeline**: Visualizes key operational stages (Transit Arrival, Ingress Security, Ticketing, Seating, Concessions, Egress) with top/bottom alternating nodes and direct radar coupling.
+* **Capacity Diagnostics Engine**: Explicit mathematical formulas detailing required vs. available throughput, queue accumulation rates, and unmitigated risk impacts.
+* **Categorized 1-Click Mitigations**: Actionable interventions across Capacity, Timing, Spatial, Transportation, Accommodation, and Safety.
 
-### 2. 🛡️ Plenum — The Space Master
-* **Vibe**: Industrial, unyielding, structurally absolute, highly architectural.
-* **Why it works**: A *plenum* is a space completely filled with matter, or a pressurized chamber regulating fluid and air flow. For crowd management, this provides total spatial awareness—taking a venue at 100% maximum capacity and regulating crowd pressure and flow across the surrounding area.
-* **Departments**:
-  * `Plenum Capacity Group`
-  * `Plenum Spatial Intelligence`
-  * `The Plenum Node`
-* **Core Responsibilities**: Micro-Area Digital Twin, 5km GIS radar rings (1.0km, 2.0km, 3.5km, 5.0km), interactive node plotting (hotels, rail stations, trauma centers, parking plazas, and highway choke points), and live spatial catchment envelopes.
+### 2. Present / Simulation (Phase 1)
+* **Crowd Dynamics Stress-Testing**: Interactive variance testing (-20% to +50%) and 4-wave ingress/egress curves.
+* **Failure Scenario Emulation**: Gate failures, transit line delays, or sudden weather shocks.
+* **Real-time Dispatch Integration**: Live sensor feeds and turnstile telemetry.
 
-### 3. ⏳ Chronos — The Time Synchronization Hub
-* **Vibe**: Precision-timed, tactical, fast-moving, high-security.
-* **Why it works**: Named after the Greek personification of chronological time, **Chronos** is all about sequence, duration, and real-time intervals. In mega-events, crowd management is a game of time—preventing bottlenecks at 09:00 AM, pacing the exits at midnight, and calculating transit intervals.
-* **Departments**:
-  * `Chronos Flow Dynamics`
-  * `Chronos Tactical Intelligence`
-  * `Chronos Event Synchrony`
-* **Core Responsibilities**: 4-Wave ingress/egress pacing curves, crowd stress-testing variance slider (`-20%` to `+50%`), the 11-touchpoint Visitor Journey Pipeline, and the alternating operational timeline.
+### 3. Post-Event Analysis (Phase 2)
+* **Variance & Clearance Auditing**: Total egress clearance times vs. planned safety baselines.
+* **Bottleneck Forensics**: Identification of service chokes to refine future planning templates.
 
 ---
 
-## ⚡ Core Platform Capabilities
+## ⚡ Core Features
 
-### 1. Natural Language Event Understanding Engine
-* Planners type any event description into the narrative console (or select from presets).
-* The parser extracts:
-  * Event Type & Title
-  * Venue & Micro-Area Coordinates
-  * Multi-Day Durations
-  * Peak Daily Attendee Influx
-  * Primary Transport Modes & Regional Constraints
+### 1. Minimal Travel-Inspired Dark Interface
+* Calibrated warm obsidian (`#121316`), matte panels, and hairlines.
+* Grounded travel palette: warm sand ochre, terracotta, forest sage, and slate blue.
+* Strictly zero harsh neons or eye-fatiguing glows.
+* 100% SVG vector iconography via [Lucide Icons](https://lucide.dev) (zero emojis).
 
-### 2. Micro-Area Digital Twin & GIS Infrastructure Radar
-* **Universal Location Coverage**: Works for cataloged stadiums (DY Patil Nerul, Wankhede Mumbai, Narendra Modi Motera, Eden Gardens Kolkata, Bharat Mandapam Delhi, Wembley London, Madison Sq Garden NYC) **and** procedurally synthesizes an authentic spatial twin for **any custom venue worldwide**.
-* **Radar Layers**: Concentric 1km–5km catchment rings with animated sweep beam, major expressway corridors, and railway feeder lines.
-* **Telemetry Inspector**: Real-time asset diagnostics displaying distance, transit times, passenger throughput, bed deficits, and stage linkages.
-* **Dynamic Pin Plotter**: Instant `+ Add Asset` modal to place custom infrastructure elements.
+### 2. Universal Venue Coverage & Procedural Digital Twin
+* Pre-configured catalog presets:
+  * DY Patil Stadium (Nerul, Navi Mumbai)
+  * Wankhede Stadium (Churchgate, Mumbai)
+  * Narendra Modi Stadium (Motera, Ahmedabad)
+  * Eden Gardens (Kolkata)
+  * Bharat Mandapam (Pragati Maidan, New Delhi)
+  * Wembley Stadium (London, UK)
+  * Madison Square Garden (New York, USA)
+* **Custom Venue Generator**: Dynamically synthesizes an authentic spatial micro-twin for any coordinate or venue name worldwide.
 
 ### 3. Alternating Event Journey Timeline
-* Interactive horizontal central rail with alternating nodes (above and below) to prevent clutter and match operational blueprints.
-* Live risk-level status badges (`Optimal`, `Attention`, `High Risk`).
-* Interactive bidirectional coupling: selecting a stage node automatically highlights the corresponding physical asset on the Digital Twin radar.
+* Positioned directly above the Digital Twin Radar.
+* Alternating top/bottom stage cards with hairline stems and anchor nodes.
+* Bidirectional sync: clicking any stage highlights the corresponding spatial asset on the radar.
 
-### 4. Operational Diagnosis & Educational Intelligence
-* **Root Cause Bottleneck Diagnostics**: Explains *why* a stage is at risk (e.g. counter processing times, turnstile saturation).
-* **Mathematical Capacity Formulas**: Explicit transparency into the calculations (e.g. `Peak Influx ÷ Window Hours = Flow Rate Needed vs Available`).
-* **Unmitigated Impact Projections**: Concrete consequences of inaction (e.g. queue wait times exceeding 38 minutes).
+### 4. Transparent Capacity Formulas & Diagnostics
+* Explicit display of capacity calculations:
+  * *Required Throughput* = `Attendees × Peak Factor ÷ Window`
+  * *Deficit* = `Required - Available`
+  * *Queue Build-up* = `Deficit Rate × Duration`
+* Clear root-cause analysis and unmitigated consequences.
 
-### 5. Syntropy Crowd Labs: 1-Click Proactive Mitigations
-* Grouped drawer categorizing AI recommendations across:
-  * **Capacity**: Mobile accreditation units, modular cloakroom lockers, turnstile reconfigurations.
-  * **Time**: Staggered gate openings, pre-event digital ticketing, early wristband dispatch.
-  * **Spatial**: Concourse satellite F&B pods, dedicated pedestrian green corridors.
-  * **Transportation**: Feeder transit frequency surges, remote park-and-ride shuttles.
-  * **Accommodation**: Satellite hotel cluster charters, express morning transfers.
-  * **Safety & Support**: Infield ALS emergency standby, hydration station deployment.
-* Applying mitigations dynamically recalculates available capacity, resolves deficits, and resets risk status indicators.
-
-### 6. Crowd Stress-Testing Simulation Slider
-* Interactive tolerance slider testing attendance surges from **-20% to +50%**.
-* Simulates how resilient transit corridors, turnstiles, and concession zones remain under unexpected crowd shocks.
+### 5. Baseline Plan Export & Lock
+* Lock the operational baseline to freeze parameters before deployment.
+* 1-Click export to structured JSON containing venue metadata, journey stages, capacity metrics, applied mitigations, and locked status.
 
 ---
 
 ## 🚀 Quick Start Guide
 
-### Option 1: Zero Installation (Instant Web Preview)
-1. Open [`index.html`](index.html) directly in any web browser (Google Chrome, Microsoft Edge, Firefox, Safari).
-2. Everything runs 100% client-side with zero build tools or configuration needed.
+### Option 1: Direct Browser Launch
+Open [`index.html`](index.html) directly in any modern browser. Zero build steps, npm installs, or external servers required.
 
-### Option 2: Run with Python Local Server
-```powershell
+### Option 2: Python Local Server
+```bash
 python server.py
 ```
-* Starts a zero-dependency local web server at `http://localhost:8000` and automatically launches your browser.
+Launches a lightweight local server at `http://localhost:8000` and opens your default browser.
 
-### Option 3: Run with Node.js
-```powershell
+### Option 3: Node.js / NPX
+```bash
 npx serve .
-# or
-npm start
 ```
 
 ---
 
-## 🗄️ Multi-Phase Database Architecture Roadmap
+## 🗄️ Database Architecture (Phase Roadmap)
 
-The platform spans three distinct operational phases:
+ChronosFlow is architected for integration with [Supabase](https://supabase.com) (PostgreSQL + Realtime WebSockets):
 
-```
-┌─────────────────────────┐    ┌─────────────────────────┐    ┌─────────────────────────┐
-│   PHASE 0: PRE-PLANNING  │ ──>│  PHASE 1: LIVE SIM / OPS│ ──>│   PHASE 2: POST-EVENT   │
-│     (Months / Weeks)    │    │       (Day-of-Event)    │    │      (Aftermath)        │
-├─────────────────────────┤    ├─────────────────────────┤    ├─────────────────────────┤
-│ • Venue & Twin Setup    │    │ • Real-time Simulation  │    │ • Actual vs. Planned    │
-│ • Operational Baseline  │    │ • Sudden Surge Influx   │    │ • Bottleneck Analysis   │
-│ • Service Requirements  │    │ • Gate Failures / Chokes│    │ • Evacuation Clearance  │
-│ • Risk Mitigations      │    │ • Dynamic Dispatch      │    │ • Debrief & Lessons     │
-└─────────────────────────┘    └─────────────────────────┘    └─────────────────────────┘
-```
-
-* **Database Engine**: [Supabase](https://supabase.com) (Hosted PostgreSQL + Realtime WebSockets) / SQLite offline fallback.
-* **Schema Highlights**:
-  * `events`: Master event profiles, dates, attendance targets, locked baseline flag.
-  * `spatial_assets`: Geo-coordinates, distance radii, capacity specs, category flags.
-  * `event_stages`: Stage codes, time intervals, service demand matrices, diagnostic insights.
-  * `stage_mitigations`: Categorized preventive interventions and applied statuses.
-  * `simulation_scenarios`: Environmental shock parameters and crowd variance percentages.
-  * `live_telemetry`: Real-time sensor feeds, turnstile throughput, and choke alerts.
-  * `post_event_reports`: Actual vs. planned variance, evacuation clearance logs, SLA metrics.
+* `events`: Master event profiles, venue metadata, locked baseline flags.
+* `spatial_assets`: Geo-coordinates, distance rings, capacity limits, transit modes.
+* `event_stages`: Stage identifiers, time windows, demand vs. available capacity.
+* `stage_mitigations`: Categorized preventive interventions and applied statuses.
+* `simulation_scenarios`: Stress-test variance parameters and wave profiles.
+* `live_telemetry`: Real-time turnstile counts, corridor density, incident alerts.
+* `post_event_reports`: Egress clearance logs, SLA metrics, variance reports.
 
 ---
 
 ## 💻 Tech Stack
 
-* **Frontend**: HTML5, Tailwind CSS (CDN), Custom Neon Tactical Dark Theme (`styles.css`).
-* **Vector Icons**: [Lucide Icons](https://lucide.dev) (zero emojis, 100% SVG vector standard).
-* **Architecture**: Vanilla ES6+ JavaScript (`app.js`), Zero external framework lock-in.
-* **GIS Engine**: Procedural SVG Digital Twin Radar with live concentric distance geometry.
-* **Export Formats**: Standardized Triad JSON specification (`Syntropy`, `Plenum`, `Chronos`).
+* **Frontend**: Vanilla HTML5, Tailwind CSS (utility baseline), Custom Minimal Travel Dark Theme (`styles.css`).
+* **Icons**: [Lucide Icons](https://lucide.dev) (SVG vectors).
+* **Scripting**: Vanilla ES6+ JavaScript (`app.js`), zero framework dependencies.
+* **GIS Radar**: Procedural SVG Digital Twin with concentric distance rings and animated radial sweep.
+* **Export**: Structured Operational Baseline JSON.
 
 ---
 
 ## 👥 Credits
 
-Developed by **Team 8** for Mega-Event Hospitality & Crowd Flow Orchestration.
+Developed by **Team 8** — Mega-Event Hospitality & Crowd Flow Orchestration Framework.

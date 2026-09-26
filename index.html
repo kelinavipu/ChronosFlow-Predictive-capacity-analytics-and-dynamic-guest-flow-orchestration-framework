@@ -3,26 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChronosFlow — Predictive Capacity Analytics & Orchestration</title>
+  <title>ORCHESTRA — Mega-Event Hospitality & Pre-Planning</title>
   
-  <!-- Fonts: Instrument Serif, Inter, JetBrains Mono, Noto Sans Devanagari -->
+  <!-- Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Early Theme Bootstrap (Prevents theme flash as per §5) -->
-  <script>
-    (function() {
-      try {
-        var t = localStorage.getItem('pravaah:theme') || localStorage.getItem('orchestra_theme') || 'light';
-        if (t === 'dark') {
-          document.documentElement.dataset.theme = 'dark';
-        } else {
-          document.documentElement.dataset.theme = 'light';
-        }
-      } catch (e) {}
-    })();
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,14 +18,12 @@
 
   <script>
     tailwind.config = {
-      darkMode: ['selector', '[data-theme="dark"]'],
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
             sans: ['var(--font-sans)'],
-            mono: ['var(--font-mono)'],
-            display: ['var(--font-display)'],
-            deva: ['var(--font-deva)']
+            mono: ['var(--font-mono)']
           },
           colors: {
             ink: 'var(--color-ink)',
@@ -48,83 +32,48 @@
             'panel-2': 'var(--color-panel-2)',
             line: 'var(--color-line)',
             'line-soft': 'var(--color-line-soft)',
-            text: 'var(--color-text)',
-            dim: 'var(--color-dim)',
-            dimmer: 'var(--color-dimmer)',
-            brass: 'var(--color-brass)',
-            'brass-dim': 'var(--color-brass-dim)',
-            'brass-glow': 'var(--color-brass-glow)',
-            accent: 'var(--color-accent)',
-            'accent-dim': 'var(--color-accent-dim)',
-            'accent-glow': 'var(--color-accent-glow)',
-            danger: 'var(--color-danger)',
-            'danger-soft': 'var(--color-danger-soft)',
-            safe: 'var(--color-safe)',
-            d0: 'var(--color-d0)',
-            d1: 'var(--color-d1)',
-            d2: 'var(--color-d2)',
-            d3: 'var(--color-d3)',
-            d4: 'var(--color-d4)',
-            d5: 'var(--color-d5)'
-          },
-          boxShadow: {
-            card: 'var(--shadow-card)'
+            sand: 'var(--color-sand)',
+            terracotta: 'var(--color-terracotta)',
+            sage: 'var(--color-sage)',
+            slate: 'var(--color-slate-blue)'
           }
         }
       }
     }
   </script>
 </head>
-<body class="min-h-screen bg-[var(--color-ink)] text-[var(--color-text)] flex flex-col font-sans">
+<body class="min-h-screen bg-[#121316] text-[#ede8e1] flex flex-col font-sans">
 
-  <!-- TOP APP BAR -->
-  <header class="bg-[var(--color-panel)]/95 backdrop-blur-md border-b border-[var(--color-line)] sticky top-0 z-50 transition-colors">
+  <!-- MINIMAL TOP BAR -->
+  <header class="bg-[#1a1b20]/95 backdrop-blur-md border-b border-[#2a2c35] sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-[var(--tone-brass)] text-[var(--color-brass)] border border-[var(--color-brass-dim)] flex items-center justify-center shadow-xs">
-          <i data-lucide="git-branch" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-[#22242b] text-[#d4a373] border border-[#2a2c35] flex items-center justify-center shadow-xs">
+          <i data-lucide="compass" class="w-5 h-5"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="text-base font-black tracking-tight text-[var(--color-text)] font-sans">ChronosFlow</span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold badge-brass">Phase 0</span>
-            <span class="hidden md:inline-flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[var(--color-panel-2)] border border-[var(--color-line)]">
-              <span class="text-[var(--color-brass)] font-bold flex items-center gap-1"><i data-lucide="sparkles" class="w-2.5 h-2.5"></i> Syntropy</span>
-              <span class="text-[var(--color-dimmer)]">•</span>
-              <span class="text-[var(--color-d1)] font-bold flex items-center gap-1"><i data-lucide="shield" class="w-2.5 h-2.5"></i> Plenum</span>
-              <span class="text-[var(--color-dimmer)]">•</span>
-              <span class="text-[var(--color-accent)] font-bold flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> Chronos</span>
-            </span>
+            <span class="text-base font-bold tracking-tight text-[#ede8e1]">ORCHESTRA</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold badge-sand">Phase 0</span>
           </div>
-          <p class="text-[11px] text-[var(--color-dim)] font-medium">Mega-Event Hospitality & Dynamic Flow Orchestration</p>
+          <p class="text-[11px] text-[#9e9b93] font-medium">Mega-Event Hospitality & Crowd Orchestration</p>
         </div>
       </div>
 
-      <!-- Right Controls: Theme Toggle & Role Pill -->
+      <!-- Right Controls: Status & Role -->
       <div class="flex items-center space-x-3">
-        <!-- Theme Toggle Button (Light Default / Night Control-Room) -->
-        <button 
-          id="theme-toggle-btn"
-          onclick="toggleDarkMode()" 
-          class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] text-[var(--color-text)] hover:border-[var(--color-brass-dim)] transition"
-          title="Toggle Light / Night Theme"
-        >
-          <i data-lucide="moon" class="w-4 h-4 text-[var(--color-dim)]"></i>
-          <span id="theme-btn-label" class="hidden sm:inline text-xs font-semibold">Night Theme</span>
-        </button>
-
-        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-[var(--color-panel-2)] border border-[var(--color-line)] rounded-full text-xs font-semibold text-[var(--color-dim)]">
-          <span class="w-2 h-2 rounded-full bg-[var(--color-safe)] shadow-xs"></span>
-          <span>Pre-Planning Mode</span>
+        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-[#22242b] border border-[#2a2c35] rounded-full text-xs font-semibold text-[#9e9b93]">
+          <span class="w-2 h-2 rounded-full bg-[#709775]"></span>
+          <span>Pre-Planning Console</span>
         </div>
 
-        <div class="flex items-center space-x-2 pl-2 border-l border-[var(--color-line)]">
-          <div class="w-8 h-8 rounded-full bg-[var(--tone-brass)] text-[var(--color-brass)] border border-[var(--color-brass-dim)] flex items-center justify-center font-bold text-xs">
+        <div class="flex items-center space-x-2 pl-2 border-l border-[#2a2c35]">
+          <div class="w-8 h-8 rounded-full bg-[#22242b] text-[#d4a373] border border-[#2a2c35] flex items-center justify-center font-bold text-xs">
             EM
           </div>
           <div class="text-left hidden md:block">
-            <div class="text-xs font-bold text-[var(--color-text)] leading-tight">Event Manager</div>
-            <div class="text-[10px] text-[var(--color-dim)]">Chief Coordinator</div>
+            <div class="text-xs font-bold text-[#ede8e1] leading-tight">Event Manager</div>
+            <div class="text-[10px] text-[#9e9b93]">Chief Dispatcher</div>
           </div>
         </div>
       </div>
@@ -134,165 +83,37 @@
   <!-- MAIN BODY CONTAINER -->
   <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
 
-    <!-- =========================================================================
-         THE OPERATIONAL TRIAD: EXECUTIVE COMMAND DECK & DEPARTMENT NAVIGATOR
-         ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
-        <div>
-          <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-            <i data-lucide="layers" class="w-3.5 h-3.5 text-teal-400"></i>
-            <span>The Mega-Event Operational Triad Architecture</span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight mt-0.5 flex items-center gap-2">
-            <span>Syntropy</span>
-            <span class="text-slate-600 font-light">•</span>
-            <span>Plenum</span>
-            <span class="text-slate-600 font-light">•</span>
-            <span>Chronos</span>
-          </h2>
+    <!-- 1. EVENT DESCRIPTION & UNIVERSAL VENUE FINDER -->
+    <section class="dark-panel p-6 sm:p-8">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full badge-sand text-xs font-semibold mb-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Intelligent Pre-Planning Engine</span>
         </div>
-
-        <!-- Quick Department Filter Tabs -->
-        <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs shrink-0 self-start md:self-auto">
-          <button onclick="setDepartmentFilter('all')" id="tab-dept-all" class="triad-nav-btn active-tab px-3 py-1.5 rounded-lg text-white font-bold transition">
-            Unified Deck
-          </button>
-          <button onclick="setDepartmentFilter('syntropy')" id="tab-dept-syntropy" class="triad-nav-btn px-3 py-1.5 rounded-lg text-purple-300 hover:text-white font-bold transition flex items-center space-x-1">
-            <i data-lucide="sparkles" class="w-3 h-3 text-purple-400"></i>
-            <span>1. Syntropy</span>
-          </button>
-          <button onclick="setDepartmentFilter('plenum')" id="tab-dept-plenum" class="triad-nav-btn px-3 py-1.5 rounded-lg text-cyan-300 hover:text-white font-bold transition flex items-center space-x-1">
-            <i data-lucide="shield" class="w-3 h-3 text-cyan-400"></i>
-            <span>2. Plenum</span>
-          </button>
-          <button onclick="setDepartmentFilter('chronos')" id="tab-dept-chronos" class="triad-nav-btn px-3 py-1.5 rounded-lg text-amber-300 hover:text-white font-bold transition flex items-center space-x-1">
-            <i data-lucide="clock" class="w-3 h-3 text-amber-400"></i>
-            <span>3. Chronos</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 3 Expanded Department Strategy Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- 1. Syntropy Card -->
-        <div onclick="scrollToDepartment('dept-syntropy')" class="dept-card-syntropy p-5 rounded-2xl cursor-pointer group flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-[10px] uppercase font-mono font-extrabold px-2.5 py-1 rounded-md badge-syntropy flex items-center gap-1.5">
-                <i data-lucide="sparkles" class="w-3 h-3 text-purple-400"></i>
-                1. SYNTROPY
-              </span>
-              <span class="text-xs font-bold text-slate-400 group-hover:text-purple-300 transition flex items-center gap-1">
-                Command <i data-lucide="arrow-down" class="w-3 h-3"></i>
-              </span>
-            </div>
-            <h3 class="text-base font-extrabold text-white group-hover:text-purple-200 transition">
-              The Order Creator
-            </h3>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              The mathematical opposite of chaos. Structures massive crowd expectations into perfect harmony through intelligent NLP design and capacity matching.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-purple-500/20 text-[11px] text-purple-300/80 font-mono space-y-0.5">
-            <div>• Syntropy Crowd Labs</div>
-            <div>• Syntropy Flow Orchestration</div>
-            <div>• Project Syntropy: Capacity Intelligence</div>
-          </div>
-        </div>
-
-        <!-- 2. Plenum Card -->
-        <div onclick="scrollToDepartment('dept-plenum')" class="dept-card-plenum p-5 rounded-2xl cursor-pointer group flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-[10px] uppercase font-mono font-extrabold px-2.5 py-1 rounded-md badge-plenum flex items-center gap-1.5">
-                <i data-lucide="shield" class="w-3 h-3 text-cyan-400"></i>
-                2. PLENUM
-              </span>
-              <span class="text-xs font-bold text-slate-400 group-hover:text-cyan-300 transition flex items-center gap-1">
-                Command <i data-lucide="arrow-down" class="w-3 h-3"></i>
-              </span>
-            </div>
-            <h3 class="text-base font-extrabold text-white group-hover:text-cyan-200 transition">
-              The Space Master
-            </h3>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Total spatial awareness. Takes venues at 100% capacity and regulates physical crowd pressure and flow across the micro-area digital twin.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-cyan-500/20 text-[11px] text-cyan-300/80 font-mono space-y-0.5">
-            <div>• Plenum Capacity Group</div>
-            <div>• Plenum Spatial Intelligence</div>
-            <div>• The Plenum Node (GIS Radar)</div>
-          </div>
-        </div>
-
-        <!-- 3. Chronos Card -->
-        <div onclick="scrollToDepartment('dept-chronos')" class="dept-card-chronos p-5 rounded-2xl cursor-pointer group flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-[10px] uppercase font-mono font-extrabold px-2.5 py-1 rounded-md badge-chronos flex items-center gap-1.5">
-                <i data-lucide="clock" class="w-3 h-3 text-amber-400"></i>
-                3. CHRONOS
-              </span>
-              <span class="text-xs font-bold text-slate-400 group-hover:text-amber-300 transition flex items-center gap-1">
-                Command <i data-lucide="arrow-down" class="w-3 h-3"></i>
-              </span>
-            </div>
-            <h3 class="text-base font-extrabold text-white group-hover:text-amber-200 transition">
-              The Time Synchronization Hub
-            </h3>
-            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Precision-timed tactical intelligence. Orchestrates sequential stages, ingress/egress wave curves, and split-second schedule pacing.
-            </p>
-          </div>
-          <div class="mt-4 pt-3 border-t border-amber-500/20 text-[11px] text-amber-300/80 font-mono space-y-0.5">
-            <div>• Chronos Flow Dynamics</div>
-            <div>• Chronos Tactical Intelligence</div>
-            <div>• Chronos Event Synchrony</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         1. SYNTROPY (THE ORDER CREATOR) — Flow Orchestration & Ingestion
-         ========================================================================= -->
-    <section id="dept-syntropy" class="dept-section dark-panel rounded-2xl p-6 sm:p-8 dept-indicator-syntropy">
-      <div class="max-w-4xl">
-        <div class="flex flex-wrap items-center gap-2 mb-2">
-          <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full badge-syntropy text-xs font-bold">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400"></i>
-            <span>Department 1: Syntropy</span>
-          </span>
-          <span class="text-[11px] font-mono text-purple-300 px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">
-            Syntropy Flow Orchestration & Capacity Intelligence
-          </span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          The Order Creator: Transform Chaos into Alignment
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#ede8e1] tracking-tight">
+          Let’s understand your event
         </h1>
-        <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-          In physics, entropy is the natural slide of a system into disorder. <strong>Syntropy</strong> is the mathematical opposite—creating perfect order, harmony, and alignment out of chaotic attendance narratives.
+        <p class="text-sm text-[#9e9b93] mt-1.5 leading-relaxed">
+          Describe the event naturally. The system converts your narrative into a structured operational plan, identifies the visitor journey, estimates service capacities, and proactively surfaces bottlenecks.
         </p>
       </div>
 
       <!-- Universal Venue & Spatial Finder -->
-      <div class="mt-6 p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 space-y-3">
+      <div class="mt-5 p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2.5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="flex items-center space-x-2 text-xs font-bold text-slate-300 shrink-0">
-            <i data-lucide="map-pin" class="w-4 h-4 text-purple-400"></i>
+          <div class="flex items-center space-x-2 text-xs font-bold text-[#ede8e1] shrink-0">
+            <i data-lucide="map-pin" class="w-4 h-4 text-[#d4a373]"></i>
             <span>Universal Venue & Spatial Finder:</span>
           </div>
 
           <!-- Dynamic Venue Autocomplete Input -->
           <div class="relative flex-1 max-w-lg">
-            <div class="flex items-center px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 focus-within:border-purple-400 focus-within:ring-1 focus-within:ring-purple-400 transition">
-              <i data-lucide="search" class="w-3.5 h-3.5 text-purple-400 shrink-0 mr-2"></i>
+            <div class="flex items-center px-3 py-1.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35] focus-within:border-[#d4a373] transition">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-[#d4a373] shrink-0 mr-2"></i>
               <input 
                 id="venue-search-input" 
                 type="text" 
-                class="w-full bg-transparent text-xs text-white placeholder-slate-500 outline-none" 
+                class="w-full bg-transparent text-xs text-[#ede8e1] placeholder-[#6b6862] outline-none" 
                 placeholder="Type ANY venue or area (e.g. DY Patil, Wankhede, Eden Gardens, Wembley, Madison Sq Garden...)"
                 oninput="handleVenueSearch(this.value)"
                 onfocus="handleVenueSearch(this.value)"
@@ -304,75 +125,75 @@
         </div>
 
         <!-- Venue Category Quick Chips -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-1 border-t border-slate-800/80">
-          <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Select:</span>
-          <button onclick="selectVenue('dypatil_nerul')" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30 font-bold transition flex items-center space-x-1">
-            <i data-lucide="trophy" class="w-3 h-3 text-purple-400"></i>
+        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-1 border-t border-[#2a2c35]">
+          <span class="text-[11px] text-[#9e9b93] font-semibold mr-1">Quick Select:</span>
+          <button onclick="selectVenue('dypatil_nerul')" class="px-2.5 py-1 rounded-lg badge-sand font-bold transition flex items-center space-x-1">
+            <i data-lucide="trophy" class="w-3 h-3 text-[#d4a373]"></i>
             <span>DY Patil (Nerul)</span>
           </button>
-          <button onclick="selectVenue('wankhede_mumbai')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="landmark" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('wankhede_mumbai')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="landmark" class="w-3 h-3"></i>
             <span>Wankhede (Mumbai)</span>
           </button>
-          <button onclick="selectVenue('narendra_modi')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="activity" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('narendra_modi')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="activity" class="w-3 h-3"></i>
             <span>Narendra Modi (Ahmedabad)</span>
           </button>
-          <button onclick="selectVenue('eden_gardens')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="shield" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('eden_gardens')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="shield" class="w-3 h-3"></i>
             <span>Eden Gardens (Kolkata)</span>
           </button>
-          <button onclick="selectVenue('bharat_mandapam')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="building" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('bharat_mandapam')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="building" class="w-3 h-3"></i>
             <span>Bharat Mandapam (Delhi)</span>
           </button>
-          <button onclick="selectVenue('wembley_london')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="globe" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('wembley_london')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="globe" class="w-3 h-3"></i>
             <span>Wembley (London)</span>
           </button>
-          <button onclick="selectVenue('madison_sq_garden')" class="px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition flex items-center space-x-1">
-            <i data-lucide="sparkles" class="w-3 h-3 text-slate-400"></i>
+          <button onclick="selectVenue('madison_sq_garden')" class="px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition flex items-center space-x-1">
+            <i data-lucide="sparkles" class="w-3 h-3"></i>
             <span>Madison Sq Garden (NYC)</span>
           </button>
         </div>
       </div>
 
       <!-- Natural Language Event Intake -->
-      <div class="mt-5">
-        <label for="nl-prompt-input" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-          <i data-lucide="message-square" class="w-3.5 h-3.5 text-purple-400"></i>
-          Syntropy Event Narrative Ingestion
+      <div class="mt-4">
+        <label for="nl-prompt-input" class="block text-xs font-bold uppercase tracking-wider text-[#9e9b93] mb-2 flex items-center gap-1.5">
+          <i data-lucide="message-square" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+          Tell us about your event
         </label>
         <div class="relative">
           <textarea 
             id="nl-prompt-input" 
             rows="4" 
-            class="w-full rounded-xl bg-slate-900/90 border border-slate-700/80 p-4 text-sm text-slate-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition placeholder-slate-500"
-            placeholder="Describe your event naturally (duration, expected visitors, location, transit modes, venue characteristics)..."
+            class="w-full rounded-xl bg-[#22242b] border border-[#2a2c35] p-4 text-sm text-[#ede8e1] focus:border-[#d4a373] outline-none transition placeholder-[#6b6862]"
+            placeholder="Describe your event (e.g. duration, expected attendees, location, transit modes, venue characteristics, main performances)..."
           >We are conducting a 4-day cricket championship at Dr. D.Y. Patil Stadium in Nerul from 1st September to 4th September with 50,000 spectators attending each day. Out-of-city spectators will arrive via Harbour Line trains and Sion-Panvel Highway, requiring local accommodation, shuttle connectivity, and staged egress management.</textarea>
           
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-3">
-            <!-- Preset Quick-Select Chips (VECTOR ICONS - NO EMOJIS) -->
+            <!-- Preset Quick-Select Chips -->
             <div class="flex flex-wrap items-center gap-2 text-xs">
-              <span class="text-slate-400 font-medium">Quick presets:</span>
+              <span class="text-[#9e9b93] font-medium">Quick presets:</span>
               
-              <button onclick="loadVenuePreset('dypatil_nerul')" class="px-2.5 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 hover:border-purple-500 text-purple-300 font-bold transition flex items-center space-x-1.5">
-                <i data-lucide="trophy" class="w-3.5 h-3.5 text-purple-400"></i>
+              <button onclick="loadVenuePreset('dypatil_nerul')" class="px-2.5 py-1.5 rounded-lg badge-sand font-bold transition flex items-center space-x-1.5">
+                <i data-lucide="trophy" class="w-3.5 h-3.5 text-[#d4a373]"></i>
                 <span>DY Patil Match (Nerul 50k)</span>
               </button>
 
-              <button onclick="loadPreset('mumbai_cultural')" class="px-2.5 py-1.5 rounded-lg dark-subpanel hover:border-purple-500/50 text-slate-200 font-semibold transition flex items-center space-x-1.5">
-                <i data-lucide="landmark" class="w-3.5 h-3.5 text-purple-400"></i>
+              <button onclick="loadPreset('mumbai_cultural')" class="px-2.5 py-1.5 rounded-lg dark-subpanel text-[#ede8e1] font-semibold transition flex items-center space-x-1.5">
+                <i data-lucide="landmark" class="w-3.5 h-3.5 text-[#d4a373]"></i>
                 <span>Mumbai Cultural (50k)</span>
               </button>
 
-              <button onclick="loadPreset('bengaluru_music')" class="px-2.5 py-1.5 rounded-lg dark-subpanel hover:border-purple-500/50 text-slate-200 font-semibold transition flex items-center space-x-1.5">
-                <i data-lucide="music-2" class="w-3.5 h-3.5 text-cyan-400"></i>
+              <button onclick="loadPreset('bengaluru_music')" class="px-2.5 py-1.5 rounded-lg dark-subpanel text-[#ede8e1] font-semibold transition flex items-center space-x-1.5">
+                <i data-lucide="music-2" class="w-3.5 h-3.5 text-[#607d8b]"></i>
                 <span>Bengaluru Music (30k)</span>
               </button>
 
-              <button onclick="loadPreset('delhi_tech')" class="px-2.5 py-1.5 rounded-lg dark-subpanel hover:border-purple-500/50 text-slate-200 font-semibold transition flex items-center space-x-1.5">
-                <i data-lucide="cpu" class="w-3.5 h-3.5 text-purple-400"></i>
+              <button onclick="loadPreset('delhi_tech')" class="px-2.5 py-1.5 rounded-lg dark-subpanel text-[#ede8e1] font-semibold transition flex items-center space-x-1.5">
+                <i data-lucide="cpu" class="w-3.5 h-3.5 text-[#d4a373]"></i>
                 <span>Delhi Tech Expo (20k)</span>
               </button>
             </div>
@@ -381,20 +202,20 @@
             <button 
               id="generate-plan-btn"
               onclick="handlePlanGeneration()"
-              class="px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-black text-sm shadow-md transition flex items-center space-x-2 shrink-0 ml-auto"
+              class="px-5 py-2.5 rounded-xl btn-sand font-bold text-sm shadow-md transition flex items-center space-x-2 shrink-0 ml-auto"
             >
               <i data-lucide="play" class="w-4 h-4"></i>
-              <span>Synthesize Operational Plan</span>
+              <span>Generate Plan</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- EVENT SNAPSHOT CARDS -->
-      <div class="mt-8 pt-6 border-t border-slate-800">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-          <i data-lucide="file-text" class="w-3.5 h-3.5 text-purple-400"></i>
-          Project Syntropy: Extracted Event Snapshot
+      <div class="mt-8 pt-6 border-t border-[#2a2c35]">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#9e9b93] mb-3 flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+          Extracted Event Snapshot
         </h3>
         <div id="event-snapshot-container">
           <!-- Rendered dynamically by app.js -->
@@ -402,68 +223,127 @@
       </div>
     </section>
 
-    <!-- =========================================================================
-         2. PLENUM (THE SPACE MASTER) — Micro-Area Digital Twin & Pressure Radar
-         ========================================================================= -->
-    <section id="dept-plenum" class="dept-section dark-panel rounded-2xl p-6 sm:p-8 dept-indicator-plenum">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-5 border-b border-slate-800 gap-4">
+    <!-- 2. OPERATIONAL DYNAMICS & CROWD STRESS TEST -->
+    <section id="operational-dynamics-section">
+      <div id="operational-dynamics-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- 3. VISITOR JOURNEY FLOW -->
+    <section class="dark-panel p-6">
+      <div class="flex items-center justify-between mb-4">
         <div>
-          <div class="flex flex-wrap items-center gap-2 mb-1.5">
-            <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full badge-plenum text-xs font-bold">
-              <i data-lucide="shield" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span>Department 2: Plenum</span>
-            </span>
-            <span class="text-[11px] font-mono text-cyan-300 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
-              The Plenum Node • Plenum Spatial Intelligence
-            </span>
-          </div>
-          <h2 id="digital-twin-title" class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <i data-lucide="radar" class="w-6 h-6 text-cyan-400"></i>
-            <span>The Space Master: Total Spatial Awareness & Flow Pressure</span>
+          <h2 class="text-base font-bold text-[#ede8e1] flex items-center gap-2">
+            <i data-lucide="route" class="w-4 h-4 text-[#d4a373]"></i>
+            Expected Visitor Journey
           </h2>
-          <p id="digital-twin-subtitle" class="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">
-            A <strong>plenum</strong> is a chamber completely filled with matter where pressure and flow are balanced. Plenum takes venues at 100% capacity and regulates crowd pressure across the micro-area digital twin.
+          <p class="text-xs text-[#9e9b93] mt-0.5">End-to-end lifecycle touchpoints traversed by attendees from origin to safe departure.</p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-md dark-subpanel text-[#9e9b93]">
+          Sequential Pipeline
+        </span>
+      </div>
+
+      <div id="visitor-journey-pipeline" class="flex flex-wrap items-center gap-2 py-2 overflow-x-auto">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- 4. EVENT JOURNEY TIMELINE (Matches User Sketch with Stems & Anchors) -->
+    <section id="timeline-section" class="dark-panel p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#2a2c35] gap-3">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-[#d4a373]">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span>Sequential Sub-Events & Stages</span>
+          </div>
+          <h2 class="text-lg font-bold text-[#ede8e1] mt-0.5">Event Journey Timeline</h2>
+          <p class="text-xs text-[#9e9b93]">
+            Click any planning node above or below the central rail to inspect stage details, capacity gaps, and proactive recommendations.
+          </p>
+        </div>
+
+        <!-- Add Stage Action -->
+        <button 
+          onclick="openAddStageModal()"
+          class="px-3.5 py-2 rounded-xl badge-sand text-xs font-bold transition flex items-center space-x-1.5 self-start sm:self-auto"
+        >
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Add Custom Stage</span>
+        </button>
+      </div>
+
+      <!-- Alternating Timeline Canvas -->
+      <div class="timeline-container mt-2">
+        <div class="timeline-rail"></div>
+        <div id="timeline-nodes-container" class="timeline-nodes-wrapper">
+          <!-- Alternating nodes rendered dynamically by app.js -->
+        </div>
+      </div>
+      <div class="text-center mt-2">
+        <span class="text-[11px] font-medium text-[#9e9b93] flex items-center justify-center gap-1.5">
+          <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+          Select any stage node to inspect operational service capacity and risk analysis below
+        </span>
+      </div>
+    </section>
+
+    <!-- 5. MICRO-AREA DIGITAL TWIN & INFRASTRUCTURE RADAR (Positioned Below Timeline) -->
+    <section id="digital-twin-section" class="dark-panel p-6 sm:p-8">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-5 border-b border-[#2a2c35] gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#d4a373] mb-1">
+            <span class="w-2 h-2 rounded-full bg-[#d4a373]"></span>
+            <span>Micro-Area Digital Twin & Infrastructure Radar</span>
+          </div>
+          <h2 id="digital-twin-title" class="text-xl sm:text-2xl font-black text-[#ede8e1] flex items-center gap-2">
+            <i data-lucide="radar" class="w-6 h-6 text-[#d4a373]"></i>
+            <span>Nerul Micro-Area Spatial Twin (DY Patil Stadium)</span>
+          </h2>
+          <p id="digital-twin-subtitle" class="text-xs text-[#9e9b93] mt-0.5">
+            Geospatial assets mapped within 5km radius: hotels, railway hubs, trauma centers, and highway corridors feeding stage capacity.
           </p>
         </div>
 
         <!-- Filter Layers & Actions -->
         <div class="flex flex-wrap items-center gap-2 text-xs">
           <!-- Venue Quick Switcher -->
-          <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700">
-            <span class="text-[10px] text-slate-400 font-bold uppercase">Area:</span>
-            <select id="twin-venue-selector" onchange="selectVenue(this.value)" class="bg-transparent text-xs text-cyan-300 font-bold outline-none cursor-pointer">
-              <option value="dypatil_nerul" class="bg-slate-900 text-white">Nerul (DY Patil Stadium)</option>
-              <option value="wankhede_mumbai" class="bg-slate-900 text-white">Churchgate (Wankhede Stadium)</option>
-              <option value="narendra_modi" class="bg-slate-900 text-white">Motera (Narendra Modi Stadium)</option>
-              <option value="eden_gardens" class="bg-slate-900 text-white">Maidan (Eden Gardens Kolkata)</option>
-              <option value="bharat_mandapam" class="bg-slate-900 text-white">Pragati Maidan (Bharat Mandapam)</option>
-              <option value="wembley_london" class="bg-slate-900 text-white">Wembley Park (Wembley London)</option>
-              <option value="madison_sq_garden" class="bg-slate-900 text-white">Manhattan (Madison Sq Garden)</option>
+          <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-[#22242b] border border-[#2a2c35]">
+            <span class="text-[10px] text-[#9e9b93] font-bold uppercase">Area:</span>
+            <select id="twin-venue-selector" onchange="selectVenue(this.value)" class="bg-transparent text-xs text-[#d4a373] font-bold outline-none cursor-pointer">
+              <option value="dypatil_nerul" class="bg-[#1a1b20] text-[#ede8e1]">Nerul (DY Patil Stadium)</option>
+              <option value="wankhede_mumbai" class="bg-[#1a1b20] text-[#ede8e1]">Churchgate (Wankhede Stadium)</option>
+              <option value="narendra_modi" class="bg-[#1a1b20] text-[#ede8e1]">Motera (Narendra Modi Stadium)</option>
+              <option value="eden_gardens" class="bg-[#1a1b20] text-[#ede8e1]">Maidan (Eden Gardens Kolkata)</option>
+              <option value="bharat_mandapam" class="bg-[#1a1b20] text-[#ede8e1]">Pragati Maidan (Bharat Mandapam)</option>
+              <option value="wembley_london" class="bg-[#1a1b20] text-[#ede8e1]">Wembley Park (Wembley London)</option>
+              <option value="madison_sq_garden" class="bg-[#1a1b20] text-[#ede8e1]">Manhattan (Madison Sq Garden)</option>
             </select>
           </div>
 
-          <div class="flex items-center space-x-1 border-l border-slate-700 pl-2">
-            <button onclick="filterDigitalTwin('all')" class="twin-filter-btn active-filter px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold transition" data-filter="all">
+          <div class="flex items-center space-x-1 border-l border-[#2a2c35] pl-2">
+            <button onclick="filterDigitalTwin('all')" class="twin-filter-btn active-filter px-2.5 py-1 rounded-lg btn-sand font-bold transition" data-filter="all">
               All
             </button>
-            <button onclick="filterDigitalTwin('rail')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition" data-filter="rail">
+            <button onclick="filterDigitalTwin('rail')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition" data-filter="rail">
               Rail
             </button>
-            <button onclick="filterDigitalTwin('hotel')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition" data-filter="hotel">
+            <button onclick="filterDigitalTwin('hotel')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition" data-filter="hotel">
               Hotels
             </button>
-            <button onclick="filterDigitalTwin('hospital')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition" data-filter="hospital">
+            <button onclick="filterDigitalTwin('hospital')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition" data-filter="hospital">
               Hospitals
             </button>
-            <button onclick="filterDigitalTwin('parking')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition" data-filter="parking">
+            <button onclick="filterDigitalTwin('parking')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition" data-filter="parking">
               Parking
             </button>
-            <button onclick="filterDigitalTwin('choke')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-slate-300 hover:text-white transition" data-filter="choke">
+            <button onclick="filterDigitalTwin('choke')" class="twin-filter-btn px-2.5 py-1 rounded-lg dark-subpanel text-[#9e9b93] hover:text-[#ede8e1] transition" data-filter="choke">
               Choke Points
             </button>
           </div>
 
-          <button onclick="openAddAssetModal()" class="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 font-bold transition flex items-center space-x-1 shrink-0 ml-auto">
+          <button onclick="openAddAssetModal()" class="px-2.5 py-1 rounded-lg badge-sand font-bold transition flex items-center space-x-1 shrink-0 ml-auto">
             <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
             <span>Add Asset</span>
           </button>
@@ -472,7 +352,7 @@
 
       <!-- Main Radar Map & Telemetry Inspector Split -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-        <!-- Left: Interactive Radar Canvas (8 Cols) -->
+        <!-- Left: Interactive Canvas (8 Cols) -->
         <div class="lg:col-span-8">
           <div class="digital-twin-canvas" id="digital-twin-canvas-container">
             <!-- Dynamic Grid & Rings -->
@@ -483,7 +363,7 @@
             <div class="radar-ring radar-ring-4"><span class="radar-ring-label">5.0 km</span></div>
             <div class="radar-beam"></div>
 
-            <!-- Major Arterial Corridors (Corridor lines) -->
+            <!-- Major Arterial Corridors (Sion-Panvel Highway & Harbour Rail Line) -->
             <div class="map-arterial-line" style="top: 36%; left: 8%; width: 84%; transform: rotate(18deg);" title="Primary Feeder Arterial Expressway"></div>
             <div class="map-rail-line" style="top: 10%; left: 28%; height: 80%; width: 3px; transform: rotate(4deg);" title="Regional Transit & Rapid Metro Corridor"></div>
 
@@ -491,63 +371,63 @@
             <div id="digital-twin-pins-layer"></div>
           </div>
 
-          <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
+          <div class="flex items-center justify-between text-[11px] text-[#9e9b93] mt-2 px-1">
             <span class="flex items-center gap-1.5">
-              <i data-lucide="info" class="w-3.5 h-3.5 text-cyan-400"></i>
-              Click any spatial asset to inspect pressure rating, capacity buffer, and operational linkage
+              <i data-lucide="info" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+              Click any infrastructure node to inspect capacity, transit time, and linked operational stage
             </span>
-            <span class="font-mono text-cyan-400">The Plenum Node • GIS Telemetry Engine</span>
+            <span class="font-mono text-[#d4a373]">GPS: 19.0330° N, 73.0297° E (Nerul)</span>
           </div>
         </div>
 
         <!-- Right: Telemetry Inspector & Area Metrics (4 Cols) -->
         <div class="lg:col-span-4 space-y-4 flex flex-col justify-between">
           <!-- Selected Node Telemetry Card -->
-          <div id="twin-node-telemetry" class="dark-subpanel rounded-xl p-4 border border-slate-700/80">
+          <div id="twin-node-telemetry" class="dark-subpanel rounded-xl p-4 border border-[#2a2c35]">
             <!-- Rendered dynamically by app.js -->
           </div>
 
           <!-- Micro-Area Operational Envelopes -->
-          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
-            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-3">
+            <div class="text-xs font-bold uppercase tracking-wider text-[#9e9b93] flex items-center justify-between">
               <span class="flex items-center gap-1.5">
-                <i data-lucide="database" class="w-3.5 h-3.5 text-cyan-400"></i>
-                Plenum Capacity Group Envelopes
+                <i data-lucide="database" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+                Spatial Capacity Envelopes
               </span>
-              <span class="text-cyan-400 font-mono text-[10px]">Active Buffer</span>
+              <span class="text-[#d4a373] font-mono text-[10px]">Active Baseline</span>
             </div>
 
             <div class="space-y-2 text-xs">
-              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-                <span class="text-slate-300 flex items-center gap-1.5">
-                  <i data-lucide="hotel" class="w-3.5 h-3.5 text-purple-400"></i>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                <span class="text-[#ede8e1] flex items-center gap-1.5">
+                  <i data-lucide="hotel" class="w-3.5 h-3.5 text-[#a27b5c]"></i>
                   Nearby Beds (4km)
                 </span>
-                <span class="font-mono font-bold text-amber-400">1,850 Rooms <span class="text-[10px] text-rose-400 font-normal">(-10.6k gap)</span></span>
+                <span class="font-mono font-bold text-[#c96a54]">1,850 Rooms <span class="text-[10px] text-[#c96a54] font-normal">(-10.6k gap)</span></span>
               </div>
 
-              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-                <span class="text-slate-300 flex items-center gap-1.5">
-                  <i data-lucide="train" class="w-3.5 h-3.5 text-cyan-400"></i>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                <span class="text-[#ede8e1] flex items-center gap-1.5">
+                  <i data-lucide="train" class="w-3.5 h-3.5 text-[#607d8b]"></i>
                   Rail Clearance
                 </span>
-                <span class="font-mono font-bold text-emerald-400">46,000 pax/hr</span>
+                <span class="font-mono font-bold text-[#709775]">46,000 pax/hr</span>
               </div>
 
-              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-                <span class="text-slate-300 flex items-center gap-1.5">
-                  <i data-lucide="car" class="w-3.5 h-3.5 text-amber-400"></i>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                <span class="text-[#ede8e1] flex items-center gap-1.5">
+                  <i data-lucide="car" class="w-3.5 h-3.5 text-[#d4a373]"></i>
                   Parking Capacity
                 </span>
-                <span class="font-mono font-bold text-amber-400">4,800 slots <span class="text-[10px] text-amber-300 font-normal">(park & ride)</span></span>
+                <span class="font-mono font-bold text-[#cc7744]">4,800 slots <span class="text-[10px] text-[#9e9b93] font-normal">(park & ride)</span></span>
               </div>
 
-              <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-                <span class="text-slate-300 flex items-center gap-1.5">
-                  <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-rose-400"></i>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
+                <span class="text-[#ede8e1] flex items-center gap-1.5">
+                  <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-[#c96a54]"></i>
                   Trauma Proximity
                 </span>
-                <span class="font-mono font-bold text-emerald-400">&lt; 3 min green corridor</span>
+                <span class="font-mono font-bold text-[#709775]">&lt; 3 min green corridor</span>
               </div>
             </div>
           </div>
@@ -555,166 +435,64 @@
       </div>
     </section>
 
-    <!-- =========================================================================
-         3. CHRONOS (THE TIME SYNCHRONIZATION HUB) — Dynamics & Timeline
-         ========================================================================= -->
-    <section id="dept-chronos" class="dept-section space-y-6">
-      
-      <!-- Chronos Department Banner & Stress-Testing Wave Dynamics -->
-      <div id="operational-dynamics-section" class="dept-indicator-chronos rounded-2xl overflow-hidden">
-        <div class="px-6 pt-6 pb-2 dark-panel border-b border-slate-800">
-          <div class="flex flex-wrap items-center gap-2 mb-1.5">
-            <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full badge-chronos text-xs font-bold">
-              <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
-              <span>Department 3: Chronos</span>
-            </span>
-            <span class="text-[11px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
-              Chronos Flow Dynamics • Chronos Tactical Intelligence
-            </span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-white">
-            The Time Synchronization Hub: Precision Waves & Stage Timing
-          </h2>
-          <p class="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">
-            Named after chronological time. <strong>Chronos</strong> manages duration, real-time intervals, and wave pacing—preventing bottlenecks at 09:00 AM, pacing midnight exits, and stress-testing crowd tolerance.
-          </p>
-        </div>
-
-        <!-- Ingress/Egress 4-Wave Curves and Crowd Stress Slider -->
-        <div id="operational-dynamics-container">
-          <!-- Rendered dynamically by app.js -->
-        </div>
-      </div>
-
-      <!-- Chronos Visitor Journey Pipeline -->
-      <div class="dark-panel rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <i data-lucide="route" class="w-4 h-4 text-amber-400"></i>
-              Chronos Tactical Pipeline: Expected Visitor Journey
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">End-to-end chronological milestones traversed by attendees from origin to safe departure.</p>
-          </div>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-md badge-chronos">
-            Sequential Pipeline
-          </span>
-        </div>
-
-        <div id="visitor-journey-pipeline" class="flex flex-wrap items-center gap-2 py-2 overflow-x-auto">
-          <!-- Rendered dynamically by app.js -->
-        </div>
-      </div>
-
-      <!-- Chronos Event Synchrony: The Alternating Timeline -->
-      <div id="timeline-section" class="dark-panel rounded-2xl p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-3">
-          <div>
-            <div class="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-amber-400">
-              <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
-              <span>Chronos Event Synchrony • Sequential Sub-Events & Stages</span>
-            </div>
-            <h3 class="text-lg font-bold text-white mt-0.5">Interactive Event Journey Timeline</h3>
-            <p class="text-xs text-slate-400">
-              Click any stage node above or below the central rail to inspect capacity gaps, diagnostic formulas, and proactive mitigations below.
-            </p>
-          </div>
-
-          <!-- Add Stage Action -->
-          <button 
-            onclick="openAddStageModal()"
-            class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold transition flex items-center space-x-1.5 self-start sm:self-auto"
-          >
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Add Custom Stage</span>
-          </button>
-        </div>
-
-        <!-- Alternating Timeline Canvas (As drawn in sketch) -->
-        <div class="timeline-container mt-2">
-          <div class="timeline-rail"></div>
-          <div id="timeline-nodes-container" class="timeline-nodes-wrapper">
-            <!-- Alternating nodes rendered dynamically by app.js -->
-          </div>
-        </div>
-        <div class="text-center mt-2">
-          <span class="text-[11px] font-medium text-slate-400 flex items-center justify-center gap-1.5">
-            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-amber-400"></i>
-            Select any stage node to inspect operational service capacity and risk analysis below
-          </span>
-        </div>
+    <!-- 6. SELECTED STAGE INSPECTION CARD -->
+    <section id="selected-stage-section" class="dark-panel p-6 sm:p-8">
+      <div id="selected-stage-inspector">
+        <!-- Rendered dynamically by app.js -->
       </div>
     </section>
 
-    <!-- =========================================================================
-         JOINT ACTION CENTER: SYNTROPY CAPACITY INTELLIGENCE & CROWD LABS
-         ========================================================================= -->
-    <section id="dept-intelligence" class="dept-section space-y-8">
-      
-      <!-- SELECTED STAGE INSPECTION CARD (Bottom-right box in user's sketch) -->
-      <div id="selected-stage-section" class="dark-panel rounded-2xl p-6 sm:p-8">
-        <div id="selected-stage-inspector">
-          <!-- Rendered dynamically by app.js -->
+    <!-- 7. CATEGORIZED OPERATIONAL RECOMMENDATIONS -->
+    <section class="dark-panel p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-base font-bold text-[#ede8e1] flex items-center gap-2">
+            <i data-lucide="compass" class="w-4 h-4 text-[#d4a373]"></i>
+            Categorized Operational Recommendations
+          </h2>
+          <p class="text-xs text-[#9e9b93] mt-0.5">
+            System recommendations categorized by domain to ensure balanced mitigation across physical, temporal, and spatial vectors.
+          </p>
         </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full badge-sand">
+          Proactive Measures
+        </span>
       </div>
 
-      <!-- SYNTROPY CROWD LABS: GROUPED PREVENTIVE RECOMMENDATIONS -->
-      <div class="dark-panel rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded badge-syntropy">
-                Syntropy Crowd Labs
-              </span>
-            </div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
-              Proactive Preventive Measures & Harmony Mitigations
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">
-              1-Click AI mitigations to eliminate operational entropy across Capacity, Time, Spatial, Transportation, Accommodation, and Safety vectors.
-            </p>
-          </div>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full badge-neon-teal">
-            Order Creation Engine
-          </span>
-        </div>
-
-        <div id="grouped-recommendations-container" class="mt-4">
-          <!-- Rendered dynamically by app.js -->
-        </div>
+      <div id="grouped-recommendations-container" class="mt-4">
+        <!-- Rendered dynamically by app.js -->
       </div>
+    </section>
 
-      <!-- EVENT MANAGER APPROVAL & CONFIRMATION CARD -->
-      <div id="approval-section">
-        <div id="approval-summary-card">
-          <!-- Rendered dynamically by app.js -->
-        </div>
+    <!-- 8. EVENT MANAGER APPROVAL & CONFIRMATION CARD -->
+    <section id="approval-section">
+      <div id="approval-summary-card">
+        <!-- Rendered dynamically by app.js -->
       </div>
     </section>
 
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-[#111827] border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-400">
+  <footer class="bg-[#1a1b20] border-t border-[#2a2c35] py-6 mt-12 text-center text-xs text-[#9e9b93]">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center space-x-2">
-        <span class="font-bold text-slate-200">ORCHESTRA Platform</span>
+        <span class="font-bold text-[#ede8e1]">ORCHESTRA Platform</span>
         <span>•</span>
-        <span>Phase 0: Intelligent Pre-Planning</span>
+        <span>Phase 0: Intelligent Pre-Planning Baseline</span>
       </div>
       <div>
-        Designed for Mega-Event Hospitality & Crowd Orchestration • Team 8
+        Minimalist Travel & Hospitality Crowd Orchestration • Team 8
       </div>
     </div>
   </footer>
 
   <!-- MODAL: ADD / EDIT STAGE -->
-  <div id="stage-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs hidden p-4">
-    <div class="dark-panel rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 id="modal-title" class="text-base font-bold text-white">Add New Event Stage</h3>
-        <button onclick="closeStageModal()" class="text-slate-400 hover:text-white">
+  <div id="stage-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs hidden p-4">
+    <div class="dark-panel max-w-md w-full p-6 shadow-2xl border border-[#2a2c35]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2a2c35]">
+        <h3 id="modal-title" class="text-base font-bold text-[#ede8e1]">Add New Event Stage</h3>
+        <button onclick="closeStageModal()" class="text-[#9e9b93] hover:text-[#ede8e1]">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -722,58 +500,58 @@
       <form onsubmit="event.preventDefault(); saveStageForm();" class="mt-4 space-y-4">
         <input type="hidden" id="stage-form-id">
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Stage Full Name</label>
-          <input id="stage-form-name" type="text" required class="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. VIP & Media Reception">
+          <label class="block text-xs font-bold text-[#9e9b93] mb-1">Stage Full Name</label>
+          <input id="stage-form-name" type="text" required class="w-full text-xs p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. VIP & Media Reception">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Short Label (Timeline)</label>
-          <input id="stage-form-short" type="text" required class="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. VIP Reception">
+          <label class="block text-xs font-bold text-[#9e9b93] mb-1">Short Label (Timeline)</label>
+          <input id="stage-form-short" type="text" required class="w-full text-xs p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. VIP Reception">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Start Time</label>
-            <input id="stage-form-start" type="time" required class="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none">
+            <label class="block text-xs font-bold text-[#9e9b93] mb-1">Start Time</label>
+            <input id="stage-form-start" type="time" required class="w-full text-xs p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">End Time</label>
-            <input id="stage-form-end" type="time" required class="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none">
+            <label class="block text-xs font-bold text-[#9e9b93] mb-1">End Time</label>
+            <input id="stage-form-end" type="time" required class="w-full text-xs p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Expected Attendees During Stage</label>
-          <input id="stage-form-visitors" type="number" required min="100" class="w-full text-xs p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. 5000">
+          <label class="block text-xs font-bold text-[#9e9b93] mb-1">Expected Attendees During Stage</label>
+          <input id="stage-form-visitors" type="number" required min="100" class="w-full text-xs p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. 5000">
         </div>
 
-        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeStageModal()" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white rounded-lg">Cancel</button>
-          <button type="submit" class="px-4 py-2 text-xs font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-lg shadow-sm">Save Stage</button>
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-[#2a2c35]">
+          <button type="button" onclick="closeStageModal()" class="px-4 py-2 text-xs font-semibold text-[#9e9b93] hover:text-[#ede8e1] rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-xs font-bold btn-sand rounded-lg shadow-sm">Save Stage</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: ADD CUSTOM DIGITAL TWIN ASSET -->
-  <div id="asset-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs hidden p-4">
-    <div class="dark-panel rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-teal-400"></i>
+  <div id="asset-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs hidden p-4">
+    <div class="dark-panel max-w-md w-full p-6 shadow-2xl border border-[#2a2c35]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#2a2c35]">
+        <h3 class="text-base font-bold text-[#ede8e1] flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-[#d4a373]"></i>
           <span>Add Infrastructure Asset to Digital Twin</span>
         </h3>
-        <button onclick="closeAddAssetModal()" class="text-slate-400 hover:text-white">
+        <button onclick="closeAddAssetModal()" class="text-[#9e9b93] hover:text-[#ede8e1]">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form onsubmit="event.preventDefault(); saveCustomAssetForm();" class="mt-4 space-y-3.5 text-xs">
         <div>
-          <label class="block font-bold text-slate-300 mb-1">Asset Name</label>
-          <input id="asset-form-name" type="text" required class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. Metro Line 3 Concourse / Hilton Hotel">
+          <label class="block font-bold text-[#9e9b93] mb-1">Asset Name</label>
+          <input id="asset-form-name" type="text" required class="w-full p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. Metro Line 3 Concourse / Hilton Hotel">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-bold text-slate-300 mb-1">Category</label>
-            <select id="asset-form-category" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none">
+            <label class="block font-bold text-[#9e9b93] mb-1">Category</label>
+            <select id="asset-form-category" class="w-full p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none">
               <option value="hotel">Hotel / Lodging</option>
               <option value="rail">Railway / Metro / Transit</option>
               <option value="hospital">Hospital / Emergency</option>
@@ -782,22 +560,22 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-slate-300 mb-1">Distance (km)</label>
-            <input id="asset-form-dist" type="text" required class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. 2.4 km">
+            <label class="block font-bold text-[#9e9b93] mb-1">Distance (km)</label>
+            <input id="asset-form-dist" type="text" required class="w-full p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. 2.4 km">
           </div>
         </div>
         <div>
-          <label class="block font-bold text-slate-300 mb-1">Capacity / Volume</label>
-          <input id="asset-form-capacity" type="text" required class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g. 180 Luxury Beds / 15,000 pax/hr / 2,000 cars">
+          <label class="block font-bold text-[#9e9b93] mb-1">Capacity / Volume</label>
+          <input id="asset-form-capacity" type="text" required class="w-full p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none" placeholder="e.g. 180 Luxury Beds / 15,000 pax/hr / 2,000 cars">
         </div>
         <div>
-          <label class="block font-bold text-slate-300 mb-1">Operational Role & Details</label>
-          <textarea id="asset-form-details" rows="2" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-teal-500 outline-none placeholder-slate-500" placeholder="e.g. Feeder station with direct shuttle to Gate 3..."></textarea>
+          <label class="block font-bold text-[#9e9b93] mb-1">Operational Role & Details</label>
+          <textarea id="asset-form-details" rows="2" class="w-full p-2.5 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none placeholder-[#6b6862]" placeholder="e.g. Feeder station with direct shuttle to Gate 3..."></textarea>
         </div>
 
-        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeAddAssetModal()" class="px-4 py-2 font-semibold text-slate-400 hover:text-white rounded-lg">Cancel</button>
-          <button type="submit" class="px-4 py-2 font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-lg shadow-sm">Add to Digital Twin</button>
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-[#2a2c35]">
+          <button type="button" onclick="closeAddAssetModal()" class="px-4 py-2 font-semibold text-[#9e9b93] hover:text-[#ede8e1] rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 font-bold btn-sand rounded-lg shadow-sm">Add to Digital Twin</button>
         </div>
       </form>
     </div>
@@ -805,38 +583,37 @@
 
   <!-- MODAL: LIVE OPS HANDOVER (Phase 1 Preview) -->
   <div id="live-ops-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden p-4">
-    <div class="dark-panel rounded-3xl max-w-xl w-full p-8 shadow-2xl border border-slate-700 text-center">
-      <div class="w-14 h-14 rounded-2xl bg-teal-500/10 text-teal-400 border border-teal-500/30 mx-auto flex items-center justify-center mb-4 shadow-sm">
+    <div class="dark-panel max-w-xl w-full p-8 shadow-2xl border border-[#2a2c35] text-center">
+      <div class="w-14 h-14 rounded-2xl bg-[#22242b] text-[#d4a373] border border-[#2a2c35] mx-auto flex items-center justify-center mb-4 shadow-sm">
         <i data-lucide="check-check" class="w-8 h-8"></i>
       </div>
-      <h3 class="text-2xl font-black text-white">Pre-Planning Baseline Confirmed</h3>
-      <p class="text-xs text-slate-300 mt-2 max-w-md mx-auto leading-relaxed">
+      <h3 class="text-2xl font-bold text-[#ede8e1]">Pre-Planning Baseline Confirmed</h3>
+      <p class="text-xs text-[#9e9b93] mt-2 max-w-md mx-auto leading-relaxed">
         The operational timeline and capacity envelopes have been locked. This plan now forms the verified benchmark for <strong>Phase 1: Live Operational Orchestration</strong>.
       </p>
 
-      <!-- Section 18 Diagram -->
-      <div class="mt-6 p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-teal-400 mb-3">Live Orchestration Feedback Loop</div>
+      <div class="mt-6 p-4 rounded-xl bg-[#22242b] border border-[#2a2c35]">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-[#d4a373] mb-3">Live Orchestration Feedback Loop</div>
         <div class="flex flex-wrap items-center justify-center gap-1.5 text-xs font-bold">
-          <span class="px-2.5 py-1 rounded-md bg-teal-500 text-slate-950 font-black">PLANNED</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500"></i>
-          <span class="px-2.5 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">ACTUAL</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500"></i>
-          <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">DEVIATION</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500"></i>
-          <span class="px-2.5 py-1 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">PREDICTION</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500"></i>
-          <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">RECOMMENDATION</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500"></i>
-          <span class="px-2.5 py-1 rounded-md bg-white text-slate-950 font-black">ACTION</span>
+          <span class="px-2.5 py-1 rounded-md btn-sand font-bold">PLANNED</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#6b6862]"></i>
+          <span class="px-2.5 py-1 rounded-md badge-slate">ACTUAL</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#6b6862]"></i>
+          <span class="px-2.5 py-1 rounded-md badge-amber">DEVIATION</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#6b6862]"></i>
+          <span class="px-2.5 py-1 rounded-md badge-sand">PREDICTION</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#6b6862]"></i>
+          <span class="px-2.5 py-1 rounded-md badge-sage">RECOMMENDATION</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-[#6b6862]"></i>
+          <span class="px-2.5 py-1 rounded-md bg-[#ede8e1] text-[#121316] font-bold">ACTION</span>
         </div>
       </div>
 
       <div class="mt-6 flex items-center justify-center space-x-3">
-        <button onclick="closeLiveOpsModal()" class="px-5 py-2.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white rounded-xl shadow-xs border border-slate-700">
+        <button onclick="closeLiveOpsModal()" class="px-5 py-2.5 text-xs font-bold btn-ghost rounded-xl shadow-xs">
           Return to Pre-Planning View
         </button>
-        <button onclick="exportPlanJSON()" class="px-5 py-2.5 text-xs font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl shadow-md">
+        <button onclick="exportPlanJSON()" class="px-5 py-2.5 text-xs font-bold btn-sand rounded-xl shadow-md">
           Download Certified Plan
         </button>
       </div>

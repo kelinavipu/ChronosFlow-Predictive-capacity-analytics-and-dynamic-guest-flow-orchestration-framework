@@ -2014,108 +2014,37 @@ window.confirmDeleteStage = function(stageId) {
   }
 };
 
-// 15. Export Plan JSON with Triad Structure (Syntropy • Plenum • Chronos)
+// 15. Export Plan JSON (Pre-Planning Baseline)
 window.exportPlanJSON = function() {
   const data = {
-    metadata: {
-      platform: "ORCHESTRA Mega-Event Hospitality Orchestration System",
-      phase: "Phase 0: Intelligent Pre-Planning Baseline",
-      generated_at: new Date().toISOString(),
-      status: "CONFIRMED_PREPLAN_BASELINE"
-    },
-    // 1. Syntropy (The Order Creator)
-    syntropy: {
-      department: "Syntropy Flow Orchestration & Capacity Intelligence",
-      event_narrative: window.orchestraEngine.currentEvent,
-      summary_statistics: window.orchestraEngine.getSummaryStats(),
-      proactive_mitigations: window.orchestraEngine.getAllGroupedRecommendations()
-    },
-    // 2. Plenum (The Space Master)
-    plenum: {
-      department: "The Plenum Node & Plenum Spatial Intelligence",
-      venue_core: window.orchestraEngine.activeSpatialTwin.name,
-      micro_area: window.orchestraEngine.activeSpatialTwin.area,
-      spatial_digital_twin_nodes: window.orchestraEngine.activeSpatialTwin.nodes
-    },
-    // 3. Chronos (The Time Synchronization Hub)
-    chronos: {
-      department: "Chronos Flow Dynamics & Chronos Event Synchrony",
-      demand_variance_stress_factor: window.orchestraEngine.demandVarianceFactor,
-      operational_stages_timeline: window.orchestraEngine.stages
-    }
+    platform: "ORCHESTRA — Mega-Event Hospitality & Crowd Orchestration System",
+    phase: "Phase 0: Intelligent Pre-Planning Baseline",
+    event_metadata: window.orchestraEngine.currentEvent,
+    venue_digital_twin: window.orchestraEngine.activeSpatialTwin,
+    summary_statistics: window.orchestraEngine.getSummaryStats(),
+    operational_stages: window.orchestraEngine.stages,
+    proactive_recommendations: window.orchestraEngine.getAllGroupedRecommendations(),
+    generated_at: new Date().toISOString(),
+    status: "CONFIRMED_PREPLAN_BASELINE"
   };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `orchestra_triad_plan_${window.orchestraEngine.currentEvent.eventType.toLowerCase().replace(/\s+/g, '_')}.json`;
+  a.download = `orchestra_plan_${window.orchestraEngine.currentEvent.eventType.toLowerCase().replace(/\s+/g, '_')}.json`;
   a.click();
   URL.revokeObjectURL(url);
 };
 
-// 16. Department Filter & Navigation Engine (Syntropy • Plenum • Chronos)
-window.setDepartmentFilter = function(dept) {
-  const allBtn = document.getElementById('tab-dept-all');
-  const synBtn = document.getElementById('tab-dept-syntropy');
-  const pleBtn = document.getElementById('tab-dept-plenum');
-  const chrBtn = document.getElementById('tab-dept-chronos');
-
-  const synSec = document.getElementById('dept-syntropy');
-  const pleSec = document.getElementById('dept-plenum');
-  const chrSec = document.getElementById('dept-chronos');
-  const intSec = document.getElementById('dept-intelligence');
-
-  // Reset tab active classes
-  [allBtn, synBtn, pleBtn, chrBtn].forEach(b => b?.classList.remove('active-tab'));
-
-  if (dept === 'syntropy') {
-    synBtn?.classList.add('active-tab');
-    if (synSec) synSec.style.display = 'block';
-    if (pleSec) pleSec.style.display = 'none';
-    if (chrSec) chrSec.style.display = 'none';
-    if (intSec) intSec.style.display = 'block';
-  } else if (dept === 'plenum') {
-    pleBtn?.classList.add('active-tab');
-    if (synSec) synSec.style.display = 'none';
-    if (pleSec) pleSec.style.display = 'block';
-    if (chrSec) chrSec.style.display = 'none';
-    if (intSec) intSec.style.display = 'none';
-  } else if (dept === 'chronos') {
-    chrBtn?.classList.add('active-tab');
-    if (synSec) synSec.style.display = 'none';
-    if (pleSec) pleSec.style.display = 'none';
-    if (chrSec) chrSec.style.display = 'block';
-    if (intSec) intSec.style.display = 'block';
-  } else {
-    // 'all'
-    allBtn?.classList.add('active-tab');
-    if (synSec) synSec.style.display = 'block';
-    if (pleSec) pleSec.style.display = 'block';
-    if (chrSec) chrSec.style.display = 'block';
-    if (intSec) intSec.style.display = 'block';
-  }
-
-  lucide.createIcons();
-};
-
-window.scrollToDepartment = function(deptId) {
-  window.setDepartmentFilter('all');
-  setTimeout(() => {
-    const el = document.getElementById(deptId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, 50);
-};
-
-// 17. Confirm & Handover to Live Ops
+// 16. Confirm & Handover to Live Ops
 window.confirmAndHandoverLive = function() {
-  document.getElementById('live-ops-modal').classList.remove('hidden');
+  document.getElementById('live-ops-modal')?.classList.remove('hidden');
   lucide.createIcons();
 };
 
 window.closeLiveOpsModal = function() {
-  document.getElementById('live-ops-modal').classList.add('hidden');
+  document.getElementById('live-ops-modal')?.classList.add('hidden');
 };
+
 
