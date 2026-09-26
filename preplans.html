@@ -1029,10 +1029,57 @@
 
             </div>
 
+
+            <!-- ========================================================================= -->
+            <!-- REGISTERED ATTENDEE PASS REGISTRY — EVENT MANAGER MASTER CONTROL          -->
+            <!-- ========================================================================= -->
+            <div class="dark-panel rounded-3xl p-5 sm:p-6 border border-sky-400/40 shadow-2xl space-y-5 bg-slate-900/95 backdrop-blur-xl relative" id="em-attendee-pass-registry">
+
+              <!-- Registry Header -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-950/80 pb-4">
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold">GATE ALLOCATION REGISTRY</span>
+                    <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">5 PASSES ISSUED</span>
+                  </div>
+                  <h3 class="text-lg font-black text-white mt-0.5 flex items-center space-x-2">
+                    <i data-lucide="ticket-check" class="w-5 h-5 text-sky-400"></i>
+                    <span>Registered Attendee Passes — Admission &amp; Reroute Status</span>
+                  </h3>
+                  <p class="text-xs text-slate-400">Alicia Stone (Event Master) · DY Patil Stadium · Strength Limit: <strong class="text-amber-300">2 / 5</strong> admitted to bowl</p>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                  <button onclick="renderEMAttendeePassRegistry()" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-900/40 text-xs font-mono font-bold flex items-center space-x-1.5 transition">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pass Cards Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="em-pass-registry-grid">
+                <!-- Populated dynamically by renderEMAttendeePassRegistry() -->
+                <div class="col-span-full text-center py-6 text-slate-500 text-xs font-mono">Loading pass registry…</div>
+              </div>
+
+              <!-- Footer Sync Line -->
+              <div class="pt-2 border-t border-sky-950/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+                <div class="text-[11px] text-slate-400 flex items-center space-x-2">
+                  <i data-lucide="radio" class="w-4 h-4 text-emerald-400"></i>
+                  <span>Registry synced with Decision Factor Engine · Live gate assignments propagated to visitor handsets</span>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                  <span id="em-pass-registry-timestamp" class="text-[10px] text-slate-500 font-mono">Last updated: —</span>
+                </div>
+              </div>
+
+            </div>
+
             <!-- DYNAMIC PHASE PANELS (Pre / Present / Post) -->
             <div id="lifecycle-phase-container">
               <!-- Dynamically populated by JS: renderLifecyclePrePanel(), renderLifecyclePresentPanel(), or renderLifecyclePostPanel() -->
             </div>
+
 
           </div>
 
@@ -1648,6 +1695,9 @@
         }
         if (typeof renderEMDecisionFactorUI === 'function') {
           renderEMDecisionFactorUI();
+        }
+        if (typeof renderEMAttendeePassRegistry === 'function') {
+          renderEMAttendeePassRegistry();
         }
       }
 

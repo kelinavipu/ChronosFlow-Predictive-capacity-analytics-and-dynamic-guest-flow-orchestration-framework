@@ -3052,9 +3052,136 @@ window.addEventListener('chronos:decision_factor_sync', () => {
   renderEMDecisionFactorUI();
 });
 
+
+// =========================================================================
+// ATTENDEE PASS REGISTRY — Event Manager Master View (All 5 Pass Holders)
+// =========================================================================
+
+const EM_AVATAR_COLORS = [
+  'from-cyan-400 to-sky-500',
+  'from-emerald-400 to-teal-500',
+  'from-rose-400 to-pink-500',
+  'from-violet-400 to-purple-500',
+  'from-amber-400 to-orange-500',
+];
+
+window.renderEMAttendeePassRegistry = function() {
+  if (!window.ChronosSupabase || typeof window.ChronosSupabase.getDecisionFactorState !== 'function') return;
+
+  const state = window.ChronosSupabase.getDecisionFactorState();
+  if (!state || !state.visitors) return;
+
+  const grid = document.getElementById('em-pass-registry-grid');
+  const tsEl = document.getElementById('em-pass-registry-timestamp');
+  if (!grid) return;
+
+  grid.innerHTML = state.visitors.map((v, idx) => {
+    const isAdmitted = v.status === 'ADMITTED';
+    const initials = v.name.substring(0, 2).toUpperCase();
+    const avatarGrad = EM_AVATAR_COLORS[idx % EM_AVATAR_COLORS.length];
+    const passId = v.passId || `PASS-DYP-2026-${v.name.toUpperCase()}-${v.tier.toUpperCase()}`;
+    const barcode = v.barcode || `DYP-${v.name.toUpperCase()}-94812`;
+
+    const verdictBorder = isAdmitted
+      ? 'border-emerald-500/30 bg-emerald-950/10'
+      : 'border-amber-500/30 bg-amber-950/10';
+    const verdictBannerCls = isAdmitted
+      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+      : 'bg-amber-500/15 border-amber-500/40 text-amber-300';
+    const verdictIcon = isAdmitted ? 'check-circle-2' : 'shuffle';
+    const verdictLabel = isAdmitted
+      ? `ADMITTED — Slot ${v.rank}/${state.strengthLimit}`
+      : `REROUTED — Overflow ${v.rank - state.strengthLimit}/${state.reroutedCount}`;
+    const destLine = isAdmitted
+      ? `<span class="text-emerald-400">${v.assignedGate || 'Gate 4 (West VIP Turnstiles)'}</span>`
+      : `<span class="text-amber-300">Buffer: ${v.bufferGate || v.assignedGate || 'Hub H1'}</span>`;
+    const dotCls = isAdmitted
+      ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+      : 'bg-amber-400 shadow-[0_0_8px_#fbbf24]';
+    const shimmerCls = isAdmitted ? 'bg-emerald-500/5' : 'bg-amber-500/5';
+    const badgeCls = isAdmitted ? 'badge-sage' : 'badge-amber';
+
+    return `
+      <div class="rounded-2xl border ${verdictBorder} p-4 space-y-3 font-mono text-xs relative overflow-hidden shadow-xl transition hover:scale-[1.01]">
+        <div class="absolute -right-10 -top-10 w-28 h-28 ${shimmerCls} rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Attendee Header -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr ${avatarGrad} text-slate-950 font-black flex items-center justify-center text-sm shadow-md shrink-0">
+            ${initials}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center space-x-2">
+              <span class="font-black text-white text-sm truncate">${v.name}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded font-bold ${badgeCls}">${v.tier}</span>
+            </div>
+            <div class="text-[9px] text-slate-400 truncate">${passId}</div>
+          </div>
+          <span class="w-2.5 h-2.5 rounded-full shrink-0 ${dotCls}"></span>
+        </div>
+
+        <!-- Verdict Banner -->
+        <div class="p-2.5 rounded-xl border ${verdictBannerCls} space-y-1">
+          <div class="flex items-center space-x-1.5 font-bold text-[11px]">
+            <i data-lucide="${verdictIcon}" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>${verdictLabel}</span>
+          </div>
+          <div class="text-[10px] leading-snug">${destLine}</div>
+        </div>
+
+        <!-- Score / Distance / ETA -->
+        <div class="grid grid-cols-3 gap-1.5 text-center">
+          <div class="p-2 rounded-lg bg-slate-950/70 border border-sky-950 space-y-0.5">
+            <div class="text-[8px] text-slate-400 uppercase">Score</div>
+            <div class="font-black text-cyan-300">${v.decisionScore}</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950/70 border border-sky-950 space-y-0.5">
+            <div class="text-[8px] text-slate-400 uppercase">Distance</div>
+            <div class="font-bold text-white">${v.distanceKm}km</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950/70 border border-sky-950 space-y-0.5">
+            <div class="text-[8px] text-slate-400 uppercase">ETA</div>
+            <div class="font-bold text-sky-300">${v.etaMinutes}m</div>
+          </div>
+        </div>
+
+        <!-- Barcode -->
+        <div class="px-2 py-1.5 rounded-lg bg-slate-950/80 border border-sky-950 flex items-center justify-between">
+          <span class="text-[9px] text-slate-400 uppercase">Barcode</span>
+          <span class="font-mono font-bold text-[9px] text-slate-200 tracking-widest">${barcode}</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+          <button onclick="showToast('Override gate for ${v.name}: Signal sent to Srinivasan Infra Command.')"
+            class="py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-400/30 text-[10px] font-bold flex items-center justify-center space-x-1 transition">
+            <i data-lucide="route" class="w-3 h-3"></i>
+            <span>Override Gate</span>
+          </button>
+          <button onclick="showToast('Pass ${passId} flagged as SUSPENDED. Gate Control Terminal notified.')"
+            class="py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center justify-center space-x-1 transition">
+            <i data-lucide="x-circle" class="w-3 h-3"></i>
+            <span>Revoke Pass</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (tsEl) {
+    const now = new Date();
+    tsEl.innerText = `Last updated: ${now.toLocaleTimeString('en-GB', { hour12: false })} UTC`;
+  }
+
+  lucide.createIcons();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initPreplansPage();
   if (window.renderEMDecisionFactorUI) {
     window.renderEMDecisionFactorUI();
+  }
+  if (window.renderEMAttendeePassRegistry) {
+    window.renderEMAttendeePassRegistry();
   }
 });

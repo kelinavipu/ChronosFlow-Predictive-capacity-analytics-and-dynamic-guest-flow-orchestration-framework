@@ -337,7 +337,7 @@ function parseUrlParamsAndInitialize() {
 }
 
 // =========================================================================
-// 3.5 DECISION FACTOR CAPACITY & DYNAMIC REROUTING ENGINE (DY PATIL STRENGTH: 2 / 5)
+// 3.5 DECISION FACTOR CAPACITY & DYNAMIC REROUTING ENGINE (AMIR, BILAL, ISHA, SHREYA, VIPU)
 // =========================================================================
 let decisionState = null;
 let activeVisitorIndex = 0;
@@ -356,9 +356,35 @@ window.initDecisionFactor = function() {
       visitors: []
     };
   }
+
+  // Check URL Query Parameters for 5 Device Login (e.g. ?device=amir or ?user=bilal or ?visitor=isha)
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const queryUser = (params.get('device') || params.get('user') || params.get('visitor') || params.get('name') || params.get('pass') || '').toLowerCase().trim();
+
+    if (queryUser && decisionState && decisionState.visitors) {
+      const foundIdx = decisionState.visitors.findIndex(v => 
+        v.name.toLowerCase().includes(queryUser) || 
+        v.id.toLowerCase().includes(queryUser)
+      );
+      if (foundIdx !== -1) {
+        activeVisitorIndex = foundIdx;
+      }
+    } else {
+      // Check localStorage saved active device user
+      const savedUser = localStorage.getItem('chronos_active_device_user');
+      if (savedUser && decisionState && decisionState.visitors) {
+        const foundIdx = decisionState.visitors.findIndex(v => v.name.toLowerCase() === savedUser.toLowerCase());
+        if (foundIdx !== -1) activeVisitorIndex = foundIdx;
+      }
+    }
+  } catch (e) {}
+
   renderDecisionFactorUI();
   applyVisitorProfile(activeVisitorIndex, false);
 };
+
+
 
 window.renderDecisionFactorUI = function() {
   if (!decisionState) return;
@@ -375,7 +401,7 @@ window.renderDecisionFactorUI = function() {
     summaryCountsEl.innerHTML = `<span class="text-emerald-400 font-bold">${decisionState.admittedCount} Admitted</span> &bull; <span class="text-amber-400 font-bold">${decisionState.reroutedCount} Rerouted</span>`;
   }
 
-  // Render 5 Visitor Chips
+  // Render 5 Visitor Chips in Decision Factor HUD
   if (chipsContainer && decisionState.visitors) {
     chipsContainer.innerHTML = decisionState.visitors.map((v, idx) => {
       const isSelected = idx === activeVisitorIndex;
@@ -388,9 +414,9 @@ window.renderDecisionFactorUI = function() {
               ? (isAdmitted ? 'bg-emerald-500/25 border-emerald-400 text-white font-bold shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400' : 'bg-amber-500/25 border-amber-400 text-white font-bold shadow-lg shadow-amber-500/20 ring-1 ring-amber-400')
               : (isAdmitted ? 'bg-slate-950 hover:bg-emerald-950/40 text-slate-300 border-emerald-500/30' : 'bg-slate-950 hover:bg-amber-950/40 text-slate-400 border-amber-500/30')
           }"
-          title="${v.name}: ${v.status} (${v.decisionScore}/100)"
+          title="${v.name}: ${v.status} (${v.decisionScore}/100) &bull; ${v.assignedGate}"
         >
-          <span class="text-[9px] font-bold truncate max-w-[48px]">${v.name.split(' ')[0]}</span>
+          <span class="text-[9px] font-bold truncate max-w-[48px]">${v.name}</span>
           <span class="text-[8px] ${isAdmitted ? 'text-emerald-400' : 'text-amber-400'} font-bold flex items-center space-x-0.5">
             <span>${isAdmitted ? '🟢' : '🔀'}</span>
             <span>${v.decisionScore}</span>
@@ -414,7 +440,7 @@ window.renderDecisionFactorUI = function() {
             <span>INGRESS APPROVED &bull; DY PATIL STADIUM</span>
             <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">SLOT ${curVis.rank}/${decisionState.strengthLimit}</span>
           </div>
-          <p class="text-[10px] text-emerald-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong> (Proximity: ${curVis.distanceKm}km &bull; ${curVis.tier}). Ingress cleared directly to ${curVis.assignedDestination}.</p>
+          <p class="text-[10px] text-emerald-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong> (Proximity: ${curVis.distanceKm}km &bull; ${curVis.tier}). Ingress cleared directly to <strong class="text-white">${curVis.assignedGate}</strong>.</p>
         </div>
       `;
     } else {
@@ -426,7 +452,7 @@ window.renderDecisionFactorUI = function() {
             <span>STRENGTH LIMIT REACHED (2) &bull; REROUTED</span>
             <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">EXCESS #${curVis.rank - decisionState.strengthLimit} OF ${decisionState.reroutedCount}</span>
           </div>
-          <p class="text-[10px] text-amber-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong>. Decision Factor dynamically rerouted pass to <strong class="text-white">${curVis.assignedDestination}</strong> to balance concourse pressure.</p>
+          <p class="text-[10px] text-amber-300/90 leading-tight">Decision Score: <strong>${curVis.decisionScore}/100</strong>. Decision Factor dynamically rerouted pass to <strong class="text-white">${curVis.assignedGate}</strong> (${curVis.assignedDestination}) to balance concourse pressure.</p>
           <div class="pt-1 flex items-center space-x-2">
             <button onclick="switchMobileTab('nav')" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 text-[9px] font-bold flex items-center space-x-1">
               <span>Inspect Rerouted Vector on Satellite Map</span>
@@ -444,28 +470,30 @@ window.renderDecisionFactorUI = function() {
 window.selectVisitorProfile = function(index) {
   if (!decisionState || !decisionState.visitors[index]) return;
   activeVisitorIndex = index;
+  const vis = decisionState.visitors[index];
+  try {
+    localStorage.setItem('chronos_active_device_user', vis.name);
+  } catch (e) {}
   applyVisitorProfile(index, true);
   renderDecisionFactorUI();
+  renderMultiDeviceLoginBar();
 };
 
 window.applyVisitorProfile = function(index, notify = false) {
   if (!decisionState || !decisionState.visitors[index]) return;
   const vis = decisionState.visitors[index];
 
-  // Update active pass state
+  // Update active pass state with rich pass metadata
   activePass.user = vis.name;
   activePass.tier = vis.tier;
-  activePass.ticket = `TKT-DYP-2026-000${index + 1}`;
-  
-  if (vis.status === 'ADMITTED') {
-    activePass.gate = index === 0 ? "GATE 4" : "GATE 2";
-    activePass.stand = "EAST STAND C";
-    activePass.seat = `ROW 14, #${80 + index}`;
-  } else {
-    activePass.gate = vis.assignedDestination.includes("Nerul Hub") ? "HUB GATE 1" : vis.assignedDestination.includes("Wonders") ? "WONDERS GATE 2" : "AUX GATE C";
-    activePass.stand = "FAN ZONE BUFFER";
-    activePass.seat = "FLEX PASS";
-  }
+  activePass.ticket = vis.passId || `PASS-DYP-2026-${vis.name.toUpperCase()}-VIP`;
+  activePass.barcode = vis.barcode || `DYP-${vis.name.toUpperCase()}-94812`;
+  activePass.seat = vis.seat || (vis.status === 'ADMITTED' ? `Row 12, #${80 + index}` : 'Buffer Zone Bay 2');
+  activePass.stand = vis.stand || (vis.status === 'ADMITTED' ? 'Main Concourse' : 'Buffer Esplanade');
+  activePass.gate = vis.assignedGate || (vis.status === 'ADMITTED' ? "Gate 4 (West VIP)" : "Buffer Gate H1");
+  activePass.status = vis.status;
+  activePass.rerouted = vis.rerouted;
+  activePass.reason = vis.reason;
 
   // Update Location
   georgeLocation.lat = vis.lat;
@@ -482,8 +510,8 @@ window.applyVisitorProfile = function(index, notify = false) {
 
   if (notify) {
     showMobileToast(vis.status === 'ADMITTED' 
-      ? `🟢 Handset switched to ${vis.name}: Ingress Cleared at DY Patil!` 
-      : `🔀 Handset switched to ${vis.name}: Rerouted to ${vis.assignedDestination}`);
+      ? `🟢 Device Handset switched to ${vis.name}: Ingress Approved at ${vis.assignedGate}!` 
+      : `🔀 Device Handset switched to ${vis.name}: Dynamic Reroute to ${vis.assignedGate}`);
   }
 };
 
@@ -495,7 +523,7 @@ window.incrementStrength = function() {
   }
   renderDecisionFactorUI();
   applyVisitorProfile(activeVisitorIndex, false);
-  showMobileToast(`Venue Strength updated to ${newStrength}! Real-time rerouting recalculated.`);
+  showMobileToast(`Venue Strength updated to ${newStrength}! Dynamic gate passes re-evaluated.`);
 };
 
 window.decrementStrength = function() {
@@ -506,7 +534,7 @@ window.decrementStrength = function() {
   }
   renderDecisionFactorUI();
   applyVisitorProfile(activeVisitorIndex, false);
-  showMobileToast(`Venue Strength throttled to ${newStrength}! Excess visitors rerouted.`);
+  showMobileToast(`Venue Strength throttled to ${newStrength}! Gate passes dynamically rerouted.`);
 };
 
 // Real-Time Inter-Tab Storage Synchronization
@@ -529,19 +557,27 @@ window.addEventListener('chronos:decision_factor_sync', (e) => {
 });
 
 function applyPassToUI() {
+  const vis = (decisionState && decisionState.visitors && decisionState.visitors[activeVisitorIndex]) ? decisionState.visitors[activeVisitorIndex] : null;
+
   // 1. Mobile Header
   const avatarEl = document.getElementById('vis-user-avatar');
   const nameEl = document.getElementById('vis-user-name');
   const subEl = document.getElementById('vis-user-sub');
 
   if (avatarEl) {
-    const initials = activePass.user.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    avatarEl.innerText = initials || 'GM';
+    const initials = activePass.user.substring(0, 2).toUpperCase();
+    avatarEl.innerText = initials || 'AM';
   }
   if (nameEl) nameEl.innerText = activePass.user;
   if (subEl) subEl.innerText = `${georgeLocation.label} • Spectator`;
 
   // 2. Holographic Smart Pass Card
+  const attendeeNameEl = document.getElementById('pass-attendee-name');
+  const attendeeAvatarEl = document.getElementById('pass-attendee-avatar');
+  const attendeeTierPillEl = document.getElementById('pass-attendee-tier-pill');
+  const attendeeIdEl = document.getElementById('pass-attendee-id');
+  const verdictBannerEl = document.getElementById('pass-verdict-banner');
+
   const badgeEl = document.getElementById('pass-tier-badge');
   const titleEl = document.getElementById('pass-event-title');
   const venueEl = document.getElementById('pass-venue-name');
@@ -552,20 +588,153 @@ function applyPassToUI() {
   const codeEl = document.getElementById('pass-code-text');
   const qrImg = document.getElementById('pass-qr-image');
   const scannerLabel = document.getElementById('pass-gate-scanner-label');
+  const scannerStatusVal = document.getElementById('pass-scanner-status-val');
+
+  if (attendeeNameEl) attendeeNameEl.innerText = activePass.user;
+  if (attendeeAvatarEl) attendeeAvatarEl.innerText = activePass.user.substring(0, 2).toUpperCase();
+  if (attendeeTierPillEl) attendeeTierPillEl.innerText = activePass.tier;
+  if (attendeeIdEl) attendeeIdEl.innerText = activePass.ticket;
 
   if (badgeEl) badgeEl.innerText = activePass.tier.toUpperCase();
   if (titleEl) titleEl.innerText = activeEvent.title;
   if (venueEl) venueEl.innerText = activeEvent.venue;
   if (gateEl) gateEl.innerText = activePass.gate;
   if (standEl) standEl.innerText = activePass.stand;
-  if (levelEl) levelEl.innerText = activePass.level;
+  if (levelEl) levelEl.innerText = activePass.status === 'ADMITTED' ? 'Level 2' : 'Ground Level';
   if (seatEl) seatEl.innerText = activePass.seat;
   if (codeEl) codeEl.innerText = activePass.ticket;
   if (scannerLabel) scannerLabel.innerText = `${activePass.gate} Optical Scanner:`;
 
+  if (scannerStatusVal) {
+    if (activePass.status === 'ADMITTED') {
+      scannerStatusVal.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>OPEN &bull; FLUID</span>`;
+      scannerStatusVal.className = "text-emerald-400 font-bold flex items-center space-x-1";
+    } else {
+      scannerStatusVal.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span><span>REROUTE STAGING</span>`;
+      scannerStatusVal.className = "text-amber-400 font-bold flex items-center space-x-1";
+    }
+  }
+
+  // Update Ingress Verdict Banner
+  if (verdictBannerEl) {
+    if (activePass.status === 'ADMITTED') {
+      verdictBannerEl.className = "p-3 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-mono text-xs space-y-1";
+      verdictBannerEl.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-white flex items-center space-x-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            <span>INGRESS APPROVED &bull; STADIUM BOWL</span>
+          </span>
+          <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">CLEARANCE VALID</span>
+        </div>
+        <p class="text-[11px] text-emerald-200/90 leading-tight">
+          Clearance granted for <strong>${activePass.user}</strong>. Present optical QR code at <strong>${activePass.gate}</strong> turnstiles for fast barrier release.
+        </p>
+      `;
+    } else {
+      verdictBannerEl.className = "p-3 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-300 font-mono text-xs space-y-1";
+      verdictBannerEl.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-white flex items-center space-x-1.5">
+            <i data-lucide="shuffle" class="w-4 h-4 text-amber-400"></i>
+            <span>DYNAMIC GATE REROUTE (CAPACITY FULL: 2/2)</span>
+          </span>
+          <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">BUFFER ZONE</span>
+        </div>
+        <p class="text-[11px] text-amber-200/90 leading-tight">
+          DY Patil Stadium bowl is capped at 2 Pax. Your pass is dynamically valid at <strong class="text-white">${activePass.gate}</strong> (${vis ? vis.assignedDestination : 'Holding Buffer'}). Shaded fan zone with big-screen live fixture broadcast.
+        </p>
+        <div class="pt-1 flex items-center space-x-2">
+          <button onclick="switchMobileTab('nav')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-[10px] font-bold flex items-center space-x-1">
+            <i data-lucide="navigation" class="w-3 h-3"></i>
+            <span>Follow Detour Guidance &rarr;</span>
+          </button>
+        </div>
+      `;
+    }
+  }
+
   if (qrImg) {
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(activePass.ticket)}`;
   }
+
+  // Update Fullscreen QR Modal content
+  const modalEventEl = document.getElementById('modal-qr-event');
+  const modalGateEl = document.getElementById('modal-qr-gate');
+  const modalQrImg = document.getElementById('modal-qr-img');
+  const modalCodeEl = document.getElementById('modal-qr-code');
+
+  if (modalEventEl) modalEventEl.innerText = activeEvent.title;
+  if (modalGateEl) modalGateEl.innerText = `${activePass.user} • ${activePass.gate} • ${activePass.seat}`;
+  if (modalCodeEl) modalCodeEl.innerText = activePass.ticket;
+  if (modalQrImg) {
+    modalQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(activePass.ticket)}`;
+  }
+
+  // Desktop Companion Side Card (Dynamic Sync!)
+  const compImg = document.getElementById('companion-qr-img');
+  const compUrl = document.getElementById('companion-qr-url');
+  const currentFullUrl = window.location.href;
+  if (compImg) {
+    compImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(currentFullUrl)}`;
+  }
+  if (compUrl) {
+    compUrl.innerText = currentFullUrl;
+  }
+
+  // Calculate Distance & Live ETA from Present Location
+  const distKm = parseFloat(calculateDistance());
+  const etaMins = getEtaMinutes(distKm);
+
+  // Update Navigation Guidance Card & Origin Buttons
+  updateTransitGuidanceUI(distKm, etaMins);
+  renderOriginChips();
+
+  // Render Dynamic Location-Based Timeline & Events
+  renderMobileTimeline(distKm, etaMins);
+  renderMobileEventsList();
+
+  // Refresh Icons
+  lucide.createIcons();
+}
+
+window.simulateTurnstileScan = function() {
+  const vis = (decisionState && decisionState.visitors && decisionState.visitors[activeVisitorIndex]) ? decisionState.visitors[activeVisitorIndex] : null;
+  const isAdmitted = vis && vis.status === 'ADMITTED';
+  
+  if (isAdmitted) {
+    alert(`🟢 [OPTICAL TURNSTILE SCAN SUCCESS]\n\nTurnstile: ${activePass.gate}\nPass Holder: ${activePass.user}\nTicket ID: ${activePass.ticket}\nTier: ${activePass.tier}\nSeat: ${activePass.seat} (${activePass.stand})\nVerdict: INGRESS CLEARED (Slot ${vis.rank}/${decisionState.strengthLimit})\n\nWelcome to Dr. D.Y. Patil Sports Stadium! Barrier Released.`);
+  } else {
+    alert(`🔀 [DYNAMIC REROUTE GATE SCAN SUCCESS]\n\nGate Reader: ${activePass.gate}\nPass Holder: ${activePass.user}\nTicket ID: ${activePass.ticket}\nDestination: ${vis ? vis.assignedDestination : 'Holding Buffer'}\nVerdict: BUFFER ENTRY AUTHORIZED (Capacity Overflow)\n\nWelcome, ${activePass.user}! Your access is verified for the Shaded Pavilion & Big-Screen Fan Zone.`);
+  }
+};
+
+window.exportPassJSON = function() {
+  const passData = {
+    event: "Championship Trophy 2026: 4-Day Mega Cricket Fixture",
+    venue: "Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul",
+    attendee: activePass.user,
+    passId: activePass.ticket,
+    barcode: activePass.barcode || `DYP-${activePass.user.toUpperCase()}-94812`,
+    tier: activePass.tier,
+    gate: activePass.gate,
+    stand: activePass.stand,
+    seat: activePass.seat,
+    status: activePass.status || "ADMITTED",
+    rerouted: activePass.rerouted || false,
+    verifiedAt: new Date().toISOString(),
+    cryptoSignature: "SIG-ECDSA-CHRONOS-" + Math.floor(100000 + Math.random() * 900000)
+  };
+
+  const blob = new Blob([JSON.stringify(passData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Pass_${activePass.user}_DYPatil.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showMobileToast(`💾 Pass exported for ${activePass.user}!`);
+};
 
   // 3. Desktop Companion Side Card (Dynamic Sync!)
   const compImg = document.getElementById('companion-qr-img');
