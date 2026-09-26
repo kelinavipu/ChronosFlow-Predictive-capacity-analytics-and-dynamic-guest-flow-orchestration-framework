@@ -434,6 +434,7 @@
     }
 
     async function loadServiceDashboard() {
+      if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['service_provider'])) return;
       renderNavbar('service');
       const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
 

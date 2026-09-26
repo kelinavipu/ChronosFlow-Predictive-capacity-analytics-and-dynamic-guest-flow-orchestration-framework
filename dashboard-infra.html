@@ -1070,6 +1070,7 @@
 
     // Load Data & Pre-populate Form
     async function loadInfraDashboard() {
+      if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['infra_provider'])) return;
       renderNavbar('infra');
       const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
       

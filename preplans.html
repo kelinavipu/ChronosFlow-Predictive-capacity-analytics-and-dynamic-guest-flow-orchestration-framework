@@ -1754,6 +1754,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['event_manager'])) return;
       syncEMProfileUI();
       if (window.populateInfraPossessionsDropdown) window.populateInfraPossessionsDropdown();
       if (window.renderEventInfraRequestsTracker) window.renderEventInfraRequestsTracker();

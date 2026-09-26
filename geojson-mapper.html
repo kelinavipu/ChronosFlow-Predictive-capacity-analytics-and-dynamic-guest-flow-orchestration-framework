@@ -706,6 +706,7 @@ function showToast(msg) {
 // Init icons & navbar
 // ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['event_manager', 'infra_provider'])) return;
   if (window.renderNavbar) renderNavbar('geojson-mapper');
 });
 lucide.createIcons();

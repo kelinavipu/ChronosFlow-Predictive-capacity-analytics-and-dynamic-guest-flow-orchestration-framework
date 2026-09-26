@@ -1602,10 +1602,6 @@ window.renderEventInfraRequestsTracker = async function(filter = currentTrackerF
             </button>
 
             ${isPending ? `
-              <button onclick="simulateSrinivasanAccept('${req.id}')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-sky-950" title="Simulate Srinivasan clicking Accept in his dashboard">
-                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                <span>Instant Lock (Srinivasan)</span>
-              </button>
               <button onclick="cancelEventInfraRequest('${req.id}')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-sky-950 text-xs transition">
                 Cancel Order
               </button>
@@ -1613,9 +1609,6 @@ window.renderEventInfraRequestsTracker = async function(filter = currentTrackerF
               <button onclick="exportGatePermit('${req.id}')" class="px-3.5 py-1.5 rounded-xl badge-sage font-bold text-xs flex items-center space-x-1.5">
                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
                 <span>Export Gate Clearance Permit</span>
-              </button>
-              <button onclick="simulateSrinivasanRevoke('${req.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-sky-950 text-xs transition" title="Simulate Srinivasan revoking approval">
-                Revoke Lock
               </button>
             ` : `
               <button onclick="switchEMSection('em-sec-procure')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">

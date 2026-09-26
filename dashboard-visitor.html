@@ -1854,6 +1854,7 @@
     }
 
     async function loadVisitorDashboard() {
+      if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['visitor'])) return;
       renderNavbar('visitor');
       const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
 

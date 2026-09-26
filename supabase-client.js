@@ -197,6 +197,39 @@ const ChronosSupabase = {
     window.location.href = "index.html";
   },
 
+  // 2. STRICT ROLE-BASED ACCESS CONTROL (RBAC) PAGE GUARD
+  requireRole(allowedRoles = []) {
+    const user = this.getCurrentUser();
+    if (!user || !user.role) {
+      alert("🔐 Authentication Required: Please sign in to access your operational role dashboard.");
+      window.location.href = "index.html?tab=signin";
+      return false;
+    }
+
+    if (Array.isArray(allowedRoles) && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      const roleNames = {
+        event_manager: "Event Master Orchestrator (Alicia Stone)",
+        infra_provider: "Infrastructure & Transit Director (Srinivasan R.)",
+        service_provider: "Hospitality & Logistics Lead (Harry Vance)",
+        visitor: "Spectator & Guest (George Miller)"
+      };
+
+      const userRoleLabel = roleNames[user.role] || user.role;
+      const requiredLabels = allowedRoles.map(r => roleNames[r] || r).join(" or ");
+
+      alert(`⛔ ACCESS DENIED — ROLE SEGREGATION ENFORCED\n\nYour logged-in profile is:\n👉 ${userRoleLabel}\n\nThis page is strictly reserved for:\n🔒 ${requiredLabels}\n\nYou are being redirected to your authorized operational dashboard.`);
+
+      if (user.role === 'event_manager') window.location.href = "preplans.html";
+      else if (user.role === 'infra_provider') window.location.href = "dashboard-infra.html";
+      else if (user.role === 'service_provider') window.location.href = "dashboard-service.html";
+      else if (user.role === 'visitor') window.location.href = "dashboard-visitor.html";
+      else window.location.href = "index.html";
+
+      return false;
+    }
+    return true;
+  },
+
   async signIn(email, password, role) {
     const lowerEmail = (email || '').toLowerCase().trim();
     // If Supabase client is active, try Supabase Auth

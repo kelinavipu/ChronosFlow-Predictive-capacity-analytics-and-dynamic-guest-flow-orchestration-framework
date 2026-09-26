@@ -54,6 +54,7 @@ const VENUE_COORDINATES = {
 // 2. INITIALIZATION
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['event_manager'])) return;
   renderNavbar('current-events');
 
   const urlParams = new URLSearchParams(window.location.search);

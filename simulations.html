@@ -442,6 +442,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['event_manager'])) return;
       renderNavbar('simulations');
       updateSimulationUI();
       lucide.createIcons();
