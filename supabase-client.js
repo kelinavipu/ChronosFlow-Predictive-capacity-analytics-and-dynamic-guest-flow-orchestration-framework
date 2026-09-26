@@ -145,10 +145,11 @@ const ChronosSupabase = {
   signOut() {
     localStorage.removeItem('chronos_user');
     window.dispatchEvent(new Event('chronos_auth_changed'));
-    window.location.href = "signin.html";
+    window.location.href = "index.html";
   },
 
   async signIn(email, password, role) {
+    const lowerEmail = (email || '').toLowerCase().trim();
     // If Supabase client is active, try Supabase Auth
     if (this.client) {
       try {
@@ -230,8 +231,26 @@ const ChronosSupabase = {
       }
     };
 
+    // Add direct username aliases
+    DEFAULT_PERSONAS['alicia'] = DEFAULT_PERSONAS['alicia@eventm.com'];
+    DEFAULT_PERSONAS['srinivasan'] = DEFAULT_PERSONAS['srinivasan@infram.com'];
+    DEFAULT_PERSONAS['harry'] = DEFAULT_PERSONAS['harry@servicem.com'];
+    DEFAULT_PERSONAS['george'] = DEFAULT_PERSONAS['george@visitor.com'];
+
+    // Check custom registered users from localStorage first
+    try {
+      const storedUsers = localStorage.getItem('chronos_registered_users');
+      if (storedUsers) {
+        const userList = JSON.parse(storedUsers);
+        const matched = userList.find(u => (u.username && u.username.toLowerCase() === lowerEmail) || (u.email && u.email.toLowerCase() === lowerEmail));
+        if (matched) {
+          this.setCurrentUser(matched);
+          return { success: true, user: matched, isLocal: true };
+        }
+      }
+    } catch (e) {}
+
     // If matches known persona, use their full profile
-    const lowerEmail = (email || '').toLowerCase().trim();
     if (DEFAULT_PERSONAS[lowerEmail]) {
       const userObj = DEFAULT_PERSONAS[lowerEmail];
       this.setCurrentUser(userObj);

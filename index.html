@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChronosFlow — Intelligent Event Orchestration & Flow Management</title>
+  <title>ChronosFlow — Mega-Event Safety & Capacity Orchestration</title>
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,361 +12,403 @@
   <!-- Supabase JS Client & App Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
-  <script src="navbar.js"></script>
 
-  <!-- Minimal Dark Travel Theme -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background-color: #080c14;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    /* Snowflakes Canvas */
+    #snow-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+    /* Frosted Cool Glassmorphism */
+    .cool-glass {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.18);
+      box-shadow: 0 20px 50px rgba(2, 6, 23, 0.7), 0 0 40px rgba(56, 189, 248, 0.08);
+    }
+    .cool-subglass {
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(56, 189, 248, 0.14);
+    }
+    .btn-glacier {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #080c14;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+      transition: all 0.25s ease;
+    }
+    .btn-glacier:hover {
+      background: linear-gradient(135deg, #7dd3fc 0%, #0369a1 100%);
+      box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5);
+      transform: translateY(-1px);
+    }
+    .glacier-glow-text {
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.35);
+    }
+    .safety-pulse {
+      animation: pulseSafety 2.5s infinite;
+    }
+    @keyframes pulseSafety {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+  </style>
 </head>
-<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-sky-400 selection:text-slate-950">
 
-  <!-- Global Shared Navbar -->
-  <div id="global-navbar"></div>
+  <!-- Interactive Background Snowflakes Canvas -->
+  <canvas id="snow-canvas"></canvas>
 
-  <!-- Hero Section -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 sm:py-12 space-y-12">
+  <!-- Top Ambient Glow -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-sky-500/15 via-blue-600/5 to-transparent blur-[120px] pointer-events-none z-0"></div>
 
-    <!-- Hero Header -->
-    <div class="text-center max-w-3xl mx-auto space-y-4">
-      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#1a1b20] border border-[#2a2c35] text-xs text-[#d4a373] font-semibold">
-        <span class="w-2 h-2 rounded-full bg-[#709775]"></span>
-        <span>Cloud Database Active &bull; Supabase rojjfjoquejjxuziriei</span>
+  <!-- Top Minimal Header -->
+  <header class="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50">
+        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="text-lg font-black tracking-tight text-white glacier-glow-text">CHRONOSFLOW</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-400/20">SAFETY GRID</span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-medium">Predictive Crowd Capacity & Safety Orchestration</p>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Links -->
+    <nav class="hidden md:flex items-center space-x-2 text-xs font-semibold">
+      <a href="preplans.html" class="px-3 py-1.5 rounded-xl cool-subglass text-slate-300 hover:text-white hover:border-sky-400/40 transition flex items-center space-x-1.5">
+        <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span>Pre-Plans</span>
+      </a>
+      <a href="simulations.html" class="px-3 py-1.5 rounded-xl cool-subglass text-slate-300 hover:text-white hover:border-sky-400/40 transition flex items-center space-x-1.5">
+        <i data-lucide="sliders" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span>Simulations</span>
+      </a>
+      <a href="current-events.html" class="px-3 py-1.5 rounded-xl cool-subglass text-slate-300 hover:text-white hover:border-sky-400/40 transition flex items-center space-x-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Current Events</span>
+      </a>
+    </nav>
+
+    <!-- Live Safety Status Pill -->
+    <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full cool-subglass text-xs font-mono">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
+      <span class="text-slate-300">Safety Status:</span>
+      <span class="text-emerald-400 font-bold">ALL PROTOCOLS OPTIMAL</span>
+    </div>
+  </header>
+
+  <!-- Hero & Centered Auth Console -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-5xl mx-auto w-full space-y-8">
+
+    <!-- Title & Safety Kicker -->
+    <div class="text-center space-y-3 max-w-2xl">
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full cool-subglass text-xs text-sky-300 border border-sky-400/30">
+        <i data-lucide="snowflake" class="w-3.5 h-3.5 text-sky-300 animate-spin" style="animation-duration: 12s;"></i>
+        <span class="font-mono text-[11px]">Crowd Safety Shield &bull; Multi-Role Orchestration Grid</span>
       </div>
 
-      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-[#ede8e1] tracking-tight leading-tight">
-        Mega-Event Capacity & <br class="hidden sm:block">
-        <span class="text-[#d4a373]">Flow Orchestration</span>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+        Next-Generation <br class="hidden sm:block">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-blue-400 to-indigo-300 glacier-glow-text">
+          Event Safety & Flow
+        </span>
       </h1>
 
-      <p class="text-sm sm:text-base text-[#9e9b93] max-w-2xl mx-auto leading-relaxed">
-        A unified multi-sided framework tailored for Event Hosts, Infrastructure Providers, Service Operators, and Spectators.
+      <p class="text-sm text-slate-400 leading-relaxed max-w-lg mx-auto">
+        Unified command infrastructure for Event Managers, Infrastructure Owners, Service Providers, and Spectators.
       </p>
-
-      <!-- Quick Action Navigation Hub -->
-      <div class="pt-2 flex flex-wrap items-center justify-center gap-2.5">
-        <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 shadow-lg transition">
-          <i data-lucide="calendar-check" class="w-4 h-4"></i>
-          <span>Pre-Plans</span>
-        </a>
-
-        <a href="simulations.html" class="px-4 py-2.5 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] font-bold text-xs flex items-center space-x-2 transition">
-          <i data-lucide="sliders" class="w-4 h-4 text-[#709775]"></i>
-          <span>Simulations</span>
-        </a>
-
-        <a href="current-events.html" class="px-4 py-2.5 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] font-bold text-xs flex items-center space-x-2 transition">
-          <span class="w-2 h-2 rounded-full bg-[#c96a54] animate-pulse"></span>
-          <span>Live Current Events</span>
-        </a>
-
-        <a href="signin.html" class="px-3.5 py-2.5 rounded-xl bg-[#1a1b20] hover:bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] border border-[#2a2c35] font-semibold text-xs transition">
-          Sign In
-        </a>
-
-        <a href="signup.html" class="px-3.5 py-2.5 rounded-xl bg-[#1a1b20] hover:bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] border border-[#2a2c35] font-semibold text-xs transition">
-          Sign Up
-        </a>
-      </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- ROLE VIEW SWITCHER TABS                                                   -->
-    <!-- (Allows testing & viewing tailored data for any of the 4 roles)           -->
-    <!-- ========================================================================= -->
-    <div class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2a2c35] pb-3">
-        <div>
-          <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">Role-Based Command Grid</span>
-          <h2 class="text-xl font-bold text-[#ede8e1]">Choose Stakeholder View</h2>
-        </div>
-        <div class="text-xs text-[#9e9b93]">Click any role below to view tailored details:</div>
-      </div>
-
-      <!-- 4 Role Selector Tabs -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs font-bold" id="home-role-tabs">
-        <button onclick="switchHomeRoleView('event_manager')" class="home-role-btn p-3 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center justify-between transition" data-role="event_manager">
-          <span class="flex items-center space-x-2">
-            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-            <span>Event Manager</span>
-          </span>
-          <span class="w-1.5 h-1.5 rounded-full bg-[#d4a373]"></span>
+    <!-- Frosted Glassmorphism Auth Console -->
+    <div class="cool-glass rounded-3xl p-6 sm:p-8 w-full max-w-xl border border-sky-400/20 space-y-6">
+      
+      <!-- Tab Switcher: Sign In & Sign Up -->
+      <div class="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs font-bold">
+        <button 
+          type="button" 
+          id="tab-btn-signin" 
+          onclick="toggleAuthTab('signin')" 
+          class="py-2.5 rounded-xl transition flex items-center justify-center space-x-2 btn-glacier font-black"
+        >
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Sign In</span>
         </button>
 
-        <button onclick="switchHomeRoleView('infra_provider')" class="home-role-btn p-3 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-between transition" data-role="infra_provider">
-          <span class="flex items-center space-x-2">
-            <i data-lucide="train" class="w-4 h-4"></i>
-            <span>Infrastructure Manager</span>
-          </span>
-          <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
-        </button>
-
-        <button onclick="switchHomeRoleView('service_provider')" class="home-role-btn p-3 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-between transition" data-role="service_provider">
-          <span class="flex items-center space-x-2">
-            <i data-lucide="utensils" class="w-4 h-4"></i>
-            <span>Service Manager</span>
-          </span>
-          <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
-        </button>
-
-        <button onclick="switchHomeRoleView('visitor')" class="home-role-btn p-3 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-between transition" data-role="visitor">
-          <span class="flex items-center space-x-2">
-            <i data-lucide="users" class="w-4 h-4"></i>
-            <span>Visitor / Spectator</span>
-          </span>
-          <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
+        <button 
+          type="button" 
+          id="tab-btn-signup" 
+          onclick="toggleAuthTab('signup')" 
+          class="py-2.5 rounded-xl transition flex items-center justify-center space-x-2 text-slate-400 hover:text-white"
+        >
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>Sign Up</span>
         </button>
       </div>
-    </div>
 
-    <!-- ========================================================================= -->
-    <!-- DYNAMIC ROLE CONTENT PANELS                                               -->
-    <!-- ========================================================================= -->
-    
-    <!-- 1. EVENT MANAGER VIEW -->
-    <div id="role-panel-event_manager" class="role-panel space-y-6">
-      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-[#2a2c35] space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2a2c35] pb-4">
+      <!-- ========================================================================= -->
+      <!-- TAB 1: SIGN IN VIEW                                                       -->
+      <!-- ========================================================================= -->
+      <div id="auth-signin-view" class="space-y-5">
+        <form onsubmit="handleUniversalSignIn(event)" class="space-y-4">
           <div>
-            <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-sand">MASTER ORCHESTRATOR</span>
-            <h3 class="text-xl font-bold text-[#ede8e1] mt-1">Event Pre-Planning & Micro-Area Intelligence</h3>
-            <p class="text-xs text-[#9e9b93]">Author venue blueprints, map 5km digital twins, and run predictive crowd stress-tests</p>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+              Username or Registered Email
+            </label>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="login-username" 
+                required 
+                placeholder="Enter username (e.g. alicia, srinivasan, harry, george)" 
+                value="alicia"
+                class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white placeholder-slate-500 focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none text-xs font-medium"
+              >
+              <i data-lucide="user" class="w-4 h-4 text-sky-400 absolute left-3.5 top-3.5"></i>
+            </div>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <a href="preplans.html" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
-              <span>Open Pre-Planning Workbench</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Card 1: Pre-plans -->
-          <a href="preplans.html" class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] hover:border-[#d4a373] transition space-y-3 group">
-            <div class="w-10 h-10 rounded-xl bg-[#1a1b20] text-[#d4a373] flex items-center justify-center border border-[#2a2c35]">
-              <i data-lucide="folder-kanban" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#ede8e1] group-hover:text-[#d4a373] transition">Pre-Planning Baselines</h4>
-              <p class="text-xs text-[#9e9b93] mt-1">Review locked fixtures for DY Patil Stadium, Wankhede, and Narendra Modi Stadium, or generate custom twins.</p>
-            </div>
-            <div class="text-[11px] font-bold text-[#d4a373] flex items-center space-x-1">
-              <span>View Baselines</span>
-              <i data-lucide="chevron-right" class="w-3 h-3"></i>
-            </div>
-          </a>
-
-          <!-- Card 2: Simulations -->
-          <a href="simulations.html" class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] hover:border-[#709775] transition space-y-3 group">
-            <div class="w-10 h-10 rounded-xl bg-[#1a1b20] text-[#709775] flex items-center justify-center border border-[#2a2c35]">
-              <i data-lucide="sliders" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#ede8e1] group-hover:text-[#709775] transition">Crowd Stress Simulations</h4>
-              <p class="text-xs text-[#9e9b93] mt-1">Simulate variance from -20% to +50%, test gate failures, monsoonal rainstorms, and verify evacuation clearance.</p>
-            </div>
-            <div class="text-[11px] font-bold text-[#709775] flex items-center space-x-1">
-              <span>Launch Simulator</span>
-              <i data-lucide="chevron-right" class="w-3 h-3"></i>
-            </div>
-          </a>
-
-          <!-- Card 3: Current Events -->
-          <a href="current-events.html" class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] hover:border-[#c96a54] transition space-y-3 group">
-            <div class="w-10 h-10 rounded-xl bg-[#1a1b20] text-[#c96a54] flex items-center justify-center border border-[#2a2c35]">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#c96a54] animate-pulse"></span>
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-[#ede8e1] group-hover:text-[#c96a54] transition">Day-of-Event Live Command</h4>
-              <p class="text-xs text-[#9e9b93] mt-1">Real-time weather, turnstile throughput, expressway traffic indexes, and 1-click autonomous AI dispatches.</p>
-            </div>
-            <div class="text-[11px] font-bold text-[#c96a54] flex items-center space-x-1">
-              <span>Enter Live Grid</span>
-              <i data-lucide="chevron-right" class="w-3 h-3"></i>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. INFRASTRUCTURE MANAGER VIEW -->
-    <div id="role-panel-infra_provider" class="role-panel hidden space-y-6">
-      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-[#2a2c35] space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2a2c35] pb-4">
           <div>
-            <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-slate">LOGISTICS & TRANSIT</span>
-            <h3 class="text-xl font-bold text-[#ede8e1] mt-1">Infrastructure Command & Host Requests</h3>
-            <p class="text-xs text-[#9e9b93]">Data about your registered physical assets and incoming event host requests</p>
-          </div>
-
-          <a href="dashboard-infra.html" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
-            <span>Open Dedicated Infra Portal</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
-
-        <!-- Host Ready Pipeline -->
-        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-3">
-          <div class="flex items-center justify-between text-xs font-mono">
-            <span class="text-[#d4a373] font-bold">READY TO HOST PIPELINE</span>
-            <span class="text-[#709775]">Host: Alicia Stone (Event Master Orchestrator)</span>
-          </div>
-          <h4 class="text-base font-bold text-[#ede8e1]">Championship Trophy: 4-Day Mega Cricket Fixture at Dr. D.Y. Patil Stadium</h4>
-          <p class="text-xs text-[#9e9b93]">
-            Dates: <strong>Sep 1 - Sep 4, 2026</strong> &bull; <strong>50,000 spectators daily</strong>. Requiring 24,000 pax/hr rail clearance at Nerul Station, 65 feeder bus shuttles, and LP Junction freight diversion.
-          </p>
-        </div>
-
-        <!-- Requests & Response Preview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-[#ede8e1]">Nerul Feeder Bus Loop (65 Buses)</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono badge-amber">PENDING</span>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                Password
+              </label>
+              <span class="text-[11px] text-sky-400 font-mono">Password: <strong>abc</strong> for all</span>
             </div>
-            <p class="text-[#9e9b93]">Request from Event Host: Allocate 65 CNG buses for continuous loop to Gate 4 between 10:30-13:30.</p>
-            <div class="pt-2 flex space-x-2">
-              <a href="dashboard-infra.html" class="px-3 py-1 rounded-lg btn-sand font-bold text-[11px]">Approve Capacity</a>
-              <a href="dashboard-infra.html" class="px-3 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] text-[11px]">Negotiate</a>
+            <div class="relative">
+              <input 
+                type="password" 
+                id="login-password" 
+                required 
+                placeholder="••••••••••••" 
+                value="abc"
+                class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white placeholder-slate-500 focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none text-xs font-mono"
+              >
+              <i data-lucide="lock" class="w-4 h-4 text-sky-400 absolute left-3.5 top-3.5"></i>
             </div>
           </div>
 
-          <div class="p-4 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-[#ede8e1]">LP Junction Freight Diversion</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono badge-sage">APPROVED</span>
-            </div>
-            <p class="text-[#9e9b93]">Green corridor priority signage active for match express shuttles along Palm Beach road.</p>
-            <div class="pt-2 text-[11px] text-[#709775] font-bold">Capacity Allocated & Confirmed</div>
+          <button 
+            type="submit" 
+            id="btn-login-submit" 
+            class="w-full py-3.5 rounded-xl btn-glacier font-black text-xs flex items-center justify-center space-x-2"
+          >
+            <span>Sign In to Operational Role</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <!-- 1-Click Instant Persona Sign-In Badges -->
+        <div class="pt-4 border-t border-slate-800/80 space-y-2.5">
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">
+            Instant 1-Click Persona Sign-In (Password: abc)
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. SERVICE MANAGER VIEW -->
-    <div id="role-panel-service_provider" class="role-panel hidden space-y-6">
-      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-[#2a2c35] space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2a2c35] pb-4">
-          <div>
-            <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-amber">OPERATIONS & HOSPITALITY</span>
-            <h3 class="text-xl font-bold text-[#ede8e1] mt-1">Service Capabilities, RFPs & Execution Playbook</h3>
-            <p class="text-xs text-[#9e9b93]">What services you provide, incoming RFPs from event managers, and wave checklists</p>
-          </div>
-
-          <a href="dashboard-service.html" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
-            <span>Open Dedicated Service Portal</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
-
-        <!-- Service Capabilities -->
-        <div class="space-y-2">
-          <div class="text-xs font-bold uppercase text-[#9e9b93]">Services You Provide</div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[#d4a373] font-bold">Infield Concessions</div>
-              <div class="text-[11px] text-[#9e9b93] mt-0.5">45 Satellite Kiosks</div>
-            </div>
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[#709775] font-bold">Security Screening</div>
-              <div class="text-[11px] text-[#9e9b93] mt-0.5">30 Optical Lanes</div>
-            </div>
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[#c96a54] font-bold">Medical & Trauma</div>
-              <div class="text-[11px] text-[#9e9b93] mt-0.5">12 ALS Ambulances</div>
-            </div>
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[#607d8b] font-bold">Rapid Sanitation</div>
-              <div class="text-[11px] text-[#9e9b93] mt-0.5">120 Crew Members</div>
-            </div>
-          </div>
-        </div>
+            <button onclick="fillAndLogin('alicia', 'abc')" class="p-2.5 rounded-xl cool-subglass hover:border-sky-400 text-left transition space-y-0.5 group">
+              <div class="font-bold text-sky-300 group-hover:text-white flex items-center justify-between">
+                <span>alicia</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-400"></i>
+              </div>
+              <div class="text-[10px] text-slate-400">Event Manager</div>
+            </button>
 
-        <!-- What Should Be Done in an Event (Playbook) -->
-        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-3">
-          <div class="text-xs font-bold uppercase text-[#d4a373]">What Should Be Done in an Event (Playbook)</div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-            <div class="p-2.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <span class="text-[10px] text-[#d4a373] font-mono font-bold">INGRESS (10:00-13:00)</span>
-              <p class="text-[11px] text-[#9e9b93] mt-1">Activate outer screening lanes; pre-chill hydration packs; position first-aid carts at Gate 4.</p>
-            </div>
-            <div class="p-2.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <span class="text-[10px] text-[#d4a373] font-mono font-bold">MID-MATCH (13:00-18:00)</span>
-              <p class="text-[11px] text-[#9e9b93] mt-1">Concourse F&B queue balancing; continuous trash cycles; roving grab-and-go vendors.</p>
-            </div>
-            <div class="p-2.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <span class="text-[10px] text-[#d4a373] font-mono font-bold">EGRESS (21:30-23:00)</span>
-              <p class="text-[11px] text-[#9e9b93] mt-1">Open all perimeter exit gates; deploy paramedical standby to railway approach corridor.</p>
-            </div>
+            <button onclick="fillAndLogin('srinivasan', 'abc')" class="p-2.5 rounded-xl cool-subglass hover:border-sky-400 text-left transition space-y-0.5 group">
+              <div class="font-bold text-sky-300 group-hover:text-white flex items-center justify-between">
+                <span>srinivasan</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-400"></i>
+              </div>
+              <div class="text-[10px] text-slate-400">Infra Manager</div>
+            </button>
+
+            <button onclick="fillAndLogin('harry', 'abc')" class="p-2.5 rounded-xl cool-subglass hover:border-sky-400 text-left transition space-y-0.5 group">
+              <div class="font-bold text-sky-300 group-hover:text-white flex items-center justify-between">
+                <span>harry</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-400"></i>
+              </div>
+              <div class="text-[10px] text-slate-400">Service Manager</div>
+            </button>
+
+            <button onclick="fillAndLogin('george', 'abc')" class="p-2.5 rounded-xl cool-subglass hover:border-sky-400 text-left transition space-y-0.5 group">
+              <div class="font-bold text-sky-300 group-hover:text-white flex items-center justify-between">
+                <span>george</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-400"></i>
+              </div>
+              <div class="text-[10px] text-slate-400">Visitor</div>
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 2: SIGN UP VIEW                                                       -->
+      <!-- ========================================================================= -->
+      <div id="auth-signup-view" class="space-y-5 hidden">
+        
+        <!-- Step 1: Role & Initial Credentials -->
+        <form id="signup-step-form" onsubmit="handleInitialSignUp(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Select Your Stakeholder Role
+            </label>
+            <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+              <label class="cool-subglass p-2.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                <input type="radio" name="signup-role" value="event_manager" checked class="accent-sky-400">
+                <span class="text-white">Event Manager</span>
+              </label>
+
+              <label class="cool-subglass p-2.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                <input type="radio" name="signup-role" value="infra_provider" class="accent-sky-400">
+                <span class="text-white">Infra Manager</span>
+              </label>
+
+              <label class="cool-subglass p-2.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                <input type="radio" name="signup-role" value="service_provider" class="accent-sky-400">
+                <span class="text-white">Service Manager</span>
+              </label>
+
+              <label class="cool-subglass p-2.5 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                <input type="radio" name="signup-role" value="visitor" class="accent-sky-400">
+                <span class="text-white">Visitor / Spectator</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+              Choose Username
+            </label>
+            <input 
+              type="text" 
+              id="signup-username" 
+              required 
+              placeholder="e.g. alicia, srinivasan, newuser123" 
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white placeholder-slate-500 focus:border-sky-400 outline-none text-xs"
+            >
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+              <input 
+                type="password" 
+                id="signup-pass" 
+                required 
+                placeholder="abc" 
+                value="abc" 
+                class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none"
+              >
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 uppercase tracking-wider mb-1">Confirm Password</label>
+              <input 
+                type="password" 
+                id="signup-pass-confirm" 
+                required 
+                placeholder="abc" 
+                value="abc" 
+                class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none"
+              >
+            </div>
+          </div>
+
+          <!-- Step 2: Expanded Registration Form (Revealed when new profile) -->
+          <div id="signup-expanded-profile" class="space-y-4 pt-3 border-t border-slate-800 hidden">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+              <i data-lucide="badge-plus" class="w-3.5 h-3.5"></i>
+              <span>Profile Registration Details</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Full Legal Name</label>
+                <input type="text" id="reg-name" placeholder="e.g. Srinivasan R." class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Email Address</label>
+                <input type="email" id="reg-email" placeholder="e.g. user@chronosflow.org" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Phone Number</label>
+                <input type="tel" id="reg-phone" placeholder="e.g. +91 98201 45678" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Place of Residence / City</label>
+                <input type="text" id="reg-address" placeholder="e.g. Nerul, Navi Mumbai" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-sky-900/40 text-white outline-none">
+              </div>
+            </div>
+
+            <!-- Role-Specific Add-ons -->
+            <div id="reg-role-extra" class="p-3 rounded-xl cool-subglass text-xs space-y-2">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            id="btn-signup-submit" 
+            class="w-full py-3.5 rounded-xl btn-glacier font-black text-xs flex items-center justify-center space-x-2"
+          >
+            <span id="signup-btn-text">Verify & Continue</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+      </div>
+
     </div>
 
-    <!-- 4. VISITOR VIEW -->
-    <div id="role-panel-visitor" class="role-panel hidden space-y-6">
-      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-[#2a2c35] space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2a2c35] pb-4">
-          <div>
-            <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-sage">SPECTATOR COMPANION</span>
-            <h3 class="text-xl font-bold text-[#ede8e1] mt-1">My Event Details, Pre-Plans & Live Updates</h3>
-            <p class="text-xs text-[#9e9b93]">Your match day admission, designated walking corridor, and live queue status</p>
-          </div>
-
-          <a href="dashboard-visitor.html" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
-            <span>Open Dedicated Visitor Portal</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
+    <!-- Safety & Architecture Feature Pills -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl text-xs">
+      <div class="cool-subglass p-3.5 rounded-2xl flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+          <i data-lucide="shield" class="w-4 h-4"></i>
         </div>
-
-        <!-- Event Details & Ticket -->
-        <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-3">
-          <div class="flex items-center justify-between text-xs font-mono">
-            <span class="text-[#709775] font-bold">CONFIRMED PASS #TKT-DYP-2026-94812</span>
-            <span class="text-[#ede8e1]">Holder: George Miller</span>
-          </div>
-          <h4 class="text-lg font-bold text-[#ede8e1]">Championship Trophy Cricket Fixture — Dr. D.Y. Patil Stadium, Nerul</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
-            <div class="p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Entry Gate</div>
-              <div class="text-sm font-bold text-[#709775]">Gate 4 (West)</div>
-            </div>
-            <div class="p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Seat Allocation</div>
-              <div class="text-sm font-bold text-[#ede8e1]">Stand C, Row 14</div>
-            </div>
-            <div class="p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Gate Opens</div>
-              <div class="text-sm font-bold text-[#d4a373]">11:30 AM</div>
-            </div>
-            <div class="p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Live Queue Time</div>
-              <div class="text-sm font-bold text-[#709775]">4 Mins Wait</div>
-            </div>
-          </div>
+        <div>
+          <div class="font-bold text-white">Crowd Safety Protocol</div>
+          <div class="text-[11px] text-slate-400">Zero-crush ingress bottlenecks</div>
         </div>
+      </div>
 
-        <!-- Pre-Plans & Current Live Plans Split -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <!-- Pre-plans decided for them -->
-          <div class="p-4 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2">
-            <div class="text-xs font-bold text-[#d4a373] uppercase">The Pre-Plans Decided for You</div>
-            <ul class="space-y-1.5 text-[#9e9b93] text-[11px] list-disc list-inside">
-              <li>Take Harbour Line local train at 10:48 AM to arrive Nerul Station by 11:32 AM.</li>
-              <li>Follow the shaded 1.8km pedestrian green corridor directly to Gate 4.</li>
-              <li>Hotel verified at Sector 21 Nerul Cluster (1.4 km from stadium).</li>
-              <li>No stadium parking; private cars must use Wonders Park overflow plaza.</li>
-            </ul>
-          </div>
+      <div class="cool-subglass p-3.5 rounded-2xl flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center shrink-0">
+          <i data-lucide="radar" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="font-bold text-white">5km Digital Twin</div>
+          <div class="text-[11px] text-slate-400">Geospatial catchment rings</div>
+        </div>
+      </div>
 
-          <!-- Current plans decided for them -->
-          <div class="p-4 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2">
-            <div class="text-xs font-bold text-[#c96a54] uppercase">Live Current Status & Advisories</div>
-            <ul class="space-y-1.5 text-[#9e9b93] text-[11px] list-disc list-inside">
-              <li>Gate 4 turnstiles currently moving with zero queue delay (&lt; 4 mins).</li>
-              <li>Free hydration misting tents active inside Gate 4 concourse.</li>
-              <li>Post-match egress advisory: Board Seawoods shuttle for fastest train departure.</li>
-            </ul>
-          </div>
+      <div class="cool-subglass p-3.5 rounded-2xl flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="font-bold text-white">AI Real-time Dispatch</div>
+          <div class="text-[11px] text-slate-400">Instant transit & gate rerouting</div>
         </div>
       </div>
     </div>
@@ -374,43 +416,227 @@
   </main>
 
   <!-- Clean Footer -->
-  <footer class="border-t border-[#2a2c35] bg-[#121316] py-6 px-4 sm:px-8 mt-12 text-center text-xs text-[#9e9b93]">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <span class="font-extrabold text-[#ede8e1]">CHRONOSFLOW</span> &bull; Engineered by Team 8
-      </div>
-      <div class="flex items-center space-x-4">
-        <a href="preplans.html" class="hover:text-[#ede8e1] transition">Pre-Plans</a>
-        <a href="simulations.html" class="hover:text-[#ede8e1] transition">Simulations</a>
-        <a href="current-events.html" class="hover:text-[#ede8e1] transition">Live Events</a>
-        <a href="signin.html" class="hover:text-[#ede8e1] transition">Sign In</a>
-      </div>
-    </div>
+  <footer class="relative z-10 border-t border-sky-950/60 py-4 px-6 text-center text-xs text-slate-500 font-mono">
+    <span>CHRONOSFLOW &bull; Team 8 &bull; Encrypted Supabase Cloud: rojjfjoquejjxuziriei</span>
   </footer>
 
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: AUTHENTICATION ROUTER & SNOWFLAKES ENGINE                      -->
+  <!-- ========================================================================= -->
   <script>
-    function switchHomeRoleView(role) {
-      document.querySelectorAll('.role-panel').forEach(p => p.classList.add('hidden'));
-      document.getElementById(`role-panel-${role}`)?.classList.remove('hidden');
+    // 1. Interactive Snowflakes Engine (Cool Arctic Atmosphere)
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
-      document.querySelectorAll('.home-role-btn').forEach(btn => {
-        const isMatch = btn.getAttribute('data-role') === role;
-        if (isMatch) {
-          btn.className = "home-role-btn p-3 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center justify-between transition";
-          btn.querySelector('span:last-child').className = "w-1.5 h-1.5 rounded-full bg-[#d4a373]";
-        } else {
-          btn.className = "home-role-btn p-3 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-between transition";
-          btn.querySelector('span:last-child').className = "w-1.5 h-1.5 rounded-full bg-transparent";
-        }
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const flakes = [];
+    const FLAKE_COUNT = 65;
+
+    for (let i = 0; i < FLAKE_COUNT; i++) {
+      flakes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2.2 + 0.8,
+        d: Math.random() * FLAKE_COUNT,
+        speed: Math.random() * 0.7 + 0.3,
+        opacity: Math.random() * 0.5 + 0.2
       });
+    }
+
+    function drawSnowflakes() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "rgba(186, 230, 253, 0.7)";
+      for (let i = 0; i < FLAKE_COUNT; i++) {
+        const f = flakes[i];
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+        ctx.fillStyle = `rgba(186, 230, 253, ${f.opacity})`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = "rgba(56, 189, 248, 0.4)";
+        ctx.fill();
+
+        f.y += f.speed;
+        f.x += Math.sin(f.d) * 0.4;
+        f.d += 0.01;
+
+        if (f.y > height) {
+          f.y = -5;
+          f.x = Math.random() * width;
+        }
+      }
+      requestAnimationFrame(drawSnowflakes);
+    }
+    drawSnowflakes();
+
+    // 2. Tab Toggling (Sign In vs Sign Up)
+    function toggleAuthTab(tab) {
+      const signInBtn = document.getElementById('tab-btn-signin');
+      const signUpBtn = document.getElementById('tab-btn-signup');
+      const signInView = document.getElementById('auth-signin-view');
+      const signUpView = document.getElementById('auth-signup-view');
+
+      if (tab === 'signin') {
+        signInBtn.className = "py-2.5 rounded-xl transition flex items-center justify-center space-x-2 btn-glacier font-black";
+        signUpBtn.className = "py-2.5 rounded-xl transition flex items-center justify-center space-x-2 text-slate-400 hover:text-white";
+        signInView.classList.remove('hidden');
+        signUpView.classList.add('hidden');
+      } else {
+        signUpBtn.className = "py-2.5 rounded-xl transition flex items-center justify-center space-x-2 btn-glacier font-black";
+        signInBtn.className = "py-2.5 rounded-xl transition flex items-center justify-center space-x-2 text-slate-400 hover:text-white";
+        signUpView.classList.remove('hidden');
+        signInView.classList.add('hidden');
+      }
       lucide.createIcons();
     }
 
+    // 3. Universal Sign-In Logic (alicia, srinivasan, harry, george)
+    async function handleUniversalSignIn(e) {
+      if (e) e.preventDefault();
+      const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
+      const passwordInput = document.getElementById('login-password').value.trim();
+
+      const btn = document.getElementById('btn-login-submit');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block mr-2">&bull;</span> Authenticating...`;
+
+      const result = await window.ChronosSupabase.signIn(usernameInput, passwordInput);
+      const role = result.user?.role || 'event_manager';
+
+      // Route directly to respective page
+      redirectToRolePage(role);
+    }
+
+    function fillAndLogin(username, password) {
+      document.getElementById('login-username').value = username;
+      document.getElementById('login-password').value = password;
+      handleUniversalSignIn();
+    }
+
+    function redirectToRolePage(role) {
+      if (role === 'event_manager') {
+        window.location.href = "preplans.html";
+      } else if (role === 'infra_provider') {
+        window.location.href = "dashboard-infra.html";
+      } else if (role === 'service_provider') {
+        window.location.href = "dashboard-service.html";
+      } else if (role === 'visitor') {
+        window.location.href = "dashboard-visitor.html";
+      } else {
+        window.location.href = "preplans.html";
+      }
+    }
+
+    // 4. Two-Step Sign-Up Logic
+    let isExpandedStep = false;
+
+    async function handleInitialSignUp(e) {
+      e.preventDefault();
+      const role = document.querySelector('input[name="signup-role"]:checked').value;
+      const username = document.getElementById('signup-username').value.trim().toLowerCase();
+      const pass = document.getElementById('signup-pass').value;
+      const passConfirm = document.getElementById('signup-pass-confirm').value;
+
+      if (pass !== passConfirm) {
+        alert("Passwords do not match. Please re-enter.");
+        return;
+      }
+
+      // Check if user is known persona (alicia, srinivasan, harry, george)
+      const known = ['alicia', 'srinivasan', 'harry', 'george'];
+      if (known.includes(username)) {
+        alert(`Profile for "${username}" recognized! Logging you directly into your ${role.replace('_', ' ').toUpperCase()} dashboard.`);
+        await window.ChronosSupabase.signIn(username, pass, role);
+        redirectToRolePage(role);
+        return;
+      }
+
+      // Check if custom profile already exists in localStorage
+      const storedUsers = localStorage.getItem('chronos_registered_users');
+      if (storedUsers) {
+        const userList = JSON.parse(storedUsers);
+        const existing = userList.find(u => u.username && u.username.toLowerCase() === username);
+        if (existing) {
+          alert(`Welcome back ${existing.fullName}! Logging you in.`);
+          window.ChronosSupabase.setCurrentUser(existing);
+          redirectToRolePage(existing.role);
+          return;
+        }
+      }
+
+      // If not yet created, reveal Step 2 registration form
+      if (!isExpandedStep) {
+        isExpandedStep = true;
+        document.getElementById('signup-expanded-profile').classList.remove('hidden');
+        document.getElementById('signup-btn-text').innerText = "Complete Registration & Enter Grid";
+
+        // Prepopulate extra fields based on role
+        const extraContainer = document.getElementById('reg-role-extra');
+        if (role === 'infra_provider') {
+          extraContainer.innerHTML = `
+            <div class="font-bold text-sky-300">Infrastructure Asset Information</div>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+              <input type="text" id="reg-infra-name" placeholder="Asset Name (e.g. Nerul Hub)" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none">
+              <input type="text" id="reg-infra-doc" placeholder="License / Doc ID" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none">
+            </div>
+          `;
+        } else if (role === 'service_provider') {
+          extraContainer.innerHTML = `
+            <div class="font-bold text-sky-300">Service Capabilities & Pricing</div>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+              <input type="text" id="reg-service-domain" placeholder="Service (e.g. Shuttles / CCTV)" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none">
+              <input type="text" id="reg-service-rate" placeholder="Hourly Rate (e.g. ₹1,800/hr)" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none">
+            </div>
+          `;
+        } else if (role === 'visitor') {
+          extraContainer.innerHTML = `
+            <div class="font-bold text-sky-300">Origin Geolocation</div>
+            <input type="text" id="reg-visitor-geo" placeholder="Origin GPS or Address (e.g. Dadar East, Mumbai)" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none mt-1">
+          `;
+        } else {
+          extraContainer.innerHTML = `
+            <div class="font-bold text-sky-300">Event Organization Details</div>
+            <input type="text" id="reg-event-org" placeholder="Sports Board / Org Authority" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none mt-1">
+          `;
+        }
+        lucide.createIcons();
+        return;
+      }
+
+      // Step 2 Submission
+      const name = document.getElementById('reg-name').value || username;
+      const email = document.getElementById('reg-email').value || `${username}@chronosflow.org`;
+      const phone = document.getElementById('reg-phone').value || "+91 90000 00000";
+      const address = document.getElementById('reg-address').value || "City Center";
+
+      const newUserObj = {
+        id: "usr_" + Math.random().toString(36).substr(2, 8),
+        username: username,
+        email: email,
+        fullName: name,
+        phone: phone,
+        address: address,
+        role: role,
+        roleTitle: role.replace('_', ' ').toUpperCase(),
+        organization: "ChronosFlow Grid"
+      };
+
+      // Store in registered users
+      let userList = storedUsers ? JSON.parse(storedUsers) : [];
+      userList.push(newUserObj);
+      localStorage.setItem('chronos_registered_users', JSON.stringify(userList));
+
+      window.ChronosSupabase.setCurrentUser(newUserObj);
+      alert(`Registration complete for ${name}! Entering your operational dashboard...`);
+      redirectToRolePage(role);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      renderNavbar('home');
-      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
-      const initialRole = currentUser?.role || 'event_manager';
-      switchHomeRoleView(initialRole);
       lucide.createIcons();
     });
   </script>
