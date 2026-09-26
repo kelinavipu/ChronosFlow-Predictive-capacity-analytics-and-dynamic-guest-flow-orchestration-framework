@@ -2194,3 +2194,50 @@ window.toggleJourneySimulation = function() {
     }
   }, 2200);
 };
+
+// =========================================================================
+// OPTICAL EVENT PASS SCANNER & DAY-OF-EVENT PLAN ACTIVATOR
+// =========================================================================
+window.openEventPassScannerModal = function() {
+  const modal = document.getElementById('event-pass-scanner-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+  }
+};
+
+window.closeEventPassScannerModal = function() {
+  document.getElementById('event-pass-scanner-modal')?.classList.add('hidden');
+};
+
+window.processScannedPassData = function(eventKey, passCode) {
+  const targetKey = (eventKey && EVENT_REGISTRY[eventKey]) ? eventKey : 'dypatil_nerul';
+  activeEventKey = targetKey;
+  activeEvent = EVENT_REGISTRY[targetKey];
+  
+  const finalCode = (passCode && passCode.trim().length > 3) ? passCode.trim().toUpperCase() : ('TKT-' + targetKey.substring(0, 3).toUpperCase() + '-2026-' + Math.floor(10000 + Math.random() * 90000));
+  
+  activePass.eventId = targetKey;
+  activePass.ticket = finalCode;
+  activePass.gate = activeEvent.defaultGate;
+  activePass.stand = activeEvent.stand;
+  activePass.level = activeEvent.level;
+  activePass.seat = activeEvent.seat;
+  
+  georgeLocation.lat = activeEvent.defaultOrigin.lat;
+  georgeLocation.lng = activeEvent.defaultOrigin.lng;
+  georgeLocation.label = activeEvent.defaultOrigin.label;
+
+  window.closeEventPassScannerModal();
+  
+  // Apply pass data to UI & maps
+  applyPassToUI();
+
+  // Show Toast
+  showMobileToast(`🎟️ Pass Scanned! Loaded Day Plan & Live Tracking for ${activeEvent.title}`);
+
+  // Switch to Day Plan / Itinerary Tab automatically so user sees day schedule
+  setTimeout(() => {
+    switchMobileTab('itinerary');
+  }, 400);
+};
