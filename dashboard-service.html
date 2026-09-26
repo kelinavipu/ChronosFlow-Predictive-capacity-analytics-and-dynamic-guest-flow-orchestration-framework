@@ -551,6 +551,21 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadServiceDashboard);
+
+    // Cross-tab sync: fires when event manager writes to localStorage in another tab
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'chronos_service_requests') {
+        loadServiceDashboard();
+      }
+    });
+
+    // Same-tab sync: fires when preplans.js dispatches chronos:service_sync
+    window.addEventListener('chronos:service_sync', () => {
+      loadServiceDashboard();
+    });
+
+    // Polling fallback every 3 seconds (catches any case the events don't fire)
+    setInterval(loadServiceDashboard, 3000);
   </script>
 </body>
 </html>

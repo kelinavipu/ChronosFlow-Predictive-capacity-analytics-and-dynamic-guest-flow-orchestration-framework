@@ -1298,9 +1298,16 @@ window.submitOrderToSrinivasan = function() {
     let list = stored ? JSON.parse(stored) : [];
     list.unshift(newReq);
     localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
+
+    // Dispatch cross-tab StorageEvent so dashboard-infra.html's storage listener fires immediately
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'chronos_infra_requests',
+      newValue: JSON.stringify(list),
+      storageArea: localStorage
+    }));
   } catch (e) {}
 
-  // Dispatch real-time synchronization event for inter-tab reactivity
+  // Also dispatch custom event for same-tab reactivity
   window.dispatchEvent(new CustomEvent('chronos:infra_sync', { detail: { newReq, action: 'order_submitted' } }));
 
   if (btn) {
@@ -1360,8 +1367,17 @@ window.submitOrderToHarry = function() {
     let list = stored ? JSON.parse(stored) : [];
     list.unshift(newServiceReq);
     localStorage.setItem('chronos_service_requests', JSON.stringify(list));
+
+    // Dispatch cross-tab StorageEvent so dashboard-service.html's storage listener fires immediately
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'chronos_service_requests',
+      newValue: JSON.stringify(list),
+      storageArea: localStorage
+    }));
   } catch (e) {}
 
+  // Also dispatch custom event for same-tab reactivity
+  window.dispatchEvent(new CustomEvent('chronos:service_sync', { detail: { newServiceReq, action: 'order_submitted' } }));
   if (btn) {
     btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2";
     btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Contract Confirmed & Staff Assigned by Harry</span>`;
