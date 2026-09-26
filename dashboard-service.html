@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Service Manager — ChronosFlow Operations</title>
+  <title>Service Manager Command — ChronosFlow Operations</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,101 +18,448 @@
   <!-- Global Shared Navbar -->
   <div id="global-navbar"></div>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
-
-    <!-- Header & Persona Badge -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
-      <div class="space-y-1">
-        <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-amber">OPERATIONS TIER</span>
-          <span class="text-xs text-sky-400 font-mono">Service Provider Command</span>
+  <!-- Dashboard Shell: Left Sidebar + Right Main Window -->
+  <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] w-full mx-auto">
+    
+    <!-- ========================================================================= -->
+    <!-- LEFT SIDEBAR NAVIGATION PANEL                                             -->
+    <!-- ========================================================================= -->
+    <aside class="w-full lg:w-72 bg-slate-950/80 border-b lg:border-b-0 lg:border-r border-sky-950/60 p-4 sm:p-5 flex flex-col justify-between shrink-0 backdrop-blur-xl">
+      <div class="space-y-6">
+        
+        <!-- Role Brand Header -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-sky-950/60">
+          <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50 shrink-0">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-black tracking-tight text-white">SERVICE OPS</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-400/20">PROVIDER</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium">Hospitality & Fleet Lead</p>
+          </div>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-white">Hospitality, Concessions & Field Services</h1>
-        <p class="text-xs text-slate-400">
-          Catalog your service offerings, process host RFPs, allocate deployment units, and execute wave-by-wave operational checklists.
-        </p>
+
+        <!-- Registered Persona Summary Card -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-sky-900/30 space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-sky-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0 shadow-md">
+              <span id="sm-sidebar-avatar">HV</span>
+            </div>
+            <div class="overflow-hidden">
+              <div class="text-xs font-bold text-white truncate" id="sm-sidebar-name">Harry Vance</div>
+              <div class="text-[10px] text-sky-400 font-mono truncate" id="sm-sidebar-role">Hospitality & Logistics Lead</div>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 pt-1 border-t border-sky-950/80 flex items-center justify-between">
+            <span class="truncate" id="sm-sidebar-org">Apex Stadium Services Ltd</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="space-y-1 text-xs font-semibold" id="sm-sidebar-nav">
+          <button 
+            type="button" 
+            onclick="switchSMSection('sm-sec-profile')" 
+            id="nav-sm-profile" 
+            class="sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="clipboard-check" class="w-4 h-4 text-sky-400"></i>
+              <span>Profile & Registration</span>
+            </div>
+            <span class="text-[10px] font-mono text-sky-300 font-bold">FORM</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchSMSection('sm-sec-portfolio')" 
+            id="nav-sm-portfolio" 
+            class="sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="utensils-crossed" class="w-4 h-4 text-sky-400"></i>
+              <span>Service Capabilities</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">4 Offerings</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchSMSection('sm-sec-requests')" 
+            id="nav-sm-requests" 
+            class="sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="message-square" class="w-4 h-4 text-sky-400"></i>
+              <span>Host RFPs & Contracts</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-sm-reqs">2 RFPs</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchSMSection('sm-sec-playbook')" 
+            id="nav-sm-playbook" 
+            class="sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="list-checks" class="w-4 h-4 text-sky-400"></i>
+              <span>Action Playbook</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">4 Phases</span>
+          </button>
+        </nav>
+
       </div>
 
-      <div class="flex items-center space-x-2">
-        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-sky-400"></i>
-          <span>Partner: Apex Mega-Event Services Ltd</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 1: WHAT KIND OF SERVICES WE PROVIDE (Service Portfolio)           -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="utensils-crossed" class="w-5 h-5 text-sky-400"></i>
-            <span>Our Service Capabilities & Portfolio</span>
-          </h2>
-          <p class="text-xs text-slate-400">Services, equipment, and staff units registered for mega-event dispatch</p>
-        </div>
-
-        <button onclick="alert('Add service capability modal will open.')" class="px-3 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>Add Service Offering</span>
+      <!-- Bottom Panel Controls -->
+      <div class="pt-6 border-t border-sky-950/60 space-y-2 text-xs">
+        <a href="index.html" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center space-x-2.5 transition border border-sky-900/30">
+          <i data-lucide="arrow-left" class="w-4 h-4 text-sky-400"></i>
+          <span>Return to Portal</span>
+        </a>
+        <button onclick="window.ChronosSupabase.signOut()" class="w-full px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 flex items-center space-x-2.5 transition border border-rose-500/20">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
         </button>
       </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="service-portfolio-grid">
-        <!-- Rendered by JavaScript -->
-      </div>
-    </section>
+    </aside>
 
     <!-- ========================================================================= -->
-    <!-- SECTION 2: REQUEST & RESPONSE OF SERVICES (RFPs from Event Hosts)         -->
+    <!-- RIGHT MAIN CONTENT WINDOW                                                 -->
     <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
+    <main class="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 overflow-y-auto">
+      
+      <!-- Top Action Bar & Dynamic Breadcrumb -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-950/60">
         <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="message-square" class="w-5 h-5 text-sky-400"></i>
-            <span>Host Service Requests & RFPs</span>
-          </h2>
-          <p class="text-xs text-slate-400">Service contracts requested by event managers for upcoming venue fixtures</p>
+          <div class="text-[11px] font-mono text-sky-400 flex items-center space-x-1.5 uppercase font-bold">
+            <span>SERVICE MANAGER</span>
+            <span>&bull;</span>
+            <span id="sm-window-breadcrumb">PROFILE & SERVICE REGISTRATION</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-1" id="sm-window-title">
+            Service Manager Registration & Capability Filing
+          </h1>
         </div>
-        <span class="text-xs font-mono text-sky-400 font-bold">Active RFP Pipeline</span>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="service-requests-grid">
-        <!-- Rendered by JavaScript -->
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 3: WHAT SHOULD BE DONE IN AN EVENT (Operational Playbook)         -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-400"></i>
-            <span>What Should Be Done in an Event (Execution Playbook)</span>
-          </h2>
-          <p class="text-xs text-slate-400">Phase-by-phase operational tasks to ensure zero service bottleneck</p>
+        <div class="flex items-center space-x-3">
+          <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
+            <span>RFP Pipeline: <strong class="text-emerald-400">SYNCHRONIZED</strong></span>
+          </div>
         </div>
-        <span class="text-xs font-mono text-emerald-400 font-bold">Standard Operating Procedure</span>
       </div>
 
-      <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="service-playbook-grid">
+      <!-- Notification Toast Banner -->
+      <div id="sm-toast" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center space-x-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+        <span id="sm-toast-msg">Service Manager profile updated successfully!</span>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 1: PROFILE & SERVICE REGISTRATION FORM                        -->
+      <!-- ===================================================================== -->
+      <section id="sm-sec-profile" class="sm-section space-y-6">
+        
+        <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-sky-900/30 space-y-6 shadow-xl backdrop-blur-md">
+          <div class="flex items-center justify-between border-b border-sky-950/60 pb-4">
+            <div>
+              <h2 class="text-lg font-black text-white flex items-center space-x-2">
+                <i data-lucide="clipboard-signature" class="w-5 h-5 text-sky-400"></i>
+                <span>Service Provider Registration & Pricing Rate Card Form</span>
+              </h2>
+              <p class="text-xs text-slate-400">Register personal partner info, catalog service offerings, and lock commercial hourly rates</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-400/20">
+              SERVICE CONTRACTOR
+            </span>
+          </div>
+
+          <form onsubmit="handleSaveServiceProfile(event)" class="space-y-6">
+            
+            <!-- Group 1: Personal Contact Details -->
+            <div class="space-y-3">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>1. Service Manager Contact Details</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
+                  <input type="text" id="sm-reg-name" required value="Harry Vance" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Email Address</label>
+                  <input type="email" id="sm-reg-email" required value="harry@servicem.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Phone Number</label>
+                  <input type="tel" id="sm-reg-phone" required value="+91 97110 33451" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Company / Agency Name</label>
+                  <input type="text" id="sm-reg-org" required value="Apex Stadium Services & Fleet Co." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: Services Provided Checkboxes -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="check-square" class="w-4 h-4"></i>
+                <span>2. Services Provided for Mega-Events</span>
+              </h3>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs font-semibold">
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-hotel" checked class="accent-sky-400">
+                  <span class="text-white">Hotel / Lodging</span>
+                </label>
+
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-shuttles" checked class="accent-sky-400">
+                  <span class="text-white">Transit Shuttles</span>
+                </label>
+
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-security" checked class="accent-sky-400">
+                  <span class="text-white">Security & Stewards</span>
+                </label>
+
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-cctv" checked class="accent-sky-400">
+                  <span class="text-white">CCTV & Cameras</span>
+                </label>
+
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-fb" checked class="accent-sky-400">
+                  <span class="text-white">Concessions / F&B</span>
+                </label>
+
+                <label class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 flex items-center space-x-2 cursor-pointer hover:border-sky-400 transition">
+                  <input type="checkbox" id="srv-chk-medical" checked class="accent-sky-400">
+                  <span class="text-white">Medical Triage</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Group 3: Hourly Pricing & Rate Card -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="badge-indian-rupee" class="w-4 h-4"></i>
+                <span>3. Hourly Commercial Pricing & Capacity Unit Rates</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs font-mono">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5 font-sans">Hotel Room Rate</label>
+                  <input type="text" id="sm-rate-hotel" required value="₹3,500 / room / night" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5 font-sans">Bus Shuttle Rate</label>
+                  <input type="text" id="sm-rate-transport" required value="₹1,800 / bus / hr" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5 font-sans">Security Guard Rate</label>
+                  <input type="text" id="sm-rate-security" required value="₹450 / guard / hr" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5 font-sans">Camera / CCTV Node</label>
+                  <input type="text" id="sm-rate-cctv" required value="₹850 / camera / day" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5 font-sans">F&B Meal Kit Rate</label>
+                  <input type="text" id="sm-rate-concessions" required value="₹120 / meal kit" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3">
+              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Save Service Manager Registration & Rates</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 2: SERVICE CAPABILITIES & PORTFOLIO                           -->
+      <!-- ===================================================================== -->
+      <section id="sm-sec-portfolio" class="sm-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="utensils-crossed" class="w-5 h-5 text-sky-400"></i>
+              <span>Our Service Capabilities & Portfolio</span>
+            </h2>
+            <p class="text-xs text-slate-400">Services, equipment, and staff units registered for mega-event dispatch</p>
+          </div>
+
+          <button onclick="switchSMSection('sm-sec-profile')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add / Edit Offerings</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="service-portfolio-grid">
           <!-- Rendered by JavaScript -->
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: HOST RFPS & CONTRACTS                                      -->
+      <!-- ===================================================================== -->
+      <section id="sm-sec-requests" class="sm-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="message-square" class="w-5 h-5 text-sky-400"></i>
+              <span>Host Service Requests & RFPs</span>
+            </h2>
+            <p class="text-xs text-slate-400">Service contracts requested by event manager Alicia Stone for upcoming venue fixtures</p>
+          </div>
+          <span class="text-xs font-mono text-sky-400 font-bold">Active RFP Pipeline</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="service-requests-grid">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: WHAT SHOULD BE DONE IN AN EVENT (ACTION PLAYBOOK)           -->
+      <!-- ===================================================================== -->
+      <section id="sm-sec-playbook" class="sm-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-400"></i>
+              <span>What Should Be Done in an Event (Execution Playbook)</span>
+            </h2>
+            <p class="text-xs text-slate-400">Phase-by-phase operational tasks to ensure zero service bottleneck</p>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 font-bold">Standard Operating Procedure</span>
+        </div>
+
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="service-playbook-grid">
+            <!-- Rendered by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
 
   <script>
+    function switchSMSection(sectionId) {
+      document.querySelectorAll('.sm-section').forEach(sec => sec.classList.add('hidden'));
+
+      document.querySelectorAll('.sm-nav-btn').forEach(btn => {
+        btn.className = "sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent";
+      });
+
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('nav-' + sectionId.replace('sm-sec-', 'sm-'));
+      if (activeBtn) {
+        activeBtn.className = "sm-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold";
+      }
+
+      const breadcrumb = document.getElementById('sm-window-breadcrumb');
+      const title = document.getElementById('sm-window-title');
+
+      if (sectionId === 'sm-sec-profile') {
+        breadcrumb.innerText = "PROFILE & SERVICE REGISTRATION";
+        title.innerText = "Service Manager Registration & Capability Filing";
+      } else if (sectionId === 'sm-sec-portfolio') {
+        breadcrumb.innerText = "CAPABILITIES PORTFOLIO";
+        title.innerText = "Service Capabilities, Leads & Capacity Units";
+      } else if (sectionId === 'sm-sec-requests') {
+        breadcrumb.innerText = "HOST RFPS & CONTRACTS";
+        title.innerText = "Host Service Requests & RFPs from Alicia Stone";
+      } else if (sectionId === 'sm-sec-playbook') {
+        breadcrumb.innerText = "ACTION PLAYBOOK";
+        title.innerText = "Event Execution Playbook & Operational Waves";
+      }
+
+      lucide.createIcons();
+    }
+
+    function handleSaveServiceProfile(e) {
+      e.preventDefault();
+      const updatedUser = {
+        fullName: document.getElementById('sm-reg-name').value,
+        email: document.getElementById('sm-reg-email').value,
+        phone: document.getElementById('sm-reg-phone').value,
+        organization: document.getElementById('sm-reg-org').value,
+        role: "service_provider",
+        roleTitle: "Hospitality, Security & Logistics Lead",
+        pricing: {
+          hotel: document.getElementById('sm-rate-hotel').value,
+          transport: document.getElementById('sm-rate-transport').value,
+          security: document.getElementById('sm-rate-security').value,
+          cctv: document.getElementById('sm-rate-cctv').value,
+          concessions: document.getElementById('sm-rate-concessions').value
+        }
+      };
+
+      window.ChronosSupabase.setCurrentUser(updatedUser);
+
+      // Toast feedback
+      const toast = document.getElementById('sm-toast');
+      const toastMsg = document.getElementById('sm-toast-msg');
+      toastMsg.innerText = `Service registration saved for ${updatedUser.fullName}! (${updatedUser.organization})`;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+      loadServiceDashboard();
+    }
+
     async function loadServiceDashboard() {
       renderNavbar('service');
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+
+      if (currentUser) {
+        if (currentUser.fullName) {
+          document.getElementById('sm-sidebar-name').innerText = currentUser.fullName;
+          document.getElementById('sm-reg-name').value = currentUser.fullName;
+          const initials = currentUser.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          document.getElementById('sm-sidebar-avatar').innerText = initials;
+        }
+        if (currentUser.email) document.getElementById('sm-reg-email').value = currentUser.email;
+        if (currentUser.phone) document.getElementById('sm-reg-phone').value = currentUser.phone;
+        if (currentUser.organization) {
+          document.getElementById('sm-sidebar-org').innerText = currentUser.organization;
+          document.getElementById('sm-reg-org').value = currentUser.organization;
+        }
+
+        if (currentUser.pricing) {
+          if (currentUser.pricing.hotel) document.getElementById('sm-rate-hotel').value = currentUser.pricing.hotel;
+          if (currentUser.pricing.transport) document.getElementById('sm-rate-transport').value = currentUser.pricing.transport;
+          if (currentUser.pricing.security) document.getElementById('sm-rate-security').value = currentUser.pricing.security;
+          if (currentUser.pricing.cctv) document.getElementById('sm-rate-cctv').value = currentUser.pricing.cctv;
+          if (currentUser.pricing.concessions) document.getElementById('sm-rate-concessions').value = currentUser.pricing.concessions;
+        }
+      }
+
       const data = await window.ChronosSupabase.getServiceData();
 
       // Render Portfolio

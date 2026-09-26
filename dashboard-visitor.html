@@ -18,216 +18,555 @@
   <!-- Global Shared Navbar -->
   <div id="global-navbar"></div>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
-
-    <!-- Header & Persona Badge -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
-      <div class="space-y-1">
-        <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-sage">SPECTATOR TIER</span>
-          <span class="text-xs text-sky-400 font-mono">Visitor Guest Companion</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-white">My Event Experience & Guidance</h1>
-        <p class="text-xs text-slate-400">
-          Your personalized itinerary, pre-planned transit corridors, hotel bookings, and real-time live match advisories.
-        </p>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
-          <i data-lucide="ticket" class="w-4 h-4 text-sky-400"></i>
-          <span>Pass Holder: George Miller</span>
-        </div>
-      </div>
-    </div>
-
+  <!-- Dashboard Shell: Left Sidebar + Right Main Window -->
+  <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] w-full mx-auto">
+    
     <!-- ========================================================================= -->
-    <!-- SECTION 1: DETAILS ABOUT THEIR EVENT (Digital Ticket & Venue Pass)        -->
+    <!-- LEFT SIDEBAR NAVIGATION PANEL                                             -->
     <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="ticket" class="w-5 h-5 text-sky-400"></i>
-            <span>My Booked Event & Entry Pass</span>
-          </h2>
-          <p class="text-xs text-slate-400">Verified admission pass and seating credentials</p>
-        </div>
-        <span class="text-xs font-mono text-emerald-400 font-bold">CONFIRMED ADMISSION</span>
-      </div>
-
-      <!-- Ticket Card -->
-      <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-sky-900/40 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800/80 relative overflow-hidden space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
+    <aside class="w-full lg:w-72 bg-slate-950/80 border-b lg:border-b-0 lg:border-r border-sky-950/60 p-4 sm:p-5 flex flex-col justify-between shrink-0 backdrop-blur-xl">
+      <div class="space-y-6">
+        
+        <!-- Role Brand Header -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-sky-950/60">
+          <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50 shrink-0">
+            <i data-lucide="ticket" class="w-5 h-5"></i>
+          </div>
           <div>
-            <div class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">Match Day Admission</div>
-            <h3 class="text-xl sm:text-2xl font-black text-white mt-1" id="ticket-event-title">
-              Championship Trophy: 4-Day Mega Cricket Fixture
-            </h3>
-            <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
-              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
-              <span id="ticket-venue-name">Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul, Navi Mumbai</span>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-black tracking-tight text-white">GUEST COMPANION</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-400/20">VISITOR</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium">Spectator Journey & Advisories</p>
+          </div>
+        </div>
+
+        <!-- Registered Persona Summary Card -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-sky-900/30 space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 font-black flex items-center justify-center text-xs shrink-0 shadow-md">
+              <span id="vis-sidebar-avatar">GM</span>
+            </div>
+            <div class="overflow-hidden">
+              <div class="text-xs font-bold text-white truncate" id="vis-sidebar-name">George Miller</div>
+              <div class="text-[10px] text-emerald-400 font-mono truncate" id="vis-sidebar-pass">Pass: TKT-DYP-2026-94812</div>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 pt-1 border-t border-sky-950/80 flex items-center justify-between">
+            <span class="truncate" id="vis-sidebar-geo">Dadar East &bull; 28.4 km</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="space-y-1 text-xs font-semibold" id="vis-sidebar-nav">
+          <button 
+            type="button" 
+            onclick="switchVisSection('vis-sec-profile')" 
+            id="nav-vis-profile" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+              <span>Profile & Geolocation</span>
+            </div>
+            <span class="text-[10px] font-mono text-sky-300 font-bold">FORM</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchVisSection('vis-sec-ticket')" 
+            id="nav-vis-ticket" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="ticket" class="w-4 h-4 text-sky-400"></i>
+              <span>My Event & Digital Pass</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold">Confirmed</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchVisSection('vis-sec-preplans')" 
+            id="nav-vis-preplans" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="route" class="w-4 h-4 text-sky-400"></i>
+              <span>Pre-Planned Itinerary</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">4 Guides</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchVisSection('vis-sec-live')" 
+            id="nav-vis-live" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="radio" class="w-4 h-4 text-sky-400"></i>
+              <span>Live Day-of-Event Feed</span>
+            </div>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          </button>
+        </nav>
+
+      </div>
+
+      <!-- Bottom Panel Controls -->
+      <div class="pt-6 border-t border-sky-950/60 space-y-2 text-xs">
+        <a href="index.html" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center space-x-2.5 transition border border-sky-900/30">
+          <i data-lucide="arrow-left" class="w-4 h-4 text-sky-400"></i>
+          <span>Return to Portal</span>
+        </a>
+        <button onclick="window.ChronosSupabase.signOut()" class="w-full px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 flex items-center space-x-2.5 transition border border-rose-500/20">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ========================================================================= -->
+    <!-- RIGHT MAIN CONTENT WINDOW                                                 -->
+    <!-- ========================================================================= -->
+    <main class="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 overflow-y-auto">
+      
+      <!-- Top Action Bar & Dynamic Breadcrumb -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-950/60">
+        <div>
+          <div class="text-[11px] font-mono text-sky-400 flex items-center space-x-1.5 uppercase font-bold">
+            <span>VISITOR COMPANION</span>
+            <span>&bull;</span>
+            <span id="vis-window-breadcrumb">PROFILE & GEOLOCATION</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-1" id="vis-window-title">
+            Visitor Registration & Origin Geolocation
+          </h1>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
+            <span>Match Day: <strong class="text-emerald-400">PASS ACTIVE</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Toast Banner -->
+      <div id="vis-toast" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center space-x-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+        <span id="vis-toast-msg">Visitor profile and geolocation updated successfully!</span>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 1: VISITOR REGISTRATION & GEOLOCATION FORM                    -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-profile" class="vis-section space-y-6">
+        
+        <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-sky-900/30 space-y-6 shadow-xl backdrop-blur-md">
+          <div class="flex items-center justify-between border-b border-sky-950/60 pb-4">
+            <div>
+              <h2 class="text-lg font-black text-white flex items-center space-x-2">
+                <i data-lucide="map-pin" class="w-5 h-5 text-sky-400"></i>
+                <span>Visitor Registration & Origin Geolocation Form</span>
+              </h2>
+              <p class="text-xs text-slate-400">Specially configured with live geolocation to tailor personalized transit corridors and gate pacing</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
+              GEOLOCATION VERIFIED
+            </span>
+          </div>
+
+          <form onsubmit="handleSaveVisitorProfile(event)" class="space-y-6">
+            
+            <!-- Group 1: Personal Details -->
+            <div class="space-y-3">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>1. Guest Contact Details</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
+                  <input type="text" id="vis-reg-name" required value="George Miller" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Email Address</label>
+                  <input type="email" id="vis-reg-email" required value="george@visitor.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Phone Number</label>
+                  <input type="tel" id="vis-reg-phone" required value="+91 91234 56789" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: Origin Geolocation -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                  <i data-lucide="navigation" class="w-4 h-4"></i>
+                  <span>2. Origin Geolocation & Transit Mode (Crucial for AI Route Guidance)</span>
+                </h3>
+
+                <button type="button" onclick="detectLiveGPS()" class="px-2.5 py-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-400/30 text-[10px] font-mono flex items-center space-x-1 transition">
+                  <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i>
+                  <span>Auto-Detect My GPS</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Origin Starting Address / Coordinates</label>
+                  <input type="text" id="vis-reg-origin" required value="Dadar East, Mumbai (19.0178° N, 72.8478° E)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Preferred Transit Mode</label>
+                  <select id="vis-reg-transit" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                    <option value="Suburban Rail (Harbour Line)" selected>Suburban Rail (Harbour Line via Kurla)</option>
+                    <option value="Direct Highway Shuttle">Direct Highway Event Shuttle (NMMT Loop)</option>
+                    <option value="Private Car / Park & Ride">Private Car to Wonders Park Overflow Plaza</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 text-xs flex items-center justify-between">
+                <span class="text-slate-400">Computed Distance to Venue:</span>
+                <span class="font-mono font-bold text-sky-300" id="vis-computed-dist">28.4 km via Harbour Rail Line</span>
+              </div>
+            </div>
+
+            <!-- Group 3: Admission Ticket Details -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="ticket" class="w-4 h-4"></i>
+                <span>3. Booked Event Pass & Seating Credentials</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Digital Ticket Code</label>
+                  <input type="text" id="vis-reg-ticket" required value="TKT-DYP-2026-94812" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none font-mono text-sky-300">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Designated Gate Entrance</label>
+                  <input type="text" id="vis-reg-gate" required value="Gate 4 (West Wing)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Seating Bay & Block</label>
+                  <input type="text" id="vis-reg-seat" required value="Stand C &bull; Row 14 &bull; Seat 48" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3">
+              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Save Visitor Registration & Geolocation</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 2: MY BOOKED EVENT & ENTRY PASS                               -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-ticket" class="vis-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="ticket" class="w-5 h-5 text-sky-400"></i>
+              <span>My Booked Event & Entry Pass</span>
+            </h2>
+            <p class="text-xs text-slate-400">Verified admission pass and seating credentials</p>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 font-bold">CONFIRMED ADMISSION</span>
+        </div>
+
+        <!-- Ticket Card -->
+        <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-sky-900/40 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800/80 relative overflow-hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">Match Day Admission</div>
+              <h3 class="text-xl sm:text-2xl font-black text-white mt-1" id="ticket-event-title">
+                Championship Trophy: 4-Day Mega Cricket Fixture
+              </h3>
+              <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span id="ticket-venue-name">Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul, Navi Mumbai</span>
+              </div>
+            </div>
+
+            <div class="text-left md:text-right font-mono">
+              <div class="text-[10px] text-slate-400 uppercase">Pass Code</div>
+              <div class="text-base font-bold text-sky-300" id="ticket-id">TKT-DYP-2026-94812</div>
             </div>
           </div>
 
-          <div class="text-left md:text-right font-mono">
-            <div class="text-[10px] text-slate-400 uppercase">Pass Code</div>
-            <div class="text-base font-bold text-sky-300" id="ticket-id">TKT-DYP-2026-94812</div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400 uppercase">Entry Portal</div>
+              <div class="text-sm font-bold text-emerald-400 mt-0.5" id="ticket-gate">Gate 4 (West Wing)</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400 uppercase">Seat Allocation</div>
+              <div class="text-sm font-bold text-white mt-0.5" id="ticket-seat">Stand C &bull; Row 14 &bull; Seat 48</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400 uppercase">Gates Open</div>
+              <div class="text-sm font-bold text-sky-300 mt-0.5">11:30 AM</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400 uppercase">Match Start</div>
+              <div class="text-sm font-bold text-white mt-0.5">01:30 PM</div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-          <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-            <div class="text-[10px] text-slate-400 uppercase">Entry Portal</div>
-            <div class="text-sm font-bold text-emerald-400 mt-0.5" id="ticket-gate">Gate 4 (West Wing)</div>
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: THE PRE-PLANS DECIDED FOR THEM                             -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-preplans" class="vis-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="map" class="w-5 h-5 text-sky-400"></i>
+              <span>The Pre-Plans Decided for You</span>
+            </h2>
+            <p class="text-xs text-slate-400">Official journey recommendations computed by the event management baseline</p>
           </div>
-          <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-            <div class="text-[10px] text-slate-400 uppercase">Seat Allocation</div>
-            <div class="text-sm font-bold text-white mt-0.5" id="ticket-seat">Stand C &bull; Row 14 &bull; Seat 48</div>
-          </div>
-          <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-            <div class="text-[10px] text-slate-400 uppercase">Gates Open</div>
-            <div class="text-sm font-bold text-sky-300 mt-0.5">11:30 AM</div>
-          </div>
-          <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-            <div class="text-[10px] text-slate-400 uppercase">Match Start</div>
-            <div class="text-sm font-bold text-white mt-0.5">01:30 PM</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 2: THE PRE-PLANS DECIDED FOR THEM (Transit, Route, Lodging)       -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="map" class="w-5 h-5 text-sky-400"></i>
-            <span>The Pre-Plans Decided for You</span>
-          </h2>
-          <p class="text-xs text-slate-400">Official journey recommendations computed by the event management baseline</p>
-        </div>
-        <span class="text-xs font-mono text-sky-400 font-bold">Pre-Event Brief</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="visitor-preplans-grid">
-        
-        <!-- Pre-plan: Transit Corridor -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">RECOMMENDED TRANSIT</span>
-            <span class="text-xs text-emerald-400 font-mono">Guaranteed Headway</span>
-          </div>
-          <h4 class="text-sm font-bold text-white">Suburban Train: Harbour Line Route</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Board the 12-car local from CSMT/Kurla departing at <strong class="text-slate-200">10:48 AM</strong>. Arrive at <strong class="text-slate-200">Nerul Railway Station at 11:32 AM</strong> to avoid peak congestion.
-          </p>
+          <span class="text-xs font-mono text-sky-400 font-bold">Pre-Event Brief</span>
         </div>
 
-        <!-- Pre-plan: Shaded Walking Corridor -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sage">FIRST/LAST MILE</span>
-            <span class="text-xs text-sky-300 font-mono">18 Min Walk / 5m Bus</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="visitor-preplans-grid">
+          
+          <!-- Transit Corridor -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">RECOMMENDED TRANSIT</span>
+              <span class="text-xs text-emerald-400 font-mono">Guaranteed Headway</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Suburban Train: Harbour Line Route</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Board the 12-car local from CSMT/Kurla departing at <strong class="text-slate-200">10:48 AM</strong>. Arrive at <strong class="text-slate-200">Nerul Railway Station at 11:32 AM</strong> to avoid peak congestion.
+            </p>
           </div>
-          <h4 class="text-sm font-bold text-white">Shaded Pedestrian Green Corridor</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Exit Nerul Station East. Follow the green overhead shaded pathway (1.8km) directly to <strong class="text-slate-200">Stadium Gate 4</strong>, or take the free NMMT continuous event shuttle from Depot Bay 2.
-          </p>
-        </div>
 
-        <!-- Pre-plan: Accommodation -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sand">HOTEL CLUSTER</span>
-            <span class="text-xs text-slate-300 font-mono">1.4 km from Stadium</span>
+          <!-- Shaded Walking Corridor -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sage">FIRST/LAST MILE</span>
+              <span class="text-xs text-sky-300 font-mono">18 Min Walk / 5m Bus</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Shaded Pedestrian Green Corridor</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Exit Nerul Station East. Follow the green overhead shaded pathway (1.8km) directly to <strong class="text-slate-200">Stadium Gate 4</strong>, or take the free NMMT continuous event shuttle from Depot Bay 2.
+            </p>
           </div>
-          <h4 class="text-sm font-bold text-white">Nerul Sector 21 Hospitality Cluster</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Your booking is verified within walking radius of the stadium. Early check-in available from 10:00 AM.
-          </p>
-        </div>
 
-        <!-- Pre-plan: Bag Policy & Parking -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-terracotta">SECURITY & PARKING RULES</span>
-            <span class="text-xs text-rose-400 font-mono">Mandatory Policy</span>
+          <!-- Accommodation -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-sand">HOTEL CLUSTER</span>
+              <span class="text-xs text-slate-300 font-mono">1.4 km from Stadium</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Nerul Sector 21 Hospitality Cluster</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Your booking is verified within walking radius of the stadium. Early check-in available from 10:00 AM.
+            </p>
           </div>
-          <h4 class="text-sm font-bold text-white">Strict Infield Pass-Only Parking & Bag Policy</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            No private vehicle parking at the stadium perimeter. Private cars must park at <strong class="text-slate-200">Wonders Park Remote Plaza</strong>. Only transparent bags permitted; power banks allowed.
-          </p>
-        </div>
 
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 3: CURRENT PLANS DECIDED FOR THEM (Live Day-of-Event Updates)     -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Current Plans Decided for You (Live Day-of-Event)</span>
-          </h2>
-          <p class="text-xs text-slate-400">Dynamic status, turnstile wait times, and live dispatch advisories</p>
-        </div>
-        <span class="text-xs font-mono text-emerald-400 font-bold">Live Updates Active</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- Live Factor 1: Gate Queue -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-400 uppercase font-bold text-[10px]">Gate 4 Turnstile Queue</span>
-            <span class="text-emerald-400 font-mono font-bold">Fast Flow</span>
+          <!-- Bag Policy & Parking -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-terracotta">SECURITY & PARKING RULES</span>
+              <span class="text-xs text-rose-400 font-mono">Mandatory Policy</span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Strict Infield Pass-Only Parking & Bag Policy</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              No private vehicle parking at the stadium perimeter. Private cars must park at <strong class="text-slate-200">Wonders Park Remote Plaza</strong>. Only transparent bags permitted; power banks allowed.
+            </p>
           </div>
-          <div class="text-2xl font-black text-emerald-400">4 Mins Wait</div>
-          <p class="text-[11px] text-slate-400">Optical scanners operating at full throughput. No backpressure.</p>
-        </div>
 
-        <!-- Live Factor 2: Weather & Hydration -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-400 uppercase font-bold text-[10px]">Stadium Concourse Climate</span>
-            <span class="text-sky-300 font-mono font-bold">Heat Index High</span>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: CURRENT PLANS DECIDED FOR THEM (LIVE UPDATES)              -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-live" class="vis-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Current Plans Decided for You (Live Day-of-Event)</span>
+            </h2>
+            <p class="text-xs text-slate-400">Dynamic status, turnstile wait times, and live dispatch advisories</p>
           </div>
-          <div class="text-2xl font-black text-white">31.4°C &bull; Humid</div>
-          <p class="text-[11px] text-slate-400">Misting fans and free electrolyte water pods activated at Concourse Gate 4.</p>
+          <span class="text-xs font-mono text-emerald-400 font-bold">Live Updates Active</span>
         </div>
 
-        <!-- Live Factor 3: Egress Routing Advisory -->
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-400 uppercase font-bold text-[10px]">Egress Dispatch Advisory</span>
-            <span class="text-sky-400 font-mono font-bold">Pacing Advice</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Live Factor 1: Gate Queue -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400 uppercase font-bold text-[10px]">Gate 4 Turnstile Queue</span>
+              <span class="text-emerald-400 font-mono font-bold">Fast Flow</span>
+            </div>
+            <div class="text-2xl font-black text-emerald-400">4 Mins Wait</div>
+            <p class="text-[11px] text-slate-400">Optical scanners operating at full throughput. No backpressure.</p>
           </div>
-          <div class="text-sm font-bold text-white leading-snug">Seawoods Direct Loop Recommended</div>
-          <p class="text-[11px] text-slate-400">At 21:45 match end, use the Seawoods shuttle from Gate 4 to avoid Nerul station footbridge crush.</p>
+
+          <!-- Live Factor 2: Weather & Hydration -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400 uppercase font-bold text-[10px]">Stadium Concourse Climate</span>
+              <span class="text-sky-300 font-mono font-bold">Heat Index High</span>
+            </div>
+            <div class="text-2xl font-black text-white">31.4°C &bull; Humid</div>
+            <p class="text-[11px] text-slate-400">Misting fans and free electrolyte water pods activated at Concourse Gate 4.</p>
+          </div>
+
+          <!-- Live Factor 3: Egress Routing Advisory -->
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400 uppercase font-bold text-[10px]">Egress Dispatch Advisory</span>
+              <span class="text-sky-400 font-mono font-bold">Pacing Advice</span>
+            </div>
+            <div class="text-sm font-bold text-white leading-snug">Seawoods Direct Loop Recommended</div>
+            <p class="text-[11px] text-slate-400">At 21:45 match end, use the Seawoods shuttle from Gate 4 to avoid Nerul station footbridge crush.</p>
+          </div>
+
         </div>
+      </section>
 
-      </div>
-    </section>
+    </main>
 
-  </main>
+  </div>
 
   <script>
+    function switchVisSection(sectionId) {
+      document.querySelectorAll('.vis-section').forEach(sec => sec.classList.add('hidden'));
+
+      document.querySelectorAll('.vis-nav-btn').forEach(btn => {
+        btn.className = "vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent";
+      });
+
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('nav-' + sectionId.replace('vis-sec-', 'vis-'));
+      if (activeBtn) {
+        activeBtn.className = "vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold";
+      }
+
+      const breadcrumb = document.getElementById('vis-window-breadcrumb');
+      const title = document.getElementById('vis-window-title');
+
+      if (sectionId === 'vis-sec-profile') {
+        breadcrumb.innerText = "PROFILE & GEOLOCATION";
+        title.innerText = "Visitor Registration & Origin Geolocation";
+      } else if (sectionId === 'vis-sec-ticket') {
+        breadcrumb.innerText = "EVENT PASS";
+        title.innerText = "My Booked Event & Entry Pass";
+      } else if (sectionId === 'vis-sec-preplans') {
+        breadcrumb.innerText = "PRE-PLANNED ITINERARY";
+        title.innerText = "The Pre-Plans Decided for You";
+      } else if (sectionId === 'vis-sec-live') {
+        breadcrumb.innerText = "LIVE DAY-OF-EVENT";
+        title.innerText = "Current Plans & Live Queue Advisories";
+      }
+
+      lucide.createIcons();
+    }
+
+    function handleSaveVisitorProfile(e) {
+      e.preventDefault();
+      const updatedUser = {
+        fullName: document.getElementById('vis-reg-name').value,
+        email: document.getElementById('vis-reg-email').value,
+        phone: document.getElementById('vis-reg-phone').value,
+        originLocation: document.getElementById('vis-reg-origin').value,
+        transitPreference: document.getElementById('vis-reg-transit').value,
+        ticketId: document.getElementById('vis-reg-ticket').value,
+        gate: document.getElementById('vis-reg-gate').value,
+        seat: document.getElementById('vis-reg-seat').value,
+        role: "visitor",
+        roleTitle: "Grandstand Ticket Holder"
+      };
+
+      window.ChronosSupabase.setCurrentUser(updatedUser);
+
+      // Toast feedback
+      const toast = document.getElementById('vis-toast');
+      const toastMsg = document.getElementById('vis-toast-msg');
+      toastMsg.innerText = `Registration & Geolocation saved for ${updatedUser.fullName}! (${updatedUser.originLocation})`;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+      loadVisitorDashboard();
+    }
+
+    function detectLiveGPS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords = `${pos.coords.latitude.toFixed(4)}° N, ${pos.coords.longitude.toFixed(4)}° E (Auto-Detected GPS)`;
+            document.getElementById('vis-reg-origin').value = coords;
+            document.getElementById('vis-computed-dist').innerText = "Live GPS locked: Transit route synchronized";
+            alert("Live GPS detected and locked to your device coordinates!");
+          },
+          (err) => {
+            alert("Geolocation permission was declined or unavailable. Using manual origin address.");
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+
     async function loadVisitorDashboard() {
       renderNavbar('visitor');
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+
+      if (currentUser) {
+        if (currentUser.fullName) {
+          document.getElementById('vis-sidebar-name').innerText = currentUser.fullName;
+          document.getElementById('vis-reg-name').value = currentUser.fullName;
+          const initials = currentUser.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          document.getElementById('vis-sidebar-avatar').innerText = initials;
+        }
+        if (currentUser.email) document.getElementById('vis-reg-email').value = currentUser.email;
+        if (currentUser.phone) document.getElementById('vis-reg-phone').value = currentUser.phone;
+        if (currentUser.originLocation) {
+          document.getElementById('vis-reg-origin').value = currentUser.originLocation;
+          document.getElementById('vis-sidebar-geo').innerText = currentUser.originLocation.split('(')[0].trim();
+        }
+        if (currentUser.ticketId) {
+          document.getElementById('vis-reg-ticket').value = currentUser.ticketId;
+          document.getElementById('vis-sidebar-pass').innerText = "Pass: " + currentUser.ticketId;
+          document.getElementById('ticket-id').innerText = currentUser.ticketId;
+        }
+      }
+
       const data = await window.ChronosSupabase.getVisitorData();
       
       document.getElementById('ticket-event-title').innerText = data.event.title;
       document.getElementById('ticket-venue-name').innerText = `${data.event.venue}, ${data.event.location}`;
-      document.getElementById('ticket-id').innerText = data.ticketId;
-      document.getElementById('ticket-gate').innerText = data.event.gate;
-      document.getElementById('ticket-seat').innerHTML = data.event.seat;
+      document.getElementById('ticket-gate').innerText = currentUser?.gate || data.event.gate;
+      document.getElementById('ticket-seat').innerHTML = currentUser?.seat || data.event.seat;
       
       lucide.createIcons();
     }

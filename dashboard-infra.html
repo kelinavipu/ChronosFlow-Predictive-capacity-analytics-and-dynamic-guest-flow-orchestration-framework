@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infrastructure Manager — ChronosFlow Grid</title>
+  <title>Infrastructure Manager Command — ChronosFlow</title>
   
+  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,152 +16,521 @@
 </head>
 <body class="bg-[#080c14] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-400 selection:text-slate-950">
 
-  <!-- Global Shared Navbar -->
+  <!-- Optional Top Navigation Bar -->
   <div id="global-navbar"></div>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
-
-    <!-- Header & Persona Badge -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
-      <div class="space-y-1">
-        <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-slate">LOGISTICS TIER</span>
-          <span class="text-xs text-sky-400 font-mono">Infra Manager Command</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-white">Infrastructure & Transit Operations</h1>
-        <p class="text-xs text-slate-400">
-          Manage physical assets, review event host pipeline, allocate transit corridors, and coordinate multi-agency requests.
-        </p>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-          <span>Agency: Central Railway & NMMT Dispatch</span>
-        </div>
-      </div>
-    </div>
-
+  <!-- Dashboard App Shell: Sidebar + Content Window -->
+  <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] w-full mx-auto">
+    
     <!-- ========================================================================= -->
-    <!-- SECTION 1: WHICH EVENT MANAGER IS READY TO HOST (Host Pipeline)           -->
+    <!-- LEFT SIDEBAR NAVIGATION PANEL                                             -->
     <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="calendar-clock" class="w-5 h-5 text-sky-400"></i>
-            <span>Active Event Host Pipeline</span>
-          </h2>
-          <p class="text-xs text-slate-400">Verified event managers preparing to host mega-events in your jurisdiction</p>
-        </div>
-        <span class="text-xs font-mono text-sky-400 font-bold">1 Ready to Host</span>
-      </div>
-
-      <!-- Host Event Card -->
-      <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:border-sky-400/50 transition">
-        <div class="space-y-3 max-w-2xl">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-sand">READY TO HOST</span>
-            <span class="text-xs text-slate-400 font-mono">&bull; Event ID: dypatil_nerul</span>
-            <span class="text-xs text-emerald-400 font-mono">&bull; Baseline Locked</span>
+    <aside class="w-full lg:w-72 bg-slate-950/80 border-b lg:border-b-0 lg:border-r border-sky-950/60 p-4 sm:p-5 flex flex-col justify-between shrink-0 backdrop-blur-xl">
+      <div class="space-y-6">
+        
+        <!-- Role Brand Header -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-sky-950/60">
+          <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50 shrink-0">
+            <i data-lucide="network" class="w-5 h-5"></i>
           </div>
-
           <div>
-            <h3 class="text-xl font-black text-white">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
-            <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
-              <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
-              <span>Hosted by <strong class="text-white">Alicia Stone</strong> (Event Master Orchestrator)</span>
-              <span>&bull;</span>
-              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
-              <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-black tracking-tight text-white">INFRASTRUCTURE</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-400/20">DIRECTOR</span>
             </div>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
-            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400">Dates</div>
-              <div class="font-bold text-white">Sep 1 - Sep 4</div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400">Daily Spectators</div>
-              <div class="font-bold text-sky-300">50,000 / Day</div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400">Rail Demand</div>
-              <div class="font-bold text-emerald-400">24,000 pax/hr</div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400">Shuttle Fleet</div>
-              <div class="font-bold text-sky-400">65 Buses Req</div>
-            </div>
+            <p class="text-[11px] text-slate-400 font-medium">Corridor & Asset Command</p>
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 w-full sm:w-auto">
-          <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2">
-            <i data-lucide="radar" class="w-4 h-4"></i>
-            <span>Inspect 5km Twin</span>
-          </a>
-          <button onclick="scrollToRequests()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-sky-900/40 text-xs font-semibold flex items-center justify-center space-x-2">
-            <i data-lucide="inbox" class="w-4 h-4 text-sky-400"></i>
-            <span>View Host Requests</span>
+        <!-- Registered Persona Summary Card -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-sky-900/30 space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-400 text-slate-950 font-black flex items-center justify-center text-xs shrink-0 shadow-md">
+              <span id="sidebar-avatar-initials">SR</span>
+            </div>
+            <div class="overflow-hidden">
+              <div class="text-xs font-bold text-white truncate" id="sidebar-user-name">Srinivasan R.</div>
+              <div class="text-[10px] text-sky-400 font-mono truncate" id="sidebar-user-role">Transit Director</div>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 pt-1 border-t border-sky-950/80 flex items-center justify-between">
+            <span class="truncate" id="sidebar-user-org">Central Railway & NMMT</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          </div>
+        </div>
+
+        <!-- Navigation Panel Tabs -->
+        <nav class="space-y-1 text-xs font-semibold" id="infra-sidebar-nav">
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-profile')" 
+            id="nav-sec-profile" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i>
+              <span>Profile & Registration</span>
+            </div>
+            <span class="text-[10px] font-mono text-sky-300 font-bold">FORM</span>
           </button>
-        </div>
+
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-pipeline')" 
+            id="nav-sec-pipeline" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="calendar-clock" class="w-4 h-4 text-sky-400"></i>
+              <span>Host Event Pipeline</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">1 Fixture</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-requests')" 
+            id="nav-sec-requests" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="git-pull-request" class="w-4 h-4 text-sky-400"></i>
+              <span>Incoming Host Requests</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-req-count">2</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-assets')" 
+            id="nav-sec-assets" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="layers" class="w-4 h-4 text-sky-400"></i>
+              <span>Physical Assets & Hubs</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">4 Active</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-analytics')" 
+            id="nav-sec-analytics" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-sky-400"></i>
+              <span>Corridor Analytics</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">5km Ring</span>
+          </button>
+        </nav>
+
       </div>
-    </section>
 
-    <!-- ========================================================================= -->
-    <!-- SECTION 2: REQUEST & RESPONSE PIPELINE (Requests from Event Hosts)        -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4" id="infra-requests-section">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="git-pull-request" class="w-5 h-5 text-sky-400"></i>
-            <span>Infrastructure Requests & Responses</span>
-          </h2>
-          <p class="text-xs text-slate-400">Capacity and corridor allocation requests submitted by event managers</p>
-        </div>
-        <span class="text-xs font-mono text-emerald-400 font-bold">Live Synchronized</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="infra-requests-grid">
-        <!-- Rendered by JavaScript -->
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 3: MY REGISTERED INFRASTRUCTURE ASSETS                            -->
-    <!-- ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <i data-lucide="layers" class="w-5 h-5 text-sky-400"></i>
-            <span>My Registered Physical Assets</span>
-          </h2>
-          <p class="text-xs text-slate-400">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
-        </div>
-
-        <button onclick="alert('Asset registration wizard will open.')" class="px-3 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>Register Asset</span>
+      <!-- Bottom Panel Controls -->
+      <div class="pt-6 border-t border-sky-950/60 space-y-2 text-xs">
+        <a href="index.html" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center space-x-2.5 transition border border-sky-900/30">
+          <i data-lucide="arrow-left" class="w-4 h-4 text-sky-400"></i>
+          <span>Return to Portal</span>
+        </a>
+        <button onclick="window.ChronosSupabase.signOut()" class="w-full px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 flex items-center space-x-2.5 transition border border-rose-500/20">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
         </button>
       </div>
+    </aside>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="infra-assets-grid">
-        <!-- Rendered by JavaScript -->
+    <!-- ========================================================================= -->
+    <!-- RIGHT MAIN CONTENT WINDOW (Displays clicked section)                      -->
+    <!-- ========================================================================= -->
+    <main class="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 overflow-y-auto">
+      
+      <!-- Top Action Bar & Breadcrumb -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-950/60">
+        <div>
+          <div class="text-[11px] font-mono text-sky-400 flex items-center space-x-1.5 uppercase font-bold">
+            <span>INFRA MANAGER</span>
+            <span>&bull;</span>
+            <span id="window-breadcrumb-text">PROFILE & ASSET REGISTRATION</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-1" id="window-title-text">
+            Infrastructure Manager Registration & Asset Filing
+          </h1>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
+            <span>Grid Status: <strong class="text-emerald-400">CONNECTED</strong></span>
+          </div>
+        </div>
       </div>
-    </section>
 
-  </main>
+      <!-- Notification Toast Banner -->
+      <div id="infra-toast" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center space-x-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+        <span id="infra-toast-msg">Registration profile updated successfully!</span>
+      </div>
 
+      <!-- ===================================================================== -->
+      <!-- SECTION 1: PROFILE & ASSET REGISTRATION FORM                          -->
+      <!-- ===================================================================== -->
+      <section id="sec-profile" class="infra-section space-y-6">
+        
+        <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-sky-900/30 space-y-6 shadow-xl backdrop-blur-md">
+          <div class="flex items-center justify-between border-b border-sky-950/60 pb-4">
+            <div>
+              <h2 class="text-lg font-black text-white flex items-center space-x-2">
+                <i data-lucide="clipboard-signature" class="w-5 h-5 text-sky-400"></i>
+                <span>Infrastructure Manager & Asset Registration Form</span>
+              </h2>
+              <p class="text-xs text-slate-400">Register and update your personal officer info, municipal jurisdiction, and managed transit asset details</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
+              OFFICIAL FILING
+            </span>
+          </div>
+
+          <form onsubmit="handleSaveInfraProfile(event)" class="space-y-6">
+            
+            <!-- Group 1: Personal Officer Information -->
+            <div class="space-y-3">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>1. Officer & Personal Contact Details</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
+                  <input type="text" id="reg-name" required value="Srinivasan R." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Email Address</label>
+                  <input type="email" id="reg-email" required value="srinivasan@infram.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Phone Number</label>
+                  <input type="tel" id="reg-phone" required value="+91 98201 45678" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Place of Residence / City</label>
+                  <input type="text" id="reg-residence" required value="Sector 19A, Nerul, Navi Mumbai" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: Managed Property & Physical Asset Details -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="building-2" class="w-4 h-4"></i>
+                <span>2. Property & Infrastructure Asset Information</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Property / Facility Name</label>
+                  <input type="text" id="reg-asset-name" required value="Nerul Multi-Modal Transit Hub & Parking Complex" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Placement & Arterial Corridor</label>
+                  <input type="text" id="reg-asset-placement" required value="Nerul East Railway Approach & Sion-Panvel Bypass" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Geographical Coordinates (GPS)</label>
+                  <input type="text" id="reg-asset-geo" required value="19.0330° N, 73.0297° E (Zone B Catchment)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Registration Doc / License Number</label>
+                  <input type="text" id="reg-asset-doc" required value="LIC-MH-CIDCO-2024-8841" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Design Throughput Capacity</label>
+                  <input type="text" id="reg-asset-cap" required value="24,000 pax/hr Rail & 2,200 Parking Bays" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Allocated Event Availability Window</label>
+                  <input type="text" id="reg-asset-window" required value="Available for Sep 1 - Sep 4 (No Conflicts)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 3: Jurisdiction Organization -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span>3. Agency Authority & Dispatch Entity</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Authority / Public Carrier Organization</label>
+                  <input type="text" id="reg-org" required value="Navi Mumbai Municipal Transport & Central Railway" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Operational Designation / Title</label>
+                  <input type="text" id="reg-title" required value="Infrastructure & Transit Director" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3">
+              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Save & Register Infrastructure Profile</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 2: ACTIVE EVENT HOST PIPELINE                                 -->
+      <!-- ===================================================================== -->
+      <section id="sec-pipeline" class="infra-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="calendar-clock" class="w-5 h-5 text-sky-400"></i>
+              <span>Active Event Host Pipeline</span>
+            </h2>
+            <p class="text-xs text-slate-400">Verified event managers preparing to host mega-events in your jurisdiction</p>
+          </div>
+          <span class="text-xs font-mono text-sky-400 font-bold">1 Ready to Host</span>
+        </div>
+
+        <!-- Host Event Card -->
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:border-sky-400/50 transition">
+          <div class="space-y-3 max-w-2xl">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-sand">READY TO HOST</span>
+              <span class="text-xs text-slate-400 font-mono">&bull; Event ID: dypatil_nerul</span>
+              <span class="text-xs text-emerald-400 font-mono">&bull; Baseline Locked</span>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-black text-white">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
+              <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Hosted by <strong class="text-white">Alicia Stone</strong> (Event Master Orchestrator)</span>
+                <span>&bull;</span>
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400">Dates</div>
+                <div class="font-bold text-white">Sep 1 - Sep 4</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400">Daily Spectators</div>
+                <div class="font-bold text-sky-300">50,000 / Day</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400">Rail Demand</div>
+                <div class="font-bold text-emerald-400">24,000 pax/hr</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400">Shuttle Fleet</div>
+                <div class="font-bold text-sky-400">65 Buses Req</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 w-full sm:w-auto">
+            <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2">
+              <i data-lucide="radar" class="w-4 h-4"></i>
+              <span>Inspect 5km Twin</span>
+            </a>
+            <button onclick="switchInfraSection('sec-requests')" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-sky-900/40 text-xs font-semibold flex items-center justify-center space-x-2">
+              <i data-lucide="inbox" class="w-4 h-4 text-sky-400"></i>
+              <span>View Host Requests</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: INCOMING HOST REQUESTS & APPROVALS                         -->
+      <!-- ===================================================================== -->
+      <section id="sec-requests" class="infra-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="git-pull-request" class="w-5 h-5 text-sky-400"></i>
+              <span>Infrastructure Requests & Responses</span>
+            </h2>
+            <p class="text-xs text-slate-400">Capacity and corridor allocation requests submitted by event manager Alicia Stone</p>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 font-bold">Live Synchronized</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="infra-requests-grid">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: PHYSICAL ASSETS & HUBS                                     -->
+      <!-- ===================================================================== -->
+      <section id="sec-assets" class="infra-section space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="layers" class="w-5 h-5 text-sky-400"></i>
+              <span>Registered Physical Assets & Corridor Nodes</span>
+            </h2>
+            <p class="text-xs text-slate-400">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
+          </div>
+
+          <button onclick="switchInfraSection('sec-profile')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Register New Asset</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="infra-assets-grid">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 5: CORRIDOR ANALYTICS & CAPACITY                              -->
+      <!-- ===================================================================== -->
+      <section id="sec-analytics" class="infra-section space-y-6 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-400"></i>
+              <span>Transit Corridors & Capacity Analytics</span>
+            </h2>
+            <p class="text-xs text-slate-400">5km Digital Twin multi-modal throughput breakdown for Dr. D.Y. Patil Stadium Catchment</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-5 rounded-2xl bg-slate-900 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400">Suburban Rail Throughput</div>
+            <div class="text-2xl font-black text-sky-300">24,000 pax/hr</div>
+            <div class="text-xs text-slate-400">Harbour line 12-car rakes on 3.5 min headway at Nerul Platform 1 & 2.</div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400">Bus Loop Frequency</div>
+            <div class="text-2xl font-black text-emerald-400">65 Continuous Shuttles</div>
+            <div class="text-xs text-slate-400">Connecting Nerul Station Depot Bay 2 to Stadium Gate 4 directly.</div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400">Parking Plazas Utilization</div>
+            <div class="text-2xl font-black text-sky-400">3,700 Bays</div>
+            <div class="text-xs text-slate-400">2,200 stadium VIP passes + 1,500 Wonders Park park-and-ride capacity.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Client JavaScript -->
   <script>
+    // Section Switcher Logic
+    function switchInfraSection(sectionId) {
+      // 1. Hide all sections
+      document.querySelectorAll('.infra-section').forEach(sec => sec.classList.add('hidden'));
+
+      // 2. Remove active styling on sidebar buttons
+      document.querySelectorAll('.infra-nav-btn').forEach(btn => {
+        btn.className = "infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent";
+      });
+
+      // 3. Show selected section
+      const targetSec = document.getElementById(sectionId);
+      if (targetSec) targetSec.classList.remove('hidden');
+
+      // 4. Highlight active nav button
+      const activeBtn = document.getElementById('nav-' + sectionId);
+      if (activeBtn) {
+        activeBtn.className = "infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold";
+      }
+
+      // 5. Update header breadcrumb & title
+      const breadcrumb = document.getElementById('window-breadcrumb-text');
+      const winTitle = document.getElementById('window-title-text');
+
+      if (sectionId === 'sec-profile') {
+        breadcrumb.innerText = "PROFILE & ASSET REGISTRATION";
+        winTitle.innerText = "Infrastructure Manager Registration & Asset Filing";
+      } else if (sectionId === 'sec-pipeline') {
+        breadcrumb.innerText = "HOST EVENT PIPELINE";
+        winTitle.innerText = "Active Event Host Pipeline & Fixtures";
+      } else if (sectionId === 'sec-requests') {
+        breadcrumb.innerText = "HOST REQUESTS & APPROVALS";
+        winTitle.innerText = "Incoming Infrastructure Allocation Requests";
+      } else if (sectionId === 'sec-assets') {
+        breadcrumb.innerText = "PHYSICAL ASSETS";
+        winTitle.innerText = "Managed Physical Assets & Corridor Nodes";
+      } else if (sectionId === 'sec-analytics') {
+        breadcrumb.innerText = "CORRIDOR ANALYTICS";
+        winTitle.innerText = "Transit Corridors & Capacity Analytics";
+      }
+
+      lucide.createIcons();
+    }
+
+    // Load Data & Pre-populate Form
     async function loadInfraDashboard() {
       renderNavbar('infra');
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+      
+      // Update sidebar avatar & info
+      if (currentUser) {
+        document.getElementById('sidebar-user-name').innerText = currentUser.fullName || "Srinivasan R.";
+        document.getElementById('sidebar-user-role').innerText = currentUser.roleTitle || "Transit Director";
+        document.getElementById('sidebar-user-org').innerText = currentUser.organization || "Central Railway & NMMT";
+        
+        const initials = (currentUser.fullName || "SR").split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('sidebar-avatar-initials').innerText = initials;
+
+        // Prepopulate form if available
+        if (currentUser.fullName) document.getElementById('reg-name').value = currentUser.fullName;
+        if (currentUser.email) document.getElementById('reg-email').value = currentUser.email;
+        if (currentUser.phone) document.getElementById('reg-phone').value = currentUser.phone;
+        if (currentUser.residence) document.getElementById('reg-residence').value = currentUser.residence;
+        if (currentUser.organization) document.getElementById('reg-org').value = currentUser.organization;
+        if (currentUser.roleTitle) document.getElementById('reg-title').value = currentUser.roleTitle;
+
+        if (currentUser.property) {
+          if (currentUser.property.name) document.getElementById('reg-asset-name').value = currentUser.property.name;
+          if (currentUser.property.placement) document.getElementById('reg-asset-placement').value = currentUser.property.placement;
+          if (currentUser.property.geo) document.getElementById('reg-asset-geo').value = currentUser.property.geo;
+          if (currentUser.property.docNumber) document.getElementById('reg-asset-doc').value = currentUser.property.docNumber;
+          if (currentUser.property.capacity) document.getElementById('reg-asset-cap').value = currentUser.property.capacity;
+          if (currentUser.property.availability) document.getElementById('reg-asset-window').value = currentUser.property.availability;
+        }
+      }
+
       const data = await window.ChronosSupabase.getInfraData();
       
+      // Update badge counter
+      const pendingCount = (data.requests || []).filter(r => r.status === 'PENDING').length;
+      document.getElementById('badge-req-count').innerText = data.requests.length;
+
       // Render Requests
       const reqContainer = document.getElementById('infra-requests-grid');
       reqContainer.innerHTML = data.requests.map(req => {
@@ -235,13 +605,46 @@
       lucide.createIcons();
     }
 
-    async function handleStatus(reqId, status) {
-      await window.ChronosSupabase.respondToInfraRequest(reqId, status, "Processed by Infra Dispatcher");
+    // Save Registration Form
+    function handleSaveInfraProfile(e) {
+      e.preventDefault();
+      
+      const updatedUser = {
+        fullName: document.getElementById('reg-name').value,
+        email: document.getElementById('reg-email').value,
+        phone: document.getElementById('reg-phone').value,
+        residence: document.getElementById('reg-residence').value,
+        organization: document.getElementById('reg-org').value,
+        roleTitle: document.getElementById('reg-title').value,
+        role: "infra_provider",
+        property: {
+          name: document.getElementById('reg-asset-name').value,
+          placement: document.getElementById('reg-asset-placement').value,
+          geo: document.getElementById('reg-asset-geo').value,
+          docNumber: document.getElementById('reg-asset-doc').value,
+          capacity: document.getElementById('reg-asset-cap').value,
+          availability: document.getElementById('reg-asset-window').value
+        }
+      };
+
+      window.ChronosSupabase.setCurrentUser(updatedUser);
+
+      // Show toast
+      const toast = document.getElementById('infra-toast');
+      const toastMsg = document.getElementById('infra-toast-msg');
+      toastMsg.innerText = `Registration saved for ${updatedUser.fullName}! Asset "${updatedUser.property.name}" registered.`;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+
       loadInfraDashboard();
     }
 
-    function scrollToRequests() {
-      document.getElementById('infra-requests-section')?.scrollIntoView({ behavior: 'smooth' });
+    async function handleStatus(reqId, status) {
+      await window.ChronosSupabase.respondToInfraRequest(reqId, status, "Processed by Infra Dispatcher");
+      loadInfraDashboard();
     }
 
     document.addEventListener('DOMContentLoaded', loadInfraDashboard);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pre-Plans & Spatial Digital Twins — ChronosFlow</title>
+  <title>Event Master Command — Pre-Plans & Digital Twins — ChronosFlow</title>
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,434 +22,585 @@
   <!-- Global Shared Navbar -->
   <div id="global-navbar"></div>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-12">
-
-    <!-- PAGE HEADER -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
-      <div>
-        <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#22242b] text-[#d4a373] border border-[#2a2c35]">PHASE 0</span>
-          <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Event Pre-Planning & Spatial Twins</h1>
-        </div>
-        <p class="text-xs text-[#9e9b93] mt-1">
-          Review verified operational baselines, explore 5km micro-area infrastructure twins, and author new event plans.
-        </p>
-      </div>
-
-      <div class="flex items-center space-x-3">
-        <a href="#add-new-plan-section" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 shadow-sm">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          <span>Author New Pre-Plan</span>
-        </a>
-      </div>
-    </div>
-
+  <!-- Dashboard Shell: Left Sidebar + Right Main Window -->
+  <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] w-full mx-auto">
+    
     <!-- ========================================================================= -->
-    <!-- SECTION 1: EXISTING PRE-PLANS (Show Existing Ones First)                  -->
+    <!-- LEFT SIDEBAR NAVIGATION PANEL                                             -->
     <!-- ========================================================================= -->
-    <section class="space-y-4" id="existing-preplans-section">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="folder-kanban" class="w-5 h-5 text-[#d4a373]"></i>
-            <span>Existing Pre-Planning Baselines</span>
-          </h2>
-          <p class="text-xs text-[#9e9b93]">Saved operational baselines in Supabase Cloud and local repository storage</p>
-        </div>
-
-        <!-- Search & Filter Controls -->
-        <div class="flex items-center space-x-2 text-xs">
-          <div class="relative">
-            <input 
-              type="text" 
-              id="plan-search-input" 
-              oninput="filterExistingPlans()" 
-              placeholder="Search by venue or city..." 
-              class="px-3 py-1.5 pl-8 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] placeholder-[#6b6862] text-xs outline-none focus:border-[#d4a373]"
-            >
-            <i data-lucide="search" class="w-3.5 h-3.5 text-[#6b6862] absolute left-2.5 top-2.5"></i>
-          </div>
-          <select id="plan-status-filter" onchange="filterExistingPlans()" class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] text-xs outline-none cursor-pointer">
-            <option value="all">All Statuses</option>
-            <option value="locked">Baseline Locked</option>
-            <option value="planning">In Planning</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Pre-Plans Cards Grid (Loaded Dynamically) -->
-      <div id="existing-plans-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered by preplans.js -->
-        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] text-center py-12">
-          <span class="text-xs text-[#9e9b93]">Loading operational baselines from Supabase...</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- SECTION 2: ADD NEW PRE-PLAN (Put Add New Below)                           -->
-    <!-- ========================================================================= -->
-    <section class="space-y-6 pt-6 border-t border-[#2a2c35]" id="add-new-plan-section">
-      
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">Workbench</span>
-          <h2 class="text-xl font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="compass" class="w-5 h-5 text-[#d4a373]"></i>
-            <span>Author New Pre-Plan & Digital Twin</span>
-          </h2>
-          <p class="text-xs text-[#9e9b93]">Describe any event in plain text or pick a venue preset to generate a micro-area spatial twin</p>
-        </div>
-
-        <button onclick="saveCurrentPlanToSupabase()" id="btn-save-plan" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
-          <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-          <span>Save Plan to Supabase</span>
-        </button>
-      </div>
-
-      <!-- Natural Language Event Authoring Bar -->
-      <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Event Narrative Brief</label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <textarea 
-              id="event-narrative-input" 
-              rows="2" 
-              class="flex-1 px-4 py-2.5 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs leading-relaxed placeholder-[#6b6862]"
-              placeholder="e.g. Conduct a 4-day cricket championship at Dr. D.Y. Patil Stadium in Nerul from 1st September to 4th September with 50,000 spectators attending each day..."
-            ></textarea>
-            <button onclick="parseAndGenerateTwin()" class="px-5 py-2.5 rounded-xl btn-sand font-bold text-xs shrink-0 flex items-center justify-center space-x-1.5 self-end sm:self-auto">
-              <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span>Generate Twin & Timeline</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Venue Quick Selector Chips -->
-        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#2a2c35] text-xs">
-          <span class="text-[11px] text-[#9e9b93] font-semibold mr-1">Presets:</span>
-          <button onclick="loadVenuePreset('dypatil_nerul')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            DY Patil Stadium (Nerul)
-          </button>
-          <button onclick="loadVenuePreset('wankhede_mumbai')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            Wankhede Stadium (Mumbai)
-          </button>
-          <button onclick="loadVenuePreset('narendra_modi')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            Narendra Modi Stadium (Ahmedabad)
-          </button>
-          <button onclick="loadVenuePreset('eden_gardens')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            Eden Gardens (Kolkata)
-          </button>
-          <button onclick="loadVenuePreset('wembley_london')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            Wembley Stadium (London)
-          </button>
-          <button onclick="loadVenuePreset('madison_sq_garden')" class="preset-chip px-2.5 py-1 rounded-lg bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-[11px] font-medium transition">
-            Madison Sq Garden (NYC)
-          </button>
-        </div>
-      </div>
-
-      <!-- Active Event Snapshot Summary -->
-      <div id="active-event-summary" class="dark-panel rounded-2xl p-5 border border-[#2a2c35]">
-        <!-- Rendered by preplans.js -->
-      </div>
-
-      <!-- Alternating Event Journey Timeline -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="text-base font-bold text-[#ede8e1] flex items-center space-x-2">
-              <i data-lucide="clock" class="w-4 h-4 text-[#d4a373]"></i>
-              <span>Alternating Operational Journey Timeline</span>
-            </h3>
-            <p class="text-[11px] text-[#9e9b93]">Alternating top & bottom stage nodes coupled with the physical radar below</p>
-          </div>
-          <span class="text-[10px] font-mono text-[#d4a373] bg-[#22242b] px-2 py-0.5 rounded border border-[#2a2c35]">Synchronized with Radar</span>
-        </div>
-
-        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] overflow-x-auto">
-          <div id="timeline-container" class="min-w-[800px] py-6 relative">
-            <!-- Alternating Timeline rendered dynamically -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Micro-Area Digital Twin & Infrastructure Radar (Positioned DIRECTLY Below Timeline) -->
-      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
+    <aside class="w-full lg:w-72 bg-slate-950/80 border-b lg:border-b-0 lg:border-r border-sky-950/60 p-4 sm:p-5 flex flex-col justify-between shrink-0 backdrop-blur-xl">
+      <div class="space-y-6">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2a2c35] pb-4">
-          <div>
-            <h3 id="digital-twin-title" class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
-              <i data-lucide="radar" class="w-5 h-5 text-[#d4a373]"></i>
-              <span>Nerul Micro-Area Spatial Twin (DY Patil Stadium)</span>
-            </h3>
-            <p id="digital-twin-subtitle" class="text-xs text-[#9e9b93] mt-0.5">
-              Geospatial infrastructure mapped within 5km radius: hotels, railway hubs, trauma centers, and highway corridors.
-            </p>
+        <!-- Role Brand Header -->
+        <div class="flex items-center space-x-3 pb-4 border-b border-sky-950/60">
+          <div class="w-10 h-10 rounded-2xl bg-sky-950/80 border border-sky-400/30 flex items-center justify-center text-sky-400 shadow-lg shadow-sky-950/50 shrink-0">
+            <i data-lucide="compass" class="w-5 h-5"></i>
           </div>
-
-          <!-- Radar Filter Buttons -->
-          <div class="flex flex-wrap items-center gap-1.5 text-xs">
-            <button onclick="filterTwinNodes('all')" class="twin-filter-btn px-2.5 py-1 rounded-lg btn-sand font-bold text-[11px]" data-cat="all">All</button>
-            <button onclick="filterTwinNodes('rail')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="rail">Rail</button>
-            <button onclick="filterTwinNodes('hotel')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="hotel">Hotels</button>
-            <button onclick="filterTwinNodes('hospital')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="hospital">Hospitals</button>
-            <button onclick="filterTwinNodes('parking')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="parking">Parking</button>
-            <button onclick="filterTwinNodes('choke')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-[#22242b] text-[#9e9b93] hover:text-[#ede8e1] text-[11px]" data-cat="choke">Choke Points</button>
-            <button onclick="openAddAssetModal()" class="px-2.5 py-1 rounded-lg badge-sand font-bold text-[11px] flex items-center space-x-1 ml-1">
-              <i data-lucide="plus" class="w-3 h-3"></i>
-              <span>Add Pin</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Radar Canvas & Inspector Split -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          <!-- Left: Radar Screen (8 Cols) -->
-          <div class="lg:col-span-8">
-            <div class="digital-twin-canvas" id="radar-canvas-container">
-              <div class="radar-grid-bg"></div>
-              <div class="radar-ring radar-ring-1"><span class="radar-ring-label">1.0 km</span></div>
-              <div class="radar-ring radar-ring-2"><span class="radar-ring-label">2.0 km</span></div>
-              <div class="radar-ring radar-ring-3"><span class="radar-ring-label">3.5 km</span></div>
-              <div class="radar-ring radar-ring-4"><span class="radar-ring-label">5.0 km</span></div>
-              <div class="radar-beam"></div>
-
-              <!-- Arterial Expressway & Feeder Rail Guides -->
-              <div class="map-arterial-line" style="top: 36%; left: 8%; width: 84%; transform: rotate(18deg);" title="Primary Feeder Arterial Expressway"></div>
-              <div class="map-rail-line" style="top: 10%; left: 28%; height: 80%; width: 3px; transform: rotate(4deg);" title="Suburban Rail Feeder"></div>
-
-              <!-- Dynamic Map Pins Layer -->
-              <div id="radar-pins-layer"></div>
-            </div>
-            
-            <div class="flex items-center justify-between text-[11px] text-[#9e9b93] mt-2 px-1">
-              <span class="flex items-center gap-1.5">
-                <i data-lucide="info" class="w-3.5 h-3.5 text-[#d4a373]"></i>
-                Click any infrastructure node to inspect capacity and linked operational stage
-              </span>
-              <span id="twin-gps-coord" class="font-mono text-[#d4a373]">GPS: 19.0330° N, 73.0297° E (Nerul)</span>
-            </div>
-          </div>
-
-          <!-- Right: Telemetry & Spatial Envelopes (4 Cols) -->
-          <div class="lg:col-span-4 space-y-4">
-            <!-- Selected Pin Telemetry Card -->
-            <div id="selected-pin-telemetry" class="dark-subpanel rounded-xl p-4 border border-[#2a2c35]">
-              <!-- Rendered by preplans.js -->
-            </div>
-
-            <!-- Micro-Area Operational Envelopes -->
-            <div class="p-4 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-3 text-xs">
-              <div class="text-xs font-bold uppercase tracking-wider text-[#9e9b93] flex items-center justify-between">
-                <span>Spatial Capacity Envelopes</span>
-                <span class="text-[#d4a373] font-mono text-[10px]">Active Baseline</span>
-              </div>
-
-              <div class="space-y-2">
-                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[#ede8e1] flex items-center gap-1.5">
-                    <i data-lucide="hotel" class="w-3.5 h-3.5 text-[#d4a373]"></i>
-                    Nearby Beds (4km)
-                  </span>
-                  <span class="font-mono font-bold text-[#c96a54]">1,850 Rooms <span class="text-[10px] text-[#c96a54] font-normal">(-10.6k gap)</span></span>
-                </div>
-
-                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[#ede8e1] flex items-center gap-1.5">
-                    <i data-lucide="train" class="w-3.5 h-3.5 text-[#607d8b]"></i>
-                    Rail Clearance
-                  </span>
-                  <span class="font-mono font-bold text-[#709775]">46,000 pax/hr</span>
-                </div>
-
-                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[#ede8e1] flex items-center gap-1.5">
-                    <i data-lucide="car" class="w-3.5 h-3.5 text-[#cc7744]"></i>
-                    Parking Capacity
-                  </span>
-                  <span class="font-mono font-bold text-[#d4a373]">4,800 slots <span class="text-[10px] text-[#9e9b93] font-normal">(park & ride)</span></span>
-                </div>
-
-                <div class="flex items-center justify-between p-2 rounded-lg bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[#ede8e1] flex items-center gap-1.5">
-                    <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-[#c96a54]"></i>
-                    Trauma Proximity
-                  </span>
-                  <span class="font-mono font-bold text-[#709775]">&lt; 3 min green corridor</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- Stage Capacity Inspector with Explicit Formulas -->
-      <div id="stage-inspector-section" class="dark-panel rounded-2xl p-6 border border-[#2a2c35]">
-        <!-- Rendered by preplans.js -->
-      </div>
-
-      <!-- Categorized Proactive Mitigations -->
-      <div id="mitigations-section" class="dark-panel rounded-2xl p-6 border border-[#2a2c35]">
-        <!-- Rendered by preplans.js -->
-      </div>
-
-      <!-- ========================================================================= -->
-      <!-- SECTION: ORDER & MANAGE INFRASTRUCTURE & SERVICES (Event Manager: Alicia) -->
-      <!-- ========================================================================= -->
-      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2a2c35] pb-4">
           <div>
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">CROSS-ROLE PROCUREMENT</span>
-              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">ALICIA'S COMMAND</span>
+              <span class="text-sm font-black tracking-tight text-white">EVENT MASTER</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-400/20">ORCHESTRATOR</span>
             </div>
-            <h3 class="text-xl font-bold text-[#ede8e1] mt-0.5">Order & Coordinate Infrastructure and Services</h3>
-            <p class="text-xs text-[#9e9b93]">Analyze asset availability by allocation time window and issue contracts to Srinivasan & Harry</p>
+            <p class="text-[11px] text-slate-400 font-medium">Mega-Event Command & Plans</p>
           </div>
-          <span class="text-xs font-mono text-[#709775]">Availability Engine Active</span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-          <!-- Left: Order Infrastructure (from Srinivasan) -->
-          <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-4 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">INFRASTRUCTURE MANAGER: SRINIVASAN</span>
-                <span class="text-[11px] font-mono text-[#709775] font-bold">100% AVAILABLE</span>
-              </div>
-
-              <div>
-                <h4 class="text-base font-bold text-[#ede8e1]">Nerul Transit Hub & Parking Complex</h4>
-                <div class="text-xs text-[#9e9b93] mt-0.5">Owner: <strong>Srinivasan R.</strong> &bull; Sector 19A, Nerul, Navi Mumbai</div>
-              </div>
-
-              <!-- Availability Analysis Engine by Time of Allocation -->
-              <div class="p-3 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2 text-xs">
-                <div class="flex items-center justify-between">
-                  <span class="text-[#9e9b93]">Requested Time Window:</span>
-                  <span class="font-mono font-bold text-[#d4a373]">Sep 1 - Sep 4 (10:00 - 23:00)</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-[#9e9b93]">Availability Analysis:</span>
-                  <span class="font-mono text-[#709775] font-bold flex items-center space-x-1">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                    <span>Free / No Schedule Conflict</span>
-                  </span>
-                </div>
-                <div class="flex items-center justify-between pt-1 border-t border-[#2a2c35] text-[11px]">
-                  <span class="text-[#9e9b93]">Registration Doc:</span>
-                  <span class="font-mono text-[#ede8e1]">LIC-MH-CIDCO-2024-8841</span>
-                </div>
-              </div>
-
-              <!-- Order Customization -->
-              <div class="space-y-2 text-xs">
-                <label class="block font-bold text-[#9e9b93]">Specify Infrastructure Allocation Request</label>
-                <input 
-                  type="text" 
-                  id="order-infra-demand" 
-                  value="Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for Sep 1-4"
-                  class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none"
-                >
-              </div>
+        <!-- Registered Persona Summary Card -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-sky-900/30 space-y-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white font-black flex items-center justify-center text-xs shrink-0 shadow-md">
+              <span id="em-sidebar-avatar">AS</span>
             </div>
-
-            <button onclick="submitOrderToSrinivasan()" id="btn-order-infra" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 transition">
-              <i data-lucide="send" class="w-3.5 h-3.5"></i>
-              <span>Send Infrastructure Order to Srinivasan</span>
-            </button>
-          </div>
-
-          <!-- Right: Order Services & Fleet Transport (from Harry) -->
-          <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-4 flex flex-col justify-between">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-amber">SERVICE MANAGER: HARRY</span>
-                <span class="text-[11px] font-mono text-[#d4a373] font-bold">COMMERCIAL RATES</span>
-              </div>
-
-              <div>
-                <h4 class="text-base font-bold text-[#ede8e1]">Apex Stadium Services & Fleet Co.</h4>
-                <div class="text-xs text-[#9e9b93] mt-0.5">Operator: <strong>Harry Vance</strong> &bull; Hospitality, Security & Logistics</div>
-              </div>
-
-              <!-- Commercial Rates List -->
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[10px] text-[#9e9b93] uppercase">Transport Shuttles</span>
-                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹1,800 / bus / hr</div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[10px] text-[#9e9b93] uppercase">Security Stewards</span>
-                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹450 / guard / hr</div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[10px] text-[#9e9b93] uppercase">CCTV Surveillance</span>
-                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹850 / camera / day</div>
-                </div>
-                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
-                  <span class="text-[10px] text-[#9e9b93] uppercase">Hotel / Lodging</span>
-                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹3,500 / room / night</div>
-                </div>
-              </div>
-
-              <!-- Service Order Builder -->
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <label class="block font-bold text-[#9e9b93] mb-1">Select Service</label>
-                  <select id="order-service-type" class="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
-                    <option value="transport">Transport Shuttle Fleet</option>
-                    <option value="security">Security Screening Stewards</option>
-                    <option value="cctv">Camera / CCTV Feeds</option>
-                    <option value="hotel">Hotel Room Block</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block font-bold text-[#9e9b93] mb-1">Required Units</label>
-                  <input type="number" id="order-service-units" value="25" min="1" class="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
-                </div>
-              </div>
+            <div class="overflow-hidden">
+              <div class="text-xs font-bold text-white truncate" id="em-sidebar-name">Alicia Stone</div>
+              <div class="text-[10px] text-sky-400 font-mono truncate" id="em-sidebar-role">Master Orchestrator</div>
             </div>
-
-            <button onclick="submitOrderToHarry()" id="btn-order-service" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 transition">
-              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-              <span>Submit Service Order Contract to Harry</span>
-            </button>
           </div>
+          <div class="text-[10px] text-slate-400 pt-1 border-t border-sky-950/80 flex items-center justify-between">
+            <span class="truncate" id="em-sidebar-org">International Events Board</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          </div>
+        </div>
 
+        <!-- Navigation Tabs -->
+        <nav class="space-y-1 text-xs font-semibold" id="em-sidebar-nav">
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-profile')" 
+            id="nav-em-profile" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i>
+              <span>Profile & Registration</span>
+            </div>
+            <span class="text-[10px] font-mono text-sky-300 font-bold">FORM</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-existing')" 
+            id="nav-em-existing" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="folder-kanban" class="w-4 h-4 text-sky-400"></i>
+              <span>Existing Pre-Plans</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 font-bold">3 Baselines</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-author')" 
+            id="nav-em-author" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="sparkles" class="w-4 h-4 text-sky-400"></i>
+              <span>Author New Event</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold">+ Author</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-procure')" 
+            id="nav-em-procure" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-sky-400"></i>
+              <span>Procure Infra & Services</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">Srinivasan/Harry</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-twin')" 
+            id="nav-em-twin" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="radar" class="w-4 h-4 text-sky-400"></i>
+              <span>5km Spatial Digital Twin</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">Radar Map</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="switchEMSection('em-sec-timeline')" 
+            id="nav-em-timeline" 
+            class="em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+              <span>Crowd Journey Timeline</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">9 Stages</span>
+          </button>
+        </nav>
+
+      </div>
+
+      <!-- Bottom Panel Controls -->
+      <div class="pt-6 border-t border-sky-950/60 space-y-2 text-xs">
+        <a href="index.html" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center space-x-2.5 transition border border-sky-900/30">
+          <i data-lucide="arrow-left" class="w-4 h-4 text-sky-400"></i>
+          <span>Return to Portal</span>
+        </a>
+        <button onclick="window.ChronosSupabase.signOut()" class="w-full px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 flex items-center space-x-2.5 transition border border-rose-500/20">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ========================================================================= -->
+    <!-- RIGHT MAIN CONTENT WINDOW                                                 -->
+    <!-- ========================================================================= -->
+    <main class="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 overflow-y-auto">
+      
+      <!-- Top Action Bar & Dynamic Breadcrumb -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-950/60">
+        <div>
+          <div class="text-[11px] font-mono text-sky-400 flex items-center space-x-1.5 uppercase font-bold">
+            <span>EVENT MANAGER</span>
+            <span>&bull;</span>
+            <span id="em-window-breadcrumb">PROFILE & REGISTRATION</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-1" id="em-window-title">
+            Event Master Registration & Authority Filing
+          </h1>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
+            <span>Protocols: <strong class="text-emerald-400">OPTIMAL</strong></span>
+          </div>
         </div>
       </div>
 
-    </section>
+      <!-- Notification Toast Banner -->
+      <div id="em-toast" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center space-x-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+        <span id="em-toast-msg">Event Manager profile updated successfully!</span>
+      </div>
 
-  </main>
+      <!-- ===================================================================== -->
+      <!-- SECTION 1: PROFILE & REGISTRATION FORM                                -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-profile" class="em-section space-y-6">
+        
+        <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-sky-900/30 space-y-6 shadow-xl backdrop-blur-md">
+          <div class="flex items-center justify-between border-b border-sky-950/60 pb-4">
+            <div>
+              <h2 class="text-lg font-black text-white flex items-center space-x-2">
+                <i data-lucide="clipboard-signature" class="w-5 h-5 text-sky-400"></i>
+                <span>Event Master Orchestrator Registration Form</span>
+              </h2>
+              <p class="text-xs text-slate-400">Register personal manager information, event authority credentials, and primary jurisdiction</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
+              LEAD ORGANIZER
+            </span>
+          </div>
+
+          <form onsubmit="handleSaveEMProfile(event)" class="space-y-6">
+            
+            <!-- Group 1: Personal Contact Info -->
+            <div class="space-y-3">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>1. Event Manager Contact Details</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
+                  <input type="text" id="em-reg-name" required value="Alicia Stone" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Email Address</label>
+                  <input type="email" id="em-reg-email" required value="alicia@eventm.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Phone Number</label>
+                  <input type="tel" id="em-reg-phone" required value="+91 98199 12345" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">City / Headquarters</label>
+                  <input type="text" id="em-reg-residence" required value="Mumbai, Maharashtra" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: Organization & Authority -->
+            <div class="space-y-3 pt-4 border-t border-sky-950/60">
+              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span>2. Organizing Body & Authority Credentials</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Organizing Body / Board</label>
+                  <input type="text" id="em-reg-org" required value="International Mega-Events Board & BCCI Logistics" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Authority License / Registration ID</label>
+                  <input type="text" id="em-reg-doc" required value="EVT-MGR-GLOBAL-2026-904" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Primary Venue Jurisdiction</label>
+                  <input type="text" id="em-reg-venue" required value="Dr. D.Y. Patil Stadium (Nerul)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex items-center justify-end space-x-3">
+              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Save & Register Event Master Profile</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 2: EXISTING PRE-PLANS                                         -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-existing" class="em-section space-y-4 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="folder-kanban" class="w-5 h-5 text-sky-400"></i>
+              <span>Existing Pre-Planning Baselines</span>
+            </h2>
+            <p class="text-xs text-slate-400">Saved operational baselines in Supabase Cloud and local repository storage</p>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="flex items-center space-x-2 text-xs">
+            <div class="relative">
+              <input 
+                type="text" 
+                id="plan-search-input" 
+                oninput="filterExistingPlans()" 
+                placeholder="Search by venue or city..." 
+                class="px-3 py-1.5 pl-8 rounded-xl bg-slate-900 border border-sky-900/40 text-white placeholder-slate-500 text-xs outline-none focus:border-sky-400"
+              >
+              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5"></i>
+            </div>
+            <select id="plan-status-filter" onchange="filterExistingPlans()" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-900/40 text-white text-xs outline-none cursor-pointer">
+              <option value="all">All Statuses</option>
+              <option value="locked">Baseline Locked</option>
+              <option value="planning">In Planning</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pre-Plans Cards Grid -->
+        <div id="existing-plans-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="dark-panel rounded-2xl p-6 border border-sky-900/30 text-center py-12">
+            <span class="text-xs text-slate-400">Loading operational baselines...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: AUTHOR NEW PRE-PLAN (WORKBENCH)                            -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-author" class="em-section space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">Workbench</span>
+            <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+              <i data-lucide="sparkles" class="w-5 h-5 text-sky-400"></i>
+              <span>Author New Pre-Plan & Digital Twin</span>
+            </h2>
+            <p class="text-xs text-slate-400">Describe any event in plain text or pick a venue preset to generate a micro-area spatial twin</p>
+          </div>
+
+          <button onclick="saveCurrentPlanToSupabase()" id="btn-save-plan" class="px-4 py-2 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
+            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+            <span>Save Plan to Supabase</span>
+          </button>
+        </div>
+
+        <!-- Natural Language Event Authoring Bar -->
+        <div class="dark-panel rounded-2xl p-5 border border-sky-900/40 space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Event Narrative Brief</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <textarea 
+                id="event-narrative-input" 
+                rows="2" 
+                class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-sky-900/40 text-white focus:border-sky-400 outline-none text-xs leading-relaxed placeholder-slate-500"
+                placeholder="e.g. Conduct a 4-day cricket championship at Dr. D.Y. Patil Stadium in Nerul from 1st September to 4th September with 50,000 spectators attending each day..."
+              ></textarea>
+              <button onclick="parseAndGenerateTwin()" class="px-5 py-2.5 rounded-xl btn-glacier font-bold text-xs shrink-0 flex items-center justify-center space-x-1.5 self-end sm:self-auto">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Generate Twin & Timeline</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Venue Quick Selector Chips -->
+          <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-sky-950/60 text-xs">
+            <span class="text-[11px] text-slate-400 font-semibold mr-1">Presets:</span>
+            <button onclick="loadVenuePreset('dypatil_nerul')" class="preset-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white border border-sky-900/30 text-[11px] font-medium transition">
+              DY Patil Stadium (Nerul)
+            </button>
+            <button onclick="loadVenuePreset('wankhede_mumbai')" class="preset-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white border border-sky-900/30 text-[11px] font-medium transition">
+              Wankhede Stadium (Mumbai)
+            </button>
+            <button onclick="loadVenuePreset('narendra_modi')" class="preset-chip px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white border border-sky-900/30 text-[11px] font-medium transition">
+              Narendra Modi Stadium (Ahmedabad)
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Event Snapshot Summary -->
+        <div id="active-event-summary" class="dark-panel rounded-2xl p-5 border border-sky-900/40">
+          <!-- Rendered by preplans.js -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: CROSS-ROLE PROCUREMENT (Order Infra & Services)            -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-procure" class="em-section space-y-6 hidden">
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-950/60 pb-4">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">CROSS-ROLE PROCUREMENT</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">ALICIA'S COMMAND</span>
+              </div>
+              <h3 class="text-xl font-bold text-white mt-0.5">Order & Coordinate Infrastructure and Services</h3>
+              <p class="text-xs text-slate-400">Analyze asset availability by allocation time window and issue contracts to Srinivasan & Harry</p>
+            </div>
+            <span class="text-xs font-mono text-emerald-400 font-bold">Availability Engine Active</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Order Infrastructure (from Srinivasan) -->
+            <div class="p-5 rounded-2xl bg-slate-900 border border-sky-900/40 space-y-4 flex flex-col justify-between">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">INFRA MANAGER: SRINIVASAN</span>
+                  <span class="text-[11px] font-mono text-emerald-400 font-bold">100% AVAILABLE</span>
+                </div>
+
+                <div>
+                  <h4 class="text-base font-bold text-white">Nerul Transit Hub & Parking Complex</h4>
+                  <div class="text-xs text-slate-400 mt-0.5">Owner: <strong class="text-slate-200">Srinivasan R.</strong> &bull; Sector 19A, Nerul, Navi Mumbai</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-2 text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Requested Time Window:</span>
+                    <span class="font-mono font-bold text-sky-300">Sep 1 - Sep 4 (10:00 - 23:00)</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Availability Analysis:</span>
+                    <span class="font-mono text-emerald-400 font-bold flex items-center space-x-1">
+                      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                      <span>Free / No Schedule Conflict</span>
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between pt-1 border-t border-sky-950/60 text-[11px]">
+                    <span class="text-slate-400">Registration Doc:</span>
+                    <span class="font-mono text-white">LIC-MH-CIDCO-2024-8841</span>
+                  </div>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                  <label class="block font-bold text-slate-400">Specify Infrastructure Allocation Request</label>
+                  <input 
+                    type="text" 
+                    id="order-infra-demand" 
+                    value="Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for Sep 1-4"
+                    class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none"
+                  >
+                </div>
+              </div>
+
+              <button onclick="submitOrderToSrinivasan()" id="btn-order-infra" class="w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span>Send Infrastructure Order to Srinivasan</span>
+              </button>
+            </div>
+
+            <!-- Order Services & Fleet Transport (from Harry) -->
+            <div class="p-5 rounded-2xl bg-slate-900 border border-sky-900/40 space-y-4 flex flex-col justify-between">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-amber">SERVICE MANAGER: HARRY</span>
+                  <span class="text-[11px] font-mono text-sky-300 font-bold">COMMERCIAL RATES</span>
+                </div>
+
+                <div>
+                  <h4 class="text-base font-bold text-white">Apex Stadium Services & Fleet Co.</h4>
+                  <div class="text-xs text-slate-400 mt-0.5">Operator: <strong class="text-slate-200">Harry Vance</strong> &bull; Hospitality, Security & Logistics</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-2 text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Service Catalogue:</span>
+                    <span class="font-mono text-sky-400 font-bold">Shuttles, Security Stewards, CCTV, Hotels</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Hourly Rates:</span>
+                    <span class="font-mono text-white">₹1,800/bus/hr &bull; ₹450/guard/hr</span>
+                  </div>
+                  <div class="flex items-center justify-between pt-1 border-t border-sky-950/60 text-[11px]">
+                    <span class="text-slate-400">Estimated Cost:</span>
+                    <span class="font-mono font-bold text-sky-300">₹8,45,000 Total Fixture Deployment</span>
+                  </div>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                  <label class="block font-bold text-slate-400">Specify Services Request</label>
+                  <input 
+                    type="text" 
+                    id="order-service-demand" 
+                    value="Deploy 35 satellite F&B hydration kiosks + 8 cooling misting tents at Gates 2, 4, 7"
+                    class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none"
+                  >
+                </div>
+              </div>
+
+              <button onclick="submitOrderToHarry()" id="btn-order-services" class="w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span>Send Services RFP to Harry</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 5: 5KM SPATIAL DIGITAL TWIN                                   -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-twin" class="em-section space-y-4 hidden">
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/60 pb-4">
+            <div>
+              <h3 id="digital-twin-title" class="text-lg font-bold text-white flex items-center space-x-2">
+                <i data-lucide="radar" class="w-5 h-5 text-sky-400"></i>
+                <span>Nerul Micro-Area Spatial Twin (DY Patil Stadium)</span>
+              </h3>
+              <p id="digital-twin-subtitle" class="text-xs text-slate-400 mt-0.5">
+                Geospatial infrastructure mapped within 5km radius: hotels, railway hubs, trauma centers, and highway corridors.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5 text-xs">
+              <button onclick="filterTwinNodes('all')" class="twin-filter-btn px-2.5 py-1 rounded-lg btn-glacier font-bold text-[11px]" data-cat="all">All</button>
+              <button onclick="filterTwinNodes('rail')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white text-[11px]" data-cat="rail">Rail</button>
+              <button onclick="filterTwinNodes('hotel')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white text-[11px]" data-cat="hotel">Hotels</button>
+              <button onclick="filterTwinNodes('hospital')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white text-[11px]" data-cat="hospital">Hospitals</button>
+              <button onclick="filterTwinNodes('parking')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white text-[11px]" data-cat="parking">Parking</button>
+              <button onclick="filterTwinNodes('choke')" class="twin-filter-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white text-[11px]" data-cat="choke">Choke Points</button>
+              <button onclick="openAddAssetModal()" class="px-2.5 py-1 rounded-lg badge-sand font-bold text-[11px] flex items-center space-x-1 ml-1">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>Add Asset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Radar / Twin Screen -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+              <div class="digital-twin-canvas" id="digital-twin-canvas">
+                <div class="radar-ring radar-ring-1"><span class="radar-ring-label">1.25 km</span></div>
+                <div class="radar-ring radar-ring-2"><span class="radar-ring-label">2.5 km</span></div>
+                <div class="radar-ring radar-ring-3"><span class="radar-ring-label">3.75 km</span></div>
+                <div class="radar-ring radar-ring-4"><span class="radar-ring-label">5.0 km</span></div>
+                <div class="radar-beam"></div>
+                <div id="twin-pins-container"></div>
+              </div>
+            </div>
+
+            <!-- Pin Inspector Panel -->
+            <div id="pin-inspector-panel" class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-4">
+              <!-- Rendered by preplans.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 6: CROWD JOURNEY TIMELINE                                     -->
+      <!-- ===================================================================== -->
+      <section id="em-sec-timeline" class="em-section space-y-6 hidden">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+                <span>Alternating Operational Journey Timeline</span>
+              </h3>
+              <p class="text-[11px] text-slate-400">Alternating top & bottom stage nodes coupled with the physical radar below</p>
+            </div>
+            <span class="text-[10px] font-mono text-sky-400 bg-slate-900 px-2.5 py-1 rounded-full border border-sky-900/40">Synchronized with Radar</span>
+          </div>
+
+          <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 overflow-x-auto">
+            <div id="timeline-container" class="min-w-[800px] py-6 relative">
+              <!-- Alternating Timeline rendered dynamically by preplans.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage Capacity Inspector with Explicit Formulas -->
+        <div id="stage-inspector-section" class="dark-panel rounded-2xl p-6 border border-sky-900/40">
+          <!-- Rendered by preplans.js -->
+        </div>
+
+        <!-- Categorized Proactive Mitigations -->
+        <div id="mitigations-section" class="dark-panel rounded-2xl p-6 border border-sky-900/40">
+          <!-- Rendered by preplans.js -->
+        </div>
+      </section>
+
+    </main>
+
+  </div>
 
   <!-- Modal: Add Custom Asset to Twin -->
   <div id="add-asset-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden p-4">
-    <div class="dark-panel rounded-2xl max-w-md w-full p-6 border border-[#2a2c35] space-y-4">
-      <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
-        <h4 class="text-sm font-bold text-[#ede8e1]">Add Physical Asset to Digital Twin</h4>
-        <button onclick="closeAddAssetModal()" class="text-[#9e9b93] hover:text-[#ede8e1]">
+    <div class="dark-panel rounded-2xl max-w-md w-full p-6 border border-sky-900/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-sky-950/60 pb-3">
+        <h4 class="text-sm font-bold text-white">Add Physical Asset to Digital Twin</h4>
+        <button onclick="closeAddAssetModal()" class="text-slate-400 hover:text-white">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <form id="add-asset-form" onsubmit="submitNewAsset(event)" class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#9e9b93] mb-1">Asset Name</label>
-          <input id="asset-name" type="text" required placeholder="e.g. Belapur Transit Shuttles" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+          <label class="block font-bold text-slate-400 mb-1">Asset Name</label>
+          <input id="asset-name" type="text" required placeholder="e.g. Belapur Transit Shuttles" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-[#9e9b93] mb-1">Category</label>
-            <select id="asset-category" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+            <label class="block font-bold text-slate-400 mb-1">Category</label>
+            <select id="asset-category" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
               <option value="hotel">Hotel / Lodging</option>
               <option value="rail">Railway / Transit</option>
               <option value="hospital">Hospital / Emergency</option>
@@ -458,23 +609,114 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-[#9e9b93] mb-1">Distance</label>
-            <input id="asset-dist" type="text" required placeholder="e.g. 2.5 km" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+            <label class="block font-bold text-slate-400 mb-1">Distance</label>
+            <input id="asset-dist" type="text" required placeholder="e.g. 2.5 km" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
           </div>
         </div>
         <div>
-          <label class="block font-bold text-[#9e9b93] mb-1">Capacity / Spec</label>
-          <input id="asset-capacity" type="text" required placeholder="e.g. 15,000 pax/hr / 200 Beds" class="w-full px-3 py-2 rounded-xl bg-[#22242b] border border-[#2a2c35] text-[#ede8e1] outline-none">
+          <label class="block font-bold text-slate-400 mb-1">Capacity / Spec</label>
+          <input id="asset-capacity" type="text" required placeholder="e.g. 15,000 pax/hr / 200 Beds" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none">
         </div>
-        <div class="flex justify-end space-x-2 pt-2 border-t border-[#2a2c35]">
-          <button type="button" onclick="closeAddAssetModal()" class="px-3 py-1.5 rounded-lg text-[#9e9b93] hover:text-[#ede8e1]">Cancel</button>
-          <button type="submit" class="px-4 py-1.5 rounded-lg btn-sand font-bold">Add to Radar</button>
+        <div class="flex justify-end space-x-2 pt-2 border-t border-sky-950/60">
+          <button type="button" onclick="closeAddAssetModal()" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 rounded-lg btn-glacier font-bold">Add to Radar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Preplans Script Logic -->
+  <!-- Preplans Engine & Section Switcher Scripts -->
   <script src="preplans.js"></script>
+  <script>
+    function switchEMSection(sectionId) {
+      document.querySelectorAll('.em-section').forEach(sec => sec.classList.add('hidden'));
+
+      document.querySelectorAll('.em-nav-btn').forEach(btn => {
+        btn.className = "em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent";
+      });
+
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('nav-' + sectionId.replace('em-sec-', 'em-'));
+      if (activeBtn) {
+        activeBtn.className = "em-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold";
+      }
+
+      const breadcrumb = document.getElementById('em-window-breadcrumb');
+      const title = document.getElementById('em-window-title');
+
+      if (sectionId === 'em-sec-profile') {
+        breadcrumb.innerText = "PROFILE & REGISTRATION";
+        title.innerText = "Event Master Registration & Authority Filing";
+      } else if (sectionId === 'em-sec-existing') {
+        breadcrumb.innerText = "EXISTING PRE-PLANS";
+        title.innerText = "Saved Pre-Planning Baselines & Digital Twins";
+      } else if (sectionId === 'em-sec-author') {
+        breadcrumb.innerText = "AUTHOR EVENT PLAN";
+        title.innerText = "Event Authoring Workbench & Digital Twin Generator";
+      } else if (sectionId === 'em-sec-procure') {
+        breadcrumb.innerText = "CROSS-ROLE PROCUREMENT";
+        title.innerText = "Order Infrastructure & Services (Srinivasan & Harry)";
+      } else if (sectionId === 'em-sec-twin') {
+        breadcrumb.innerText = "5KM SPATIAL DIGITAL TWIN";
+        title.innerText = "Micro-Area Spatial Twin & Radar Scan";
+      } else if (sectionId === 'em-sec-timeline') {
+        breadcrumb.innerText = "CROWD JOURNEY TIMELINE";
+        title.innerText = "Alternating Operational Journey Timeline (Stages 1-9)";
+      }
+
+      lucide.createIcons();
+    }
+
+    function handleSaveEMProfile(e) {
+      e.preventDefault();
+      const updatedUser = {
+        fullName: document.getElementById('em-reg-name').value,
+        email: document.getElementById('em-reg-email').value,
+        phone: document.getElementById('em-reg-phone').value,
+        residence: document.getElementById('em-reg-residence').value,
+        organization: document.getElementById('em-reg-org').value,
+        role: "event_manager",
+        roleTitle: "Event Master Orchestrator",
+        licenseId: document.getElementById('em-reg-doc').value,
+        primaryVenue: document.getElementById('em-reg-venue').value
+      };
+
+      window.ChronosSupabase.setCurrentUser(updatedUser);
+
+      // Toast feedback
+      const toast = document.getElementById('em-toast');
+      const toastMsg = document.getElementById('em-toast-msg');
+      toastMsg.innerText = `Profile registered successfully for ${updatedUser.fullName}! (${updatedUser.organization})`;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+      syncEMProfileUI();
+    }
+
+    function syncEMProfileUI() {
+      const user = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+      if (user) {
+        if (user.fullName) {
+          document.getElementById('em-sidebar-name').innerText = user.fullName;
+          document.getElementById('em-reg-name').value = user.fullName;
+          const initials = user.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          document.getElementById('em-sidebar-avatar').innerText = initials;
+        }
+        if (user.email) document.getElementById('em-reg-email').value = user.email;
+        if (user.phone) document.getElementById('em-reg-phone').value = user.phone;
+        if (user.residence) document.getElementById('em-reg-residence').value = user.residence;
+        if (user.organization) {
+          document.getElementById('em-sidebar-org').innerText = user.organization;
+          document.getElementById('em-reg-org').value = user.organization;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      syncEMProfileUI();
+    });
+  </script>
 </body>
 </html>
