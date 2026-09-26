@@ -176,6 +176,30 @@
         <form onsubmit="handleUniversalSignIn(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+              Select Operational Role
+            </label>
+            <div class="grid grid-cols-2 gap-2 text-xs font-semibold" id="login-role-selector">
+              <button type="button" onclick="selectLoginRole('event_manager')" class="login-role-pill active-role p-2.5 rounded-xl border border-sky-400 bg-sky-950/60 text-sky-300 flex items-center space-x-2 transition" data-role="event_manager">
+                <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                <span>Event Manager</span>
+              </button>
+              <button type="button" onclick="selectLoginRole('visitor')" class="login-role-pill p-2.5 rounded-xl border border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white flex items-center space-x-2 transition" data-role="visitor">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>Visitor</span>
+              </button>
+              <button type="button" onclick="selectLoginRole('service_provider')" class="login-role-pill p-2.5 rounded-xl border border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white flex items-center space-x-2 transition" data-role="service_provider">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
+                <span>Service Provider</span>
+              </button>
+              <button type="button" onclick="selectLoginRole('infra_provider')" class="login-role-pill p-2.5 rounded-xl border border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white flex items-center space-x-2 transition" data-role="infra_provider">
+                <i data-lucide="train" class="w-4 h-4"></i>
+                <span>Infra Provider</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
               Username or Registered Email
             </label>
             <div class="relative">
@@ -452,21 +476,43 @@
       lucide.createIcons();
     }
 
-    // 3. Universal Sign-In Logic (alicia, srinivasan, harry, george)
+    // 3. Universal Sign-In Logic
+    let selectedLoginRole = 'event_manager';
+
+    function selectLoginRole(role) {
+      selectedLoginRole = role;
+      document.querySelectorAll('.login-role-pill').forEach(btn => {
+        if (btn.getAttribute('data-role') === role) {
+          btn.className = "login-role-pill active-role p-2.5 rounded-xl border border-sky-400 bg-sky-950/60 text-sky-300 flex items-center space-x-2 transition";
+        } else {
+          btn.className = "login-role-pill p-2.5 rounded-xl border border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white flex items-center space-x-2 transition";
+        }
+      });
+    }
+
     async function handleUniversalSignIn(e) {
       if (e) e.preventDefault();
       const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
       const passwordInput = document.getElementById('login-password').value.trim();
 
       const btn = document.getElementById('btn-login-submit');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin inline-block mr-2">&bull;</span> Authenticating...`;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-spin inline-block mr-2">&bull;</span> Authenticating...`;
+      }
 
-      const result = await window.ChronosSupabase.signIn(usernameInput, passwordInput);
-      const role = result.user?.role || 'event_manager';
-
-      // Route directly to respective page
-      redirectToRolePage(role);
+      try {
+        const result = await window.ChronosSupabase.signIn(usernameInput, passwordInput, selectedLoginRole);
+        const role = result.user?.role || selectedLoginRole;
+        redirectToRolePage(role);
+      } catch (err) {
+        console.error("Sign-in error:", err);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Sign In to Operational Role</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        }
+        redirectToRolePage(selectedLoginRole);
+      }
     }
 
     function redirectToRolePage(role) {
@@ -588,6 +634,16 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') || params.get('mode');
+      const roleParam = params.get('role');
+
+      if (tabParam === 'signup') {
+        toggleAuthTab('signup');
+      }
+      if (roleParam && ['event_manager', 'visitor', 'service_provider', 'infra_provider'].includes(roleParam)) {
+        selectLoginRole(roleParam);
+      }
       lucide.createIcons();
     });
   </script>

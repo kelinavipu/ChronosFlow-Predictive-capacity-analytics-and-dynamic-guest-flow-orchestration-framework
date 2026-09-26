@@ -88,10 +88,10 @@ function renderNavbar(activePage = '') {
             </div>
           ` : `
             <div class="flex items-center space-x-2 text-xs font-bold">
-              <a href="index.html" class="px-3 py-1.5 rounded-xl border border-sky-900/40 bg-slate-900 hover:bg-slate-800 text-slate-200 transition">
+              <a href="index.html?tab=signin" class="px-3 py-1.5 rounded-xl border border-sky-900/40 bg-slate-900 hover:bg-slate-800 text-slate-200 transition">
                 Sign In
               </a>
-              <a href="index.html" class="px-3 py-1.5 rounded-xl btn-glacier transition">
+              <a href="index.html?tab=signup" class="px-3 py-1.5 rounded-xl btn-glacier transition">
                 Sign Up
               </a>
             </div>
