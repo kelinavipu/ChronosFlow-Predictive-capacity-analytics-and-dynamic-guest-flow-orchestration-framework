@@ -487,6 +487,159 @@ const ChronosSupabase = {
   },
 
   // 5. INFRASTRUCTURE MANAGER PIPELINE & ASSETS
+  // 5. INFRASTRUCTURE MANAGER PIPELINE, POSSESSIONS & TIME-CONFLICT ENGINE
+  async getInfraPossessions() {
+    try {
+      const stored = localStorage.getItem('chronos_infra_possessions');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+
+    const defaultPossessions = [
+      {
+        id: "pos_nerul_hub",
+        name: "Nerul Multi-Modal Hub & Open Grounds",
+        category: "Transit Complex & Ground",
+        landAreaSqFt: 185000,
+        acres: "4.25 Acres",
+        gatesCount: 4,
+        gatesDetail: "Gate 1 (Main Ingress), Gate 2 (VIP Pass), Gate 3 (Rapid Egress), Gate 4 (Emergency Fire/Ambulance)",
+        geo: "19.0330° N, 73.0297° E",
+        placement: "Nerul East Railway Approach & Sion-Panvel Bypass",
+        nocDocNumber: "NOC-MH-CIDCO-2024-8841",
+        nocVerified: true,
+        nocIssuer: "CIDCO & Maharashtra State Fire Safety Directorate",
+        reliabilityScore: "99.4%",
+        ocrText: "OCR Verified: CIDCO Structural Safety Approved. Fire Safety Clearance Type A valid through 2027. Land title clear without encumbrance.",
+        activeBookings: [
+          {
+            eventId: "dypatil_nerul",
+            eventTitle: "Championship Trophy: 4-Day Mega Cricket Fixture",
+            eventHost: "Alicia Stone (Event Master Orchestrator)",
+            startDate: "2026-09-01",
+            endDate: "2026-09-04",
+            timeWindow: "10:00 - 23:00",
+            status: "LOCKED"
+          }
+        ]
+      },
+      {
+        id: "pos_dypatil_ground",
+        name: "DY Patil Sports Ground & Western Arena",
+        category: "Sports Ground & Concert Hall",
+        landAreaSqFt: 320000,
+        acres: "7.35 Acres",
+        gatesCount: 6,
+        gatesDetail: "Gates A, B, C (Spectator Turnstiles), Gate D (VIP & Media), Gate E (Athletes / Stage Entry), Gate F (Emergency Evac)",
+        geo: "19.0335° N, 73.0305° E",
+        placement: "Sector 7, Dr. D.Y. Patil University Campus, Nerul",
+        nocDocNumber: "NOC-MH-FIRE-2024-1109",
+        nocVerified: true,
+        nocIssuer: "Navi Mumbai Fire Brigade & Municipal Urban Planning",
+        reliabilityScore: "98.8%",
+        ocrText: "OCR Verified: Crowd Load Capacity Certified up to 55,000 pax. Seismic & Structural Stability Approved. Emergency exits cleared.",
+        activeBookings: [
+          {
+            eventId: "evt_football_cup",
+            eventTitle: "National Inter-Club Football Championship",
+            eventHost: "National Sports Directorate",
+            startDate: "2026-05-01",
+            endDate: "2026-05-12",
+            timeWindow: "08:00 - 22:00",
+            status: "LOCKED"
+          }
+        ]
+      },
+      {
+        id: "pos_wonders_park",
+        name: "Wonders Park Open Exhibition & Staging Grounds",
+        category: "Open Exhibition Ground & Remote Staging",
+        landAreaSqFt: 140000,
+        acres: "3.21 Acres",
+        gatesCount: 3,
+        gatesDetail: "North Gate (Shuttle Bay & Bus Entry), South Gate (Pedestrian Ingress), East Gate (Maintenance Service)",
+        geo: "19.0270° N, 73.0225° E",
+        placement: "Uran Road, Sector 19A, Nerul",
+        nocDocNumber: "NOC-CIDCO-EXP-2025-4412",
+        nocVerified: true,
+        nocIssuer: "CIDCO Parks & Urban Transit Wing",
+        reliabilityScore: "97.9%",
+        ocrText: "OCR Verified: Open ground staging license valid. 1,500 vehicle park-and-ride permit active.",
+        activeBookings: []
+      }
+    ];
+
+    try {
+      localStorage.setItem('chronos_infra_possessions', JSON.stringify(defaultPossessions));
+    } catch (e) {}
+
+    return defaultPossessions;
+  },
+
+  async addInfraPossession(possession) {
+    const possessions = await this.getInfraPossessions();
+    const newPos = {
+      id: "pos_" + Math.random().toString(36).substr(2, 8),
+      name: possession.name || "Untitled Land Possession",
+      category: possession.category || "Open Ground",
+      landAreaSqFt: parseInt(possession.landAreaSqFt) || 100000,
+      acres: ((parseInt(possession.landAreaSqFt) || 100000) / 43560).toFixed(2) + " Acres",
+      gatesCount: parseInt(possession.gatesCount) || 4,
+      gatesDetail: possession.gatesDetail || "4 Perimeter Ingress & Egress Gates",
+      geo: possession.geo || "19.0330° N, 73.0297° E",
+      placement: possession.placement || "Nerul Corridor, Navi Mumbai",
+      nocDocNumber: possession.nocDocNumber || ("NOC-MH-" + Math.floor(1000 + Math.random() * 9000)),
+      nocVerified: true,
+      nocIssuer: possession.nocIssuer || "CIDCO Urban Safety & Fire Department",
+      reliabilityScore: (97.5 + Math.random() * 2.3).toFixed(1) + "%",
+      ocrText: `OCR Verified: Official Document ${possession.nocDocNumber || 'NOC-MH-2026'}. Structural integrity approved for public gathering. Fire safety compliance cleared.`,
+      activeBookings: []
+    };
+
+    possessions.push(newPos);
+    try {
+      localStorage.setItem('chronos_infra_possessions', JSON.stringify(possessions));
+    } catch (e) {}
+    return { success: true, possession: newPos };
+  },
+
+  checkPossessionAvailability(possessionId, requestedStart, requestedEnd) {
+    let possessions = [];
+    try {
+      const stored = localStorage.getItem('chronos_infra_possessions');
+      if (stored) possessions = JSON.parse(stored);
+    } catch (e) {}
+
+    const targetPos = possessions.find(p => p.id === possessionId) || possessions[0];
+    if (!targetPos) return { available: true };
+
+    const reqStart = new Date(requestedStart).getTime();
+    const reqEnd = new Date(requestedEnd).getTime();
+
+    // Check overlap with active bookings
+    for (const b of targetPos.activeBookings || []) {
+      const bookStart = new Date(b.startDate).getTime();
+      const bookEnd = new Date(b.endDate).getTime();
+
+      // Check date intersection
+      if (reqStart <= bookEnd && reqEnd >= bookStart) {
+        return {
+          available: false,
+          possessionName: targetPos.name,
+          conflictEvent: b.eventTitle,
+          conflictHost: b.eventHost,
+          conflictRange: `${b.startDate} to ${b.endDate}`,
+          reason: `SCHEDULE CONFLICT: "${targetPos.name}" is already in active use from ${b.startDate} to ${b.endDate} for "${b.eventTitle}". Concurrent bookings restricted!`
+        };
+      }
+    }
+
+    return {
+      available: true,
+      possessionName: targetPos.name,
+      message: `100% AVAILABLE: "${targetPos.name}" has no conflicting event bookings in the selected window.`
+    };
+  },
+
   async getInfraData() {
     const assets = [
       { id: "rail_nerul", name: "Nerul Railway Station", category: "Suburban Rail", capacity: "24,000 pax/hr", status: "Operational", line: "Harbour Line & Trans-Harbour Line", loadPct: 68 },
@@ -506,29 +659,56 @@ const ChronosSupabase = {
             id: "req_inf_01",
             eventId: "dypatil_nerul",
             eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
-            eventHost: "Vikram Sethi (Event Master Orchestrator)",
+            eventHost: "Alicia Stone (Event Master Orchestrator)",
             venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
-            date: "Sep 1 - Sep 4, 2026",
+            possessionId: "pos_nerul_hub",
+            possessionName: "Nerul Multi-Modal Hub & Open Grounds",
+            startDate: "2026-09-01",
+            endDate: "2026-09-04",
+            timeWindow: "10:00 - 23:00",
             expectedVisitors: 50000,
-            requestedAsset: "Nerul Station & Bus Fleet",
-            requestText: "Allocate 65 feeder CNG loop shuttles from Nerul Station to Stadium Gate 4 between 10:30-13:30. Coordinate with Central Railway for 3 emergency rakes at 22:00.",
-            allocatedCapacity: "65 Shuttles & 3 Extra Rakes",
-            status: "PENDING",
+            requestedAsset: "Nerul Multi-Modal Hub & Bus Loop Grounds",
+            requestText: "Allocate 65 feeder CNG loop shuttles from Nerul Station grounds to Stadium Gate 4 between 10:30-13:30. Reserve 2,200 parking bays across Sep 1-4.",
+            allocatedCapacity: "65 Shuttles & 2,200 Bays",
+            status: "APPROVED",
             timestamp: "2026-08-15T09:30:00Z"
           },
           {
             id: "req_inf_02",
-            eventId: "dypatil_nerul",
-            eventTitle: "Championship Trophy: 4-Day Cricket Fixture",
-            eventHost: "Vikram Sethi (Event Master Orchestrator)",
-            venue: "Dr. D.Y. Patil Sports Stadium, Nerul",
-            date: "Sep 1 - Sep 4, 2026",
-            expectedVisitors: 50000,
-            requestedAsset: "LP Junction Traffic Police Unit",
-            requestText: "Designate freight lane diversion at Uran Phata and LP Junction to prevent match spectator buses from being delayed by port trailers.",
-            allocatedCapacity: "Green Corridor Priority Signage",
-            status: "APPROVED",
+            eventId: "evt_summer_fest",
+            eventTitle: "Mumbai Metro Live Summer Fest",
+            eventHost: "Karan Mehta (Events Director)",
+            venue: "DY Patil Sports Ground Precinct",
+            possessionId: "pos_dypatil_ground",
+            possessionName: "DY Patil Sports Ground & Western Arena",
+            startDate: "2026-05-05",
+            endDate: "2026-05-08",
+            timeWindow: "12:00 - 22:00",
+            expectedVisitors: 25000,
+            requestedAsset: "Western Arena & Concert Stage Ground",
+            requestText: "Requesting Western Arena for 3-day music and youth festival from May 5 to May 8.",
+            allocatedCapacity: "Pending Availability Check",
+            status: "RESTRICTED",
+            responseNotes: "SCHEDULE CONFLICT: Ground already locked for National Inter-Club Football (May 1 - May 12). Booking Restricted.",
             timestamp: "2026-08-14T14:15:00Z"
+          },
+          {
+            id: "req_inf_03",
+            eventId: "evt_marathon_2026",
+            eventTitle: "Navi Mumbai Coastal Half Marathon",
+            eventHost: "Pooja Hegde (Sports Foundation)",
+            venue: "Wonders Park Exhibition Grounds",
+            possessionId: "pos_wonders_park",
+            possessionName: "Wonders Park Open Exhibition & Staging Grounds",
+            startDate: "2026-10-15",
+            endDate: "2026-10-17",
+            timeWindow: "05:00 - 14:00",
+            expectedVisitors: 15000,
+            requestedAsset: "Wonders Park Staging Plaza & 1,500 Bays",
+            requestText: "Staging area for 15,000 marathon participants and continuous hydration loops.",
+            allocatedCapacity: "140,000 sq ft Staging Ground",
+            status: "PENDING",
+            timestamp: "2026-08-18T10:00:00Z"
           }
         ];
         localStorage.setItem('chronos_infra_requests', JSON.stringify(requests));
@@ -542,8 +722,40 @@ const ChronosSupabase = {
     try {
       const stored = localStorage.getItem('chronos_infra_requests');
       let requests = stored ? JSON.parse(stored) : [];
-      requests = requests.map(r => r.id === requestId ? { ...r, status: newStatus, responseNotes: notes, updated_at: new Date().toISOString() } : r);
+      
+      let matchedReq = null;
+      requests = requests.map(r => {
+        if (r.id === requestId) {
+          matchedReq = { ...r, status: newStatus, responseNotes: notes, updated_at: new Date().toISOString() };
+          return matchedReq;
+        }
+        return r;
+      });
       localStorage.setItem('chronos_infra_requests', JSON.stringify(requests));
+
+      // If ACCEPTED/APPROVED, update possession active bookings
+      if (newStatus === 'APPROVED' && matchedReq && matchedReq.possessionId) {
+        const possessions = await this.getInfraPossessions();
+        const updatedPossessions = possessions.map(p => {
+          if (p.id === matchedReq.possessionId) {
+            const bookings = p.activeBookings || [];
+            if (!bookings.some(b => b.eventId === matchedReq.eventId)) {
+              bookings.push({
+                eventId: matchedReq.eventId,
+                eventTitle: matchedReq.eventTitle,
+                eventHost: matchedReq.eventHost,
+                startDate: matchedReq.startDate || "2026-09-01",
+                endDate: matchedReq.endDate || "2026-09-04",
+                timeWindow: matchedReq.timeWindow || "10:00 - 23:00",
+                status: "LOCKED"
+              });
+            }
+            return { ...p, activeBookings: bookings };
+          }
+          return p;
+        });
+        localStorage.setItem('chronos_infra_possessions', JSON.stringify(updatedPossessions));
+      }
     } catch (e) {}
     return { success: true };
   },

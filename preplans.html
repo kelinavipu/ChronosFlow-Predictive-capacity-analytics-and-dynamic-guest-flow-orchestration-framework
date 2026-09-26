@@ -401,44 +401,76 @@
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">INFRA MANAGER: SRINIVASAN</span>
-                  <span class="text-[11px] font-mono text-emerald-400 font-bold">100% AVAILABLE</span>
+                  <span id="order-infra-status-pill" class="text-[11px] font-mono text-emerald-400 font-bold flex items-center space-x-1">
+                    <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
+                    <span>AVAILABLE</span>
+                  </span>
                 </div>
 
                 <div>
-                  <h4 class="text-base font-bold text-white">Nerul Transit Hub & Parking Complex</h4>
-                  <div class="text-xs text-slate-400 mt-0.5">Owner: <strong class="text-slate-200">Srinivasan R.</strong> &bull; Sector 19A, Nerul, Navi Mumbai</div>
+                  <label class="block font-bold text-slate-300 text-xs mb-1">Select Srinivasan's Land Possession</label>
+                  <select 
+                    id="order-infra-possession" 
+                    onchange="checkOrderAvailability()"
+                    class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white text-xs font-semibold outline-none focus:border-sky-400"
+                  >
+                    <option value="pos_nerul_hub">Nerul Multi-Modal Hub & Open Grounds (185,000 sq ft &bull; 4 Gates)</option>
+                    <option value="pos_dypatil_ground">DY Patil Sports Ground & Western Arena (320,000 sq ft &bull; 6 Gates)</option>
+                    <option value="pos_wonders_park">Wonders Park Open Exhibition & Staging Grounds (140,000 sq ft &bull; 3 Gates)</option>
+                  </select>
+                  <div class="text-[11px] text-slate-400 mt-1">Holder: <strong class="text-slate-200">Srinivasan R.</strong> &bull; Resides: Sector 19A, Nerul (99.2% Reliability)</div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-2 text-xs">
-                  <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Requested Time Window:</span>
-                    <span class="font-mono font-bold text-sky-300">Sep 1 - Sep 4 (10:00 - 23:00)</span>
+                <!-- Date Range Selection -->
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label class="block font-bold text-slate-400 mb-1">Start Date</label>
+                    <input 
+                      type="date" 
+                      id="order-infra-start" 
+                      value="2026-09-01" 
+                      onchange="checkOrderAvailability()"
+                      class="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white font-mono text-xs outline-none focus:border-sky-400"
+                    >
                   </div>
+                  <div>
+                    <label class="block font-bold text-slate-400 mb-1">End Date</label>
+                    <input 
+                      type="date" 
+                      id="order-infra-end" 
+                      value="2026-09-04" 
+                      onchange="checkOrderAvailability()"
+                      class="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white font-mono text-xs outline-none focus:border-sky-400"
+                    >
+                  </div>
+                </div>
+
+                <!-- Live Availability & Conflict Analysis Box -->
+                <div id="order-infra-conflict-box" class="p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-1.5 text-xs">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Availability Analysis:</span>
-                    <span class="font-mono text-emerald-400 font-bold flex items-center space-x-1">
+                    <span class="text-slate-400">Conflict Engine:</span>
+                    <span class="font-mono text-emerald-400 font-bold flex items-center space-x-1" id="order-infra-verdict">
                       <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                      <span>Free / No Schedule Conflict</span>
+                      <span>Free / No Schedule Overlap</span>
                     </span>
                   </div>
-                  <div class="flex items-center justify-between pt-1 border-t border-sky-950/60 text-[11px]">
-                    <span class="text-slate-400">Registration Doc:</span>
-                    <span class="font-mono text-white">LIC-MH-CIDCO-2024-8841</span>
+                  <div class="text-[11px] text-slate-400 leading-tight" id="order-infra-conflict-msg">
+                    Target ground has no conflicting event bookings for Sep 1 - Sep 4.
                   </div>
                 </div>
 
-                <div class="space-y-2 text-xs">
+                <div class="space-y-1.5 text-xs">
                   <label class="block font-bold text-slate-400">Specify Infrastructure Allocation Request</label>
                   <input 
                     type="text" 
                     id="order-infra-demand" 
-                    value="Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for Sep 1-4"
-                    class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none"
+                    value="Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for fixture"
+                    class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none text-xs"
                   >
                 </div>
               </div>
 
-              <button onclick="submitOrderToSrinivasan()" id="btn-order-infra" class="w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition">
+              <button onclick="submitOrderToSrinivasan()" id="btn-order-infra" class="w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition mt-2">
                 <i data-lucide="send" class="w-3.5 h-3.5"></i>
                 <span>Send Infrastructure Order to Srinivasan</span>
               </button>
@@ -658,6 +690,7 @@
       } else if (sectionId === 'em-sec-procure') {
         breadcrumb.innerText = "CROSS-ROLE PROCUREMENT";
         title.innerText = "Order Infrastructure & Services (Srinivasan & Harry)";
+        if (window.populateInfraPossessionsDropdown) window.populateInfraPossessionsDropdown();
       } else if (sectionId === 'em-sec-twin') {
         breadcrumb.innerText = "5KM SPATIAL DIGITAL TWIN";
         title.innerText = "Micro-Area Spatial Twin & Radar Scan";
@@ -716,6 +749,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       syncEMProfileUI();
+      if (window.populateInfraPossessionsDropdown) window.populateInfraPossessionsDropdown();
     });
   </script>
 </body>

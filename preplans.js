@@ -817,22 +817,117 @@ window.submitNewAsset = function(e) {
 };
 
 // Cross-Role Procurement Handlers (Alicia orders from Srinivasan & Harry)
+// Dynamic Possession Options & Availability Checker
+window.populateInfraPossessionsDropdown = async function() {
+  const select = document.getElementById('order-infra-possession');
+  if (!select || !window.ChronosSupabase) return;
+  const possessions = await window.ChronosSupabase.getInfraPossessions();
+  if (possessions && possessions.length > 0) {
+    select.innerHTML = possessions.map(p => `
+      <option value="${p.id}">${p.name} (${Number(p.landAreaSqFt).toLocaleString()} sq ft &bull; ${p.gatesCount} Gates)</option>
+    `).join('');
+  }
+  window.checkOrderAvailability();
+};
+
+window.checkOrderAvailability = function() {
+  const posSelect = document.getElementById('order-infra-possession');
+  const startInp = document.getElementById('order-infra-start');
+  const endInp = document.getElementById('order-infra-end');
+  const verdict = document.getElementById('order-infra-verdict');
+  const msg = document.getElementById('order-infra-conflict-msg');
+  const statusPill = document.getElementById('order-infra-status-pill');
+  const btn = document.getElementById('btn-order-infra');
+  const box = document.getElementById('order-infra-conflict-box');
+
+  if (!posSelect || !startInp || !endInp) return;
+
+  const posId = posSelect.value;
+  const startDate = startInp.value || "2026-09-01";
+  const endDate = endInp.value || "2026-09-04";
+
+  const check = window.ChronosSupabase.checkPossessionAvailability(posId, startDate, endDate);
+
+  if (!check.available) {
+    // Conflict detected!
+    if (box) box.className = "p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 space-y-1 text-xs text-rose-300";
+    if (verdict) {
+      verdict.className = "font-mono text-rose-400 font-bold flex items-center space-x-1";
+      verdict.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400"></i><span>SCHEDULE CONFLICT</span>`;
+    }
+    if (msg) {
+      msg.className = "text-[11px] text-rose-300 leading-tight";
+      msg.innerText = check.reason || `Ground is in active use from ${check.conflictRange} for ${check.conflictEvent}! Concurrent equipping is restricted.`;
+    }
+    if (statusPill) {
+      statusPill.className = "text-[11px] font-mono text-rose-400 font-bold flex items-center space-x-1";
+      statusPill.innerHTML = `<i data-lucide="ban" class="w-3 h-3 text-rose-400"></i><span>RESTRICTED</span>`;
+    }
+    if (btn) {
+      btn.disabled = true;
+      btn.className = "w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center space-x-2 transition mt-2 cursor-not-allowed border border-slate-700";
+      btn.innerHTML = `<i data-lucide="ban" class="w-3.5 h-3.5"></i><span>Equipping Restricted (Concurrent Conflict)</span>`;
+    }
+  } else {
+    // 100% Available
+    if (box) box.className = "p-3 rounded-xl bg-slate-950 border border-sky-900/30 space-y-1.5 text-xs";
+    if (verdict) {
+      verdict.className = "font-mono text-emerald-400 font-bold flex items-center space-x-1";
+      verdict.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i><span>Free / No Schedule Overlap</span>`;
+    }
+    if (msg) {
+      msg.className = "text-[11px] text-slate-400 leading-tight";
+      msg.innerText = check.message || `Target ground "${check.possessionName}" has no conflicting event bookings for ${startDate} to ${endDate}.`;
+    }
+    if (statusPill) {
+      statusPill.className = "text-[11px] font-mono text-emerald-400 font-bold flex items-center space-x-1";
+      statusPill.innerHTML = `<i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i><span>AVAILABLE</span>`;
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.className = "w-full py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2 transition mt-2";
+      btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i><span>Send Infrastructure Order to Srinivasan</span>`;
+    }
+  }
+  lucide.createIcons();
+};
+
+// Cross-Role Procurement Handlers (Alicia orders from Srinivasan & Harry)
 window.submitOrderToSrinivasan = function() {
+  const posSelect = document.getElementById('order-infra-possession');
+  const startInp = document.getElementById('order-infra-start');
+  const endInp = document.getElementById('order-infra-end');
   const demand = document.getElementById('order-infra-demand')?.value || "65 Feeder Buses + 2,200 Parking Bays";
   const btn = document.getElementById('btn-order-infra');
   
+  const posId = posSelect?.value || "pos_nerul_hub";
+  const posText = posSelect ? posSelect.options[posSelect.selectedIndex].text.split('(')[0].trim() : "Nerul Multi-Modal Hub";
+  const startDate = startInp?.value || "2026-09-01";
+  const endDate = endInp?.value || "2026-09-04";
+
+  // Re-check conflict before sending
+  const check = window.ChronosSupabase.checkPossessionAvailability(posId, startDate, endDate);
+  if (!check.available) {
+    alert("CANNOT TRANSMIT ORDER:\n\n" + check.reason);
+    return;
+  }
+
   const newReq = {
     id: "req_inf_" + Math.random().toString(36).substr(2, 7),
     eventId: currentActiveEvent.id,
     eventTitle: currentActiveEvent.title || currentActiveEvent.venueName,
     eventHost: "Alicia Stone (Event Master Orchestrator)",
     venue: currentActiveEvent.venueName,
-    date: currentActiveEvent.duration || "Sep 1 - Sep 4, 2026",
+    possessionId: posId,
+    possessionName: posText,
+    startDate: startDate,
+    endDate: endDate,
+    timeWindow: "10:00 - 23:00",
     expectedVisitors: currentActiveEvent.expectedVisitors || 50000,
-    requestedAsset: "Nerul Multi-Modal Transit Hub (Srinivasan R.)",
+    requestedAsset: posText,
     requestText: demand,
-    allocatedCapacity: "Time Window Confirmed: Sep 1-4 (10:00-23:00)",
-    status: "APPROVED",
+    allocatedCapacity: `Requested for ${startDate} to ${endDate} (10:00-23:00)`,
+    status: "PENDING",
     timestamp: new Date().toISOString()
   };
 
@@ -844,12 +939,12 @@ window.submitOrderToSrinivasan = function() {
   } catch (e) {}
 
   if (btn) {
-    btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2";
-    btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Allocated & Confirmed by Srinivasan</span>`;
+    btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2 mt-2";
+    btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Order Transmitted to Srinivasan's Command</span>`;
     btn.disabled = true;
   }
 
-  alert("Infrastructure order successfully transmitted to Infrastructure Manager (Srinivasan R.)!\n\nAvailability Analysis: 100% Free for Sep 1 - Sep 4 (10:00 - 23:00).\nCapacity Reserved: 65 Feeder CNG Buses & 2,200 Bays.");
+  alert(`Infrastructure request transmitted to Infrastructure Manager (Srinivasan R.)!\n\nTarget Ground: ${posText}\nDates: ${startDate} to ${endDate}\nStatus: Submitted to Srinivasan for Schedule Lock Verification.`);
   lucide.createIcons();
 };
 

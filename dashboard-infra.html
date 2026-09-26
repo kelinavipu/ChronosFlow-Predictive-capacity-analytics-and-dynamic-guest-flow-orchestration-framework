@@ -13,10 +13,19 @@
   <script src="navbar.js"></script>
 
   <link rel="stylesheet" href="styles.css">
+  <style>
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(400%); }
+    }
+    .ocr-scanner-line {
+      animation: scanline 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+  </style>
 </head>
 <body class="bg-[#080c14] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-400 selection:text-slate-950">
 
-  <!-- Optional Top Navigation Bar -->
+  <!-- Shared Top Navigation Bar -->
   <div id="global-navbar"></div>
 
   <!-- Dashboard App Shell: Sidebar + Content Window -->
@@ -53,27 +62,65 @@
               <div class="text-[10px] text-sky-400 font-mono truncate" id="sidebar-user-role">Transit Director</div>
             </div>
           </div>
-          <div class="text-[10px] text-slate-400 pt-1 border-t border-sky-950/80 flex items-center justify-between">
+          <div class="text-[10px] text-slate-400 pt-1.5 border-t border-sky-950/80 flex items-center justify-between">
             <span class="truncate" id="sidebar-user-org">Central Railway & NMMT</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono font-bold text-[9px] flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>LIVE</span>
+            </span>
+          </div>
+          <!-- Officer Reliability Metric Mini -->
+          <div class="pt-1 flex items-center justify-between text-[10px] font-mono">
+            <span class="text-slate-400">Reliability Factor:</span>
+            <span class="text-emerald-400 font-bold" id="sidebar-reliability-val">99.2%</span>
           </div>
         </div>
 
         <!-- Navigation Panel Tabs -->
         <nav class="space-y-1 text-xs font-semibold" id="infra-sidebar-nav">
+          <!-- Tab 1: Profile & Living Residence -->
           <button 
             type="button" 
             onclick="switchInfraSection('sec-profile')" 
             id="nav-sec-profile" 
-            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm"
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold"
           >
             <div class="flex items-center space-x-3">
               <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i>
-              <span>Profile & Registration</span>
+              <span>Profile & Residence</span>
             </div>
-            <span class="text-[10px] font-mono text-sky-300 font-bold">FORM</span>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold">RELIABILITY</span>
           </button>
 
+          <!-- Tab 2: Possessions & Land Holdings (Concert Hall, Ground, Stadiums) -->
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-possessions')" 
+            id="nav-sec-possessions" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="landmark" class="w-4 h-4 text-sky-400"></i>
+              <span>Land Holdings & Venues</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 font-bold" id="badge-possessions-count">3 Assets</span>
+          </button>
+
+          <!-- Tab 3: Incoming Host Requests & Time Conflicts -->
+          <button 
+            type="button" 
+            onclick="switchInfraSection('sec-requests')" 
+            id="nav-sec-requests" 
+            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="git-pull-request" class="w-4 h-4 text-sky-400"></i>
+              <span>Host Requests & Conflicts</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-req-count">3</span>
+          </button>
+
+          <!-- Tab 4: Host Event Pipeline -->
           <button 
             type="button" 
             onclick="switchInfraSection('sec-pipeline')" 
@@ -87,32 +134,7 @@
             <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">1 Fixture</span>
           </button>
 
-          <button 
-            type="button" 
-            onclick="switchInfraSection('sec-requests')" 
-            id="nav-sec-requests" 
-            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
-          >
-            <div class="flex items-center space-x-3">
-              <i data-lucide="git-pull-request" class="w-4 h-4 text-sky-400"></i>
-              <span>Incoming Host Requests</span>
-            </div>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-req-count">2</span>
-          </button>
-
-          <button 
-            type="button" 
-            onclick="switchInfraSection('sec-assets')" 
-            id="nav-sec-assets" 
-            class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
-          >
-            <div class="flex items-center space-x-3">
-              <i data-lucide="layers" class="w-4 h-4 text-sky-400"></i>
-              <span>Physical Assets & Hubs</span>
-            </div>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">4 Active</span>
-          </button>
-
+          <!-- Tab 5: Corridor Analytics -->
           <button 
             type="button" 
             onclick="switchInfraSection('sec-analytics')" 
@@ -143,27 +165,27 @@
     </aside>
 
     <!-- ========================================================================= -->
-    <!-- RIGHT MAIN CONTENT WINDOW (Displays clicked section)                      -->
+    <!-- RIGHT MAIN CONTENT WINDOW                                                 -->
     <!-- ========================================================================= -->
     <main class="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 overflow-y-auto">
       
-      <!-- Top Action Bar & Breadcrumb -->
+      <!-- Top Action Bar & Dynamic Breadcrumb -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-950/60">
         <div>
           <div class="text-[11px] font-mono text-sky-400 flex items-center space-x-1.5 uppercase font-bold">
-            <span>INFRA MANAGER</span>
+            <span>INFRA MANAGER &bull; SRINIVASAN R.</span>
             <span>&bull;</span>
-            <span id="window-breadcrumb-text">PROFILE & ASSET REGISTRATION</span>
+            <span id="window-breadcrumb-text">OFFICER PROFILE & RESIDENTIAL VERIFICATION</span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-black text-white mt-1" id="window-title-text">
-            Infrastructure Manager Registration & Asset Filing
+            Officer Registration & Living Proximity Reliability
           </h1>
         </div>
 
         <div class="flex items-center space-x-3">
           <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
             <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
-            <span>Grid Status: <strong class="text-emerald-400">CONNECTED</strong></span>
+            <span>Grid Status: <strong class="text-emerald-400">SYNCHRONIZED</strong></span>
           </div>
         </div>
       </div>
@@ -171,124 +193,135 @@
       <!-- Notification Toast Banner -->
       <div id="infra-toast" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center space-x-3">
         <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-        <span id="infra-toast-msg">Registration profile updated successfully!</span>
+        <span id="infra-toast-msg">Officer Profile and Residential Reliability verified successfully!</span>
       </div>
 
       <!-- ===================================================================== -->
-      <!-- SECTION 1: PROFILE & ASSET REGISTRATION FORM                          -->
+      <!-- SECTION 1: OFFICER PROFILE & LIVING RESIDENCE (RELIABILITY FACTOR)     -->
       <!-- ===================================================================== -->
       <section id="sec-profile" class="infra-section space-y-6">
         
+        <!-- Explanation Alert Card -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-sky-950/40 border border-sky-400/20 text-xs text-sky-200/90 flex items-start space-x-3.5">
+          <i data-lucide="info" class="w-5 h-5 text-sky-400 shrink-0 mt-0.5"></i>
+          <div class="space-y-1">
+            <strong class="text-white font-bold">Reliability Factor Architecture:</strong>
+            <p class="leading-relaxed text-slate-300">
+              Personal registration captures strictly <strong>where the officer lives</strong>. Because Srinivasan resides locally in Nerul, the system computes an algorithmic <strong>Reliability Factor</strong> based on real-time transit proximity, rapid on-site arrival capabilities during emergency crowd spikes, and municipal catchment familiarity. Commercial grounds and physical assets are separated into the <em>Land Holdings & Venues</em> panel.
+            </p>
+          </div>
+        </div>
+
+        <!-- Reliability Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
+              <span>Living Residence Proximity</span>
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+            </div>
+            <div class="text-2xl font-black text-white" id="stat-dist">0.8 km</div>
+            <div class="text-[11px] text-slate-400">Sector 19A, Nerul &rarr; DY Patil / Hub</div>
+          </div>
+
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
+              <span>Rapid Dispatch Time</span>
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
+            </div>
+            <div class="text-2xl font-black text-amber-300" id="stat-response">4.5 Mins</div>
+            <div class="text-[11px] text-slate-400">On-site response in crowd bottleneck</div>
+          </div>
+
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
+              <span>Reliability Factor</span>
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            </div>
+            <div class="text-2xl font-black text-emerald-400" id="stat-reliability">99.2%</div>
+            <div class="text-[11px] text-emerald-300/80 font-medium">Zone A Local Officer Verified</div>
+          </div>
+
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/40 space-y-2">
+            <div class="text-[10px] font-mono uppercase text-slate-400 flex items-center justify-between">
+              <span>Operational Authority</span>
+              <i data-lucide="building-2" class="w-3.5 h-3.5 text-sky-400"></i>
+            </div>
+            <div class="text-lg font-black text-sky-300 truncate">Central Railway / NMMT</div>
+            <div class="text-[11px] text-slate-400">Jurisdiction Zone: Navi Mumbai</div>
+          </div>
+        </div>
+
+        <!-- Registration Form -->
         <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-sky-900/30 space-y-6 shadow-xl backdrop-blur-md">
           <div class="flex items-center justify-between border-b border-sky-950/60 pb-4">
             <div>
               <h2 class="text-lg font-black text-white flex items-center space-x-2">
                 <i data-lucide="clipboard-signature" class="w-5 h-5 text-sky-400"></i>
-                <span>Infrastructure Manager & Asset Registration Form</span>
+                <span>Officer Identity & Residence Registration</span>
               </h2>
-              <p class="text-xs text-slate-400">Register and update your personal officer info, municipal jurisdiction, and managed transit asset details</p>
+              <p class="text-xs text-slate-400">Verify your legal identity, home address, and authority credentials to calibrate dispatch reliability</p>
             </div>
-            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
-              OFFICIAL FILING
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-400/20">
+              OFFICIAL DISPATCH CREDENTIAL
             </span>
           </div>
 
           <form onsubmit="handleSaveInfraProfile(event)" class="space-y-6">
             
-            <!-- Group 1: Personal Officer Information -->
-            <div class="space-y-3">
-              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
-                <i data-lucide="user" class="w-4 h-4"></i>
-                <span>1. Officer & Personal Contact Details</span>
-              </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
+                <input type="text" id="reg-name" required value="Srinivasan R." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Full Legal Name</label>
-                  <input type="text" id="reg-name" required value="Srinivasan R." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Official Email Address</label>
+                <input type="email" id="reg-email" required value="srinivasan@infram.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
 
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Email Address</label>
-                  <input type="email" id="reg-email" required value="srinivasan@infram.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Emergency Dispatch Phone</label>
+                <input type="tel" id="reg-phone" required value="+91 98201 45678" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
 
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Phone Number</label>
-                  <input type="tel" id="reg-phone" required value="+91 98201 45678" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>Officer Living Residence Address (Where the Person Lives)</span>
+                  <span class="text-[10px] text-emerald-400 font-mono font-semibold">Calibrates Dispatch Reliability Factor</span>
+                </label>
+                <input type="text" id="reg-residence" required value="Sector 19A, Nerul, Navi Mumbai (Zone B Residential Catchment)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                <p class="text-[11px] text-slate-400 mt-1">Living proximity within 1.0 km radius grants 99%+ emergency transit override authority.</p>
+              </div>
 
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Place of Residence / City</label>
-                  <input type="text" id="reg-residence" required value="Sector 19A, Nerul, Navi Mumbai" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Jurisdiction / Carrier Organization</label>
+                <input type="text" id="reg-org" required value="Navi Mumbai Municipal Transport & Central Railway" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Operational Designation / Title</label>
+                <input type="text" id="reg-title" required value="Infrastructure & Transit Director" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Official Officer ID Badge</label>
+                <input type="text" id="reg-badge-no" required value="INFRA-DIR-CR-9842" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Living Catchment Sector</label>
+                <input type="text" id="reg-catchment" required value="Nerul East Coastal Ring" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
               </div>
             </div>
 
-            <!-- Group 2: Managed Property & Physical Asset Details -->
-            <div class="space-y-3 pt-4 border-t border-sky-950/60">
-              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
-                <i data-lucide="building-2" class="w-4 h-4"></i>
-                <span>2. Property & Infrastructure Asset Information</span>
-              </h3>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Property / Facility Name</label>
-                  <input type="text" id="reg-asset-name" required value="Nerul Multi-Modal Transit Hub & Parking Complex" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Placement & Arterial Corridor</label>
-                  <input type="text" id="reg-asset-placement" required value="Nerul East Railway Approach & Sion-Panvel Bypass" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Geographical Coordinates (GPS)</label>
-                  <input type="text" id="reg-asset-geo" required value="19.0330° N, 73.0297° E (Zone B Catchment)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Registration Doc / License Number</label>
-                  <input type="text" id="reg-asset-doc" required value="LIC-MH-CIDCO-2024-8841" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Design Throughput Capacity</label>
-                  <input type="text" id="reg-asset-cap" required value="24,000 pax/hr Rail & 2,200 Parking Bays" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Allocated Event Availability Window</label>
-                  <input type="text" id="reg-asset-window" required value="Available for Sep 1 - Sep 4 (No Conflicts)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
+            <div class="pt-4 border-t border-sky-950/60 flex items-center justify-between">
+              <div class="text-xs text-slate-400 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Proximity Reliability Check: <strong class="text-emerald-400">PASSED (HIGH TRUST)</strong></span>
               </div>
-            </div>
-
-            <!-- Group 3: Jurisdiction Organization -->
-            <div class="space-y-3 pt-4 border-t border-sky-950/60">
-              <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center space-x-1.5">
-                <i data-lucide="shield-alert" class="w-4 h-4"></i>
-                <span>3. Agency Authority & Dispatch Entity</span>
-              </h3>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Authority / Public Carrier Organization</label>
-                  <input type="text" id="reg-org" required value="Navi Mumbai Municipal Transport & Central Railway" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-
-                <div>
-                  <label class="block font-bold text-slate-300 mb-1.5">Operational Designation / Title</label>
-                  <input type="text" id="reg-title" required value="Infrastructure & Transit Director" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
-                </div>
-              </div>
-            </div>
-
-            <div class="pt-4 flex items-center justify-end space-x-3">
-              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2">
+              <button type="submit" class="px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2 shadow-lg shadow-sky-950/50">
                 <i data-lucide="save" class="w-4 h-4"></i>
-                <span>Save & Register Infrastructure Profile</span>
+                <span>Update Officer Profile & Recalculate Reliability</span>
               </button>
             </div>
           </form>
@@ -297,18 +330,354 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- SECTION 2: ACTIVE EVENT HOST PIPELINE                                 -->
+      <!-- SECTION 2: POSSESSIONS & LAND HOLDINGS PANEL (GROUNDS / VENUES)       -->
+      <!-- ===================================================================== -->
+      <section id="sec-possessions" class="infra-section space-y-6 hidden">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-950/60">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">PHYSICAL ASSET HOLDINGS</span>
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">SRINIVASAN'S PORTFOLIO</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white mt-1 flex items-center space-x-2">
+              <i data-lucide="landmark" class="w-6 h-6 text-sky-400"></i>
+              <span>Land Holdings, Grounds & Facility Possessions</span>
+            </h2>
+            <p class="text-xs text-slate-400">Commercial grounds, stadiums, concert halls, and transit complexes held and managed under Srinivasan's jurisdiction</p>
+          </div>
+
+          <a href="#add-possession-form-container" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add New Possession Below</span>
+          </a>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 2-A: EXISTING POSSESSIONS (MUST BE SHOWN FIRST!)                    -->
+        <!-- =================================================================== -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+              <span>1. Currently Registered Possessions & Venues (Existing Holdings)</span>
+            </h3>
+            <span class="text-xs font-mono text-slate-400">Click any card to inspect land mass, gates & GPS coordinates</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="possessions-list-grid">
+            <!-- Rendered by JavaScript: Nerul Hub, DY Patil Ground, Wonders Park Grounds -->
+          </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 2-B: ADD NEW POSSESSION (BELOW THE EXISTING ONES!)                  -->
+        <!-- =================================================================== -->
+        <div id="add-possession-form-container" class="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-sky-900/40 space-y-6 shadow-2xl backdrop-blur-md mt-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-950/60 pb-4">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">EXPAND INVENTORY</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/10 text-sky-300">NOC REQUIRED</span>
+              </div>
+              <h3 class="text-lg font-black text-white mt-1 flex items-center space-x-2">
+                <i data-lucide="plus-circle" class="w-5 h-5 text-sky-400"></i>
+                <span>2. Register New Possession / Land Holding</span>
+              </h3>
+              <p class="text-xs text-slate-400">Enter physical land specs, perimeter gates query block, geolocation GPS, and run mandatory AI/OCR document verification</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
+              GEOSPACE FILING
+            </span>
+          </div>
+
+          <form onsubmit="handleAddNewPossession(event)" class="space-y-6">
+            
+            <!-- Group 1: General Holding Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Possession / Land Name</label>
+                <input 
+                  type="text" 
+                  id="new-pos-name" 
+                  required 
+                  placeholder="e.g. Seawoods Coastal Arena & Open Grounds"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400"
+                >
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5">Holding Category</label>
+                <select id="new-pos-category" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                  <option value="Sports Ground & Arena">Sports Ground & Arena</option>
+                  <option value="Concert Hall & Outdoor Amphitheater">Concert Hall & Outdoor Amphitheater</option>
+                  <option value="Open Exhibition Ground & Staging">Open Exhibition Ground & Staging</option>
+                  <option value="Multi-Modal Transit Complex & Terminal">Multi-Modal Transit Complex & Terminal</option>
+                  <option value="Municipal Remote Parking Plaza">Municipal Remote Parking Plaza</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span>Land Mass Covering (in Sq Ft)</span>
+                  <span class="text-[10px] font-mono text-sky-400" id="sqft-acres-calc">0.00 Acres</span>
+                </label>
+                <input 
+                  type="number" 
+                  id="new-pos-sqft" 
+                  required 
+                  placeholder="e.g. 210000"
+                  oninput="updateAcresDisplay(this.value)"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400"
+                >
+              </div>
+            </div>
+
+            <!-- Group 2: Gate Specifications & Query Block -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-sky-900/30 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="door-open" class="w-4 h-4 text-sky-400"></i>
+                  <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">Query-Based Gate Configuration & Perimeter Access</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-[11px] text-slate-400 font-mono">Total Gates:</span>
+                  <input 
+                    type="number" 
+                    id="new-pos-gates-count" 
+                    value="4" 
+                    min="1" 
+                    max="16" 
+                    onchange="adjustGateInputs(this.value)"
+                    class="w-16 px-2.5 py-1 rounded-lg bg-slate-900 border border-sky-900/40 text-center font-mono font-bold text-sky-300 text-xs outline-none"
+                  >
+                </div>
+              </div>
+
+              <!-- Query block for gates breakdown -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs" id="dynamic-gates-container">
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/30 space-y-1.5">
+                  <span class="font-mono font-bold text-sky-400 text-[10px]">GATE 1</span>
+                  <input type="text" id="gate-1-role" value="Gate 1 (North Public Ingress - 8,500 pax/hr)" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-sky-900/30 text-white text-[11px] outline-none">
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/30 space-y-1.5">
+                  <span class="font-mono font-bold text-sky-400 text-[10px]">GATE 2</span>
+                  <input type="text" id="gate-2-role" value="Gate 2 (VIP Pass / Official Teams Express)" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-sky-900/30 text-white text-[11px] outline-none">
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/30 space-y-1.5">
+                  <span class="font-mono font-bold text-sky-400 text-[10px]">GATE 3</span>
+                  <input type="text" id="gate-3-role" value="Gate 3 (South Concourse Egress - 12,000 pax/hr)" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-sky-900/30 text-white text-[11px] outline-none">
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/30 space-y-1.5">
+                  <span class="font-mono font-bold text-sky-400 text-[10px]">GATE 4</span>
+                  <input type="text" id="gate-4-role" value="Gate 4 (Emergency Fire & Ambulance Corridors)" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-sky-900/30 text-white text-[11px] outline-none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 3: Geolocation Coordinates & Corridor Placement -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5 flex items-center space-x-1.5">
+                  <i data-lucide="crosshair" class="w-3.5 h-3.5 text-sky-400"></i>
+                  <span>Geolocation Coordinates (GPS Latitude & Longitude)</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="new-pos-geo" 
+                  required 
+                  placeholder="e.g. 19.0215° N, 73.0185° E"
+                  value="19.0215° N, 73.0185° E (Seawoods Catchment)"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400 font-mono"
+                >
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1.5 flex items-center space-x-1.5">
+                  <i data-lucide="map" class="w-3.5 h-3.5 text-sky-400"></i>
+                  <span>Corridor Placement & Geospace Access Arteries</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="new-pos-placement" 
+                  required 
+                  placeholder="e.g. Seawoods Grand Central Coastal Bypass & Palm Beach Rd"
+                  value="Seawoods Grand Central Coastal Bypass & Palm Beach Arterial"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400"
+                >
+              </div>
+            </div>
+
+            <!-- Group 4: Mandatory NOC Certificate & AI/OCR Document Verification Engine -->
+            <div class="p-5 rounded-2xl bg-gradient-to-b from-slate-950 to-slate-900/90 border border-sky-400/30 space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/80 pb-3">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-400/30 flex items-center justify-center text-sky-400">
+                    <i data-lucide="scan-line" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white uppercase font-mono tracking-wider">Mandatory NOC Certificate & AI OCR Verification Engine</h4>
+                    <p class="text-[11px] text-slate-400">Upload or cite official regulatory clearance. AI OCR scans safety parameters to validate reliability factor.</p>
+                  </div>
+                </div>
+                <span id="ocr-status-pill" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-400/20 font-bold self-start sm:self-auto">
+                  OCR PENDING VERIFICATION
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">NOC Clearance Document Number</label>
+                  <input 
+                    type="text" 
+                    id="new-pos-noc-no" 
+                    required 
+                    value="NOC-MH-CIDCO-2026-9418" 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none font-mono"
+                  >
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">Issuing Municipal / Safety Authority</label>
+                  <input 
+                    type="text" 
+                    id="new-pos-noc-issuer" 
+                    required 
+                    value="CIDCO Urban Safety & Maharashtra State Fire Directorate" 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none"
+                  >
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-300 mb-1.5">NOC Regulatory Document</label>
+                  <div class="flex items-center space-x-2">
+                    <label class="flex-1 px-3 py-2 rounded-xl bg-slate-950 border border-dashed border-sky-900/50 hover:border-sky-400/50 text-slate-400 hover:text-white cursor-pointer transition flex items-center justify-center space-x-2 text-[11px]">
+                      <i data-lucide="file-check-2" class="w-4 h-4 text-sky-400"></i>
+                      <span id="noc-file-name-text">NOC-Safety-Certificate.pdf</span>
+                      <input type="file" class="hidden" onchange="handleNocFileSelected(event)">
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Animated OCR Inspection Card -->
+              <div class="relative overflow-hidden p-4 rounded-xl bg-slate-950/80 border border-sky-950 space-y-2.5" id="ocr-simulation-card">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="text-slate-400 font-mono flex items-center space-x-1.5">
+                    <i data-lucide="binary" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span>OCR ENGINE: TESSERACT-CIDCO CROWD CLEARANCE PARSER</span>
+                  </span>
+                  <span class="text-sky-300 font-mono text-[10px]" id="ocr-progress-label">Ready to Scan</span>
+                </div>
+
+                <!-- Animated Scan Line (hidden until scan clicked) -->
+                <div id="ocr-scan-bar" class="hidden absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-sky-400 to-transparent shadow-lg shadow-sky-400 ocr-scanner-line top-0 z-10"></div>
+
+                <div class="p-3 rounded-lg bg-slate-900/80 font-mono text-[11px] text-slate-300 space-y-1 border border-sky-950" id="ocr-output-box">
+                  <div class="text-slate-400">[Waiting for OCR verification trigger...]</div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                  <button 
+                    type="button" 
+                    id="btn-run-ocr"
+                    onclick="runAiOcrScan()" 
+                    class="px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-bold flex items-center space-x-2 transition"
+                  >
+                    <i data-lucide="scan" class="w-4 h-4"></i>
+                    <span>Run AI OCR Document Scanner & Safety Validation</span>
+                  </button>
+
+                  <div class="text-[11px] font-mono text-slate-400">
+                    Calculated Safety Score: <strong class="text-emerald-400" id="ocr-reliability-score">--%</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Submit Button (Disabled until OCR run) -->
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-sky-950/60">
+              <span class="text-xs text-slate-400 font-mono" id="form-ready-hint">Please verify NOC via OCR above before submitting.</span>
+              <button 
+                type="submit" 
+                id="btn-submit-possession"
+                disabled
+                class="px-6 py-3 rounded-xl bg-slate-800 text-slate-500 font-black text-xs flex items-center space-x-2 transition cursor-not-allowed border border-slate-700"
+              >
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Register Possession to Srinivasan's Portfolio</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: INCOMING HOST REQUESTS & TIME CONFLICT ENGINE               -->
+      <!-- ===================================================================== -->
+      <section id="sec-requests" class="infra-section space-y-6 hidden">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-950/60">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">CROSS-ROLE DISPATCH</span>
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">TIME-CONFLICT ENGINE</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white mt-1 flex items-center space-x-2">
+              <i data-lucide="git-pull-request" class="w-6 h-6 text-sky-400"></i>
+              <span>Host Infrastructure Requests & Time-Slot Availability</span>
+            </h2>
+            <p class="text-xs text-slate-400">Requests submitted by event managers (Alicia Stone & others) requiring specific grounds. Concurrent equipping is strictly prohibited.</p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="simulateConflictingRequest()" class="px-3.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-mono font-semibold transition flex items-center space-x-1.5">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+              <span>Simulate May 5-8 Conflict Test</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Explanatory Conflict Banner -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-sky-900/40 text-xs space-y-2">
+          <div class="font-bold text-white flex items-center space-x-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-sky-400"></i>
+            <span>Active Possession Schedule Lock Rules:</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-300 text-[11px] leading-relaxed">
+            <div class="p-3 rounded-xl bg-slate-950/70 border border-sky-950">
+              <strong class="text-rose-400">&bull; Conflict Rule:</strong> If a ground is booked (e.g. <em>May 1 to May 12</em> or <em>Sep 1 to Sep 4</em>), no concurrent event manager can equip it. The engine automatically flags the overlap and restricts overlapping bookings.
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/70 border border-sky-950">
+              <strong class="text-emerald-400">&bull; Resolution Authority:</strong> Srinivasan can <em>Accept & Lock Schedule</em> for open dates, or enforce <em>Restrict / Decline</em> when date conflicts or safety limits are triggered.
+            </div>
+          </div>
+        </div>
+
+        <!-- Requests Grid -->
+        <div class="space-y-4" id="infra-requests-list-container">
+          <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: ACTIVE HOST PIPELINE                                       -->
       <!-- ===================================================================== -->
       <section id="sec-pipeline" class="infra-section space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-sky-950/60">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <h2 class="text-xl font-bold text-white flex items-center space-x-2">
               <i data-lucide="calendar-clock" class="w-5 h-5 text-sky-400"></i>
               <span>Active Event Host Pipeline</span>
             </h2>
-            <p class="text-xs text-slate-400">Verified event managers preparing to host mega-events in your jurisdiction</p>
+            <p class="text-xs text-slate-400">Verified event managers actively hosting fixtures in your jurisdiction</p>
           </div>
-          <span class="text-xs font-mono text-sky-400 font-bold">1 Ready to Host</span>
+          <span class="text-xs font-mono text-sky-400 font-bold">1 Fixture Locked</span>
         </div>
 
         <!-- Host Event Card -->
@@ -365,56 +734,12 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- SECTION 3: INCOMING HOST REQUESTS & APPROVALS                         -->
-      <!-- ===================================================================== -->
-      <section id="sec-requests" class="infra-section space-y-4 hidden">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-              <i data-lucide="git-pull-request" class="w-5 h-5 text-sky-400"></i>
-              <span>Infrastructure Requests & Responses</span>
-            </h2>
-            <p class="text-xs text-slate-400">Capacity and corridor allocation requests submitted by event manager Alicia Stone</p>
-          </div>
-          <span class="text-xs font-mono text-emerald-400 font-bold">Live Synchronized</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="infra-requests-grid">
-          <!-- Rendered by JavaScript -->
-        </div>
-      </section>
-
-      <!-- ===================================================================== -->
-      <!-- SECTION 4: PHYSICAL ASSETS & HUBS                                     -->
-      <!-- ===================================================================== -->
-      <section id="sec-assets" class="infra-section space-y-4 hidden">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-              <i data-lucide="layers" class="w-5 h-5 text-sky-400"></i>
-              <span>Registered Physical Assets & Corridor Nodes</span>
-            </h2>
-            <p class="text-xs text-slate-400">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
-          </div>
-
-          <button onclick="switchInfraSection('sec-profile')" class="px-3.5 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Register New Asset</span>
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="infra-assets-grid">
-          <!-- Rendered by JavaScript -->
-        </div>
-      </section>
-
-      <!-- ===================================================================== -->
-      <!-- SECTION 5: CORRIDOR ANALYTICS & CAPACITY                              -->
+      <!-- SECTION 5: CORRIDOR ANALYTICS                                         -->
       <!-- ===================================================================== -->
       <section id="sec-analytics" class="infra-section space-y-6 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-sky-950/60">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <h2 class="text-xl font-bold text-white flex items-center space-x-2">
               <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-400"></i>
               <span>Transit Corridors & Capacity Analytics</span>
             </h2>
@@ -447,8 +772,116 @@
 
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- MODAL: DETAILED POSSESSION & LAND MASS INSPECTOR                          -->
+  <!-- ========================================================================= -->
+  <div id="possession-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+    <div class="dark-panel rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-sky-400/30 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-sky-950/80 pb-4">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold" id="modal-pos-category">Holding Category</span>
+            <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/10 text-emerald-400" id="modal-pos-ocr-badge">OCR VERIFIED</span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-black text-white" id="modal-pos-name">Possession Title</h3>
+        </div>
+        <button onclick="closePossessionModal()" class="w-8 h-8 rounded-full bg-slate-900 border border-sky-900/40 flex items-center justify-center text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Land Mass & Geolocation Overview Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-1">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Land Mass</span>
+          <div class="text-base font-black text-white" id="modal-pos-sqft">185,000 sq ft</div>
+          <div class="text-[10px] text-sky-400 font-mono" id="modal-pos-acres">4.25 Acres</div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-1">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Perimeter Gates</span>
+          <div class="text-base font-black text-sky-300" id="modal-pos-gates-count">4 Gates</div>
+          <div class="text-[10px] text-slate-400 font-mono">Ingress / Egress / VIP</div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-1">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Reliability Score</span>
+          <div class="text-base font-black text-emerald-400" id="modal-pos-reliability">99.4%</div>
+          <div class="text-[10px] text-slate-400 font-mono">Safety Certified</div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-1">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Schedule Status</span>
+          <div class="text-base font-black text-amber-300" id="modal-pos-booking-state">LOCKED</div>
+          <div class="text-[10px] text-slate-400 font-mono" id="modal-pos-booking-dates">Sep 1 - Sep 4</div>
+        </div>
+      </div>
+
+      <!-- Geolocation GPS & Geospace -->
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-2">
+        <div class="text-xs font-bold text-white flex items-center space-x-2">
+          <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+          <span>Geolocation GPS & Arterial Corridor Placement</span>
+        </div>
+        <div class="text-xs font-mono text-sky-300" id="modal-pos-geo">19.0330° N, 73.0297° E (Zone B Catchment)</div>
+        <div class="text-xs text-slate-400" id="modal-pos-placement">Nerul East Railway Approach & Sion-Panvel Bypass</div>
+      </div>
+
+      <!-- Gates Specification Details Matrix -->
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-2.5">
+        <div class="text-xs font-bold text-white flex items-center space-x-2">
+          <i data-lucide="door-open" class="w-4 h-4 text-sky-400"></i>
+          <span>Perimeter Gates Matrix & Flow Specifications</span>
+        </div>
+        <div class="text-xs text-slate-300 leading-relaxed font-mono p-3 rounded-xl bg-slate-900/90 border border-sky-950" id="modal-pos-gates-detail">
+          Gate specifications matrix will be listed here.
+        </div>
+      </div>
+
+      <!-- Mandatory NOC Certificate & OCR Report -->
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-sky-400/20 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-bold text-white flex items-center space-x-2">
+            <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-400"></i>
+            <span>NOC Certificate & OCR Verified Clearance</span>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 font-bold" id="modal-pos-noc-no">NOC-MH-CIDCO-2024-8841</span>
+        </div>
+        <div class="text-[11px] text-slate-400" id="modal-pos-noc-issuer">Issued by: CIDCO & Maharashtra State Fire Safety Directorate</div>
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-950 text-xs font-mono text-slate-300 leading-relaxed" id="modal-pos-ocr-text">
+          OCR text will appear here.
+        </div>
+      </div>
+
+      <!-- Active Bookings & Concurrent Locking Notice -->
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-sky-900/30 space-y-2">
+        <div class="text-xs font-bold text-white flex items-center space-x-2">
+          <i data-lucide="lock" class="w-4 h-4 text-sky-400"></i>
+          <span>Active Bookings & Concurrent Equipping Lock</span>
+        </div>
+        <div id="modal-pos-bookings-list" class="space-y-2 text-xs">
+          <!-- Active bookings rendered here -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end space-x-3 pt-2 border-t border-sky-950/80">
+        <button onclick="closePossessionModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold">
+          Close Inspector
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Client JavaScript -->
   <script>
+    // State Tracking
+    let ocrVerifiedForNewPossession = false;
+    let computedNewReliability = "99.1%";
+
     // Section Switcher Logic
     function switchInfraSection(sectionId) {
       // 1. Hide all sections
@@ -474,17 +907,17 @@
       const winTitle = document.getElementById('window-title-text');
 
       if (sectionId === 'sec-profile') {
-        breadcrumb.innerText = "PROFILE & ASSET REGISTRATION";
-        winTitle.innerText = "Infrastructure Manager Registration & Asset Filing";
+        breadcrumb.innerText = "OFFICER PROFILE & RESIDENTIAL VERIFICATION";
+        winTitle.innerText = "Officer Registration & Living Proximity Reliability";
+      } else if (sectionId === 'sec-possessions') {
+        breadcrumb.innerText = "PHYSICAL POSSESSIONS & VENUES";
+        winTitle.innerText = "Grounds, Concert Halls & Facility Possessions";
+      } else if (sectionId === 'sec-requests') {
+        breadcrumb.innerText = "HOST REQUESTS & TIME CONFLICTS";
+        winTitle.innerText = "Incoming Infrastructure Requests & Time-Slot Availability";
       } else if (sectionId === 'sec-pipeline') {
         breadcrumb.innerText = "HOST EVENT PIPELINE";
         winTitle.innerText = "Active Event Host Pipeline & Fixtures";
-      } else if (sectionId === 'sec-requests') {
-        breadcrumb.innerText = "HOST REQUESTS & APPROVALS";
-        winTitle.innerText = "Incoming Infrastructure Allocation Requests";
-      } else if (sectionId === 'sec-assets') {
-        breadcrumb.innerText = "PHYSICAL ASSETS";
-        winTitle.innerText = "Managed Physical Assets & Corridor Nodes";
       } else if (sectionId === 'sec-analytics') {
         breadcrumb.innerText = "CORRIDOR ANALYTICS";
         winTitle.innerText = "Transit Corridors & Capacity Analytics";
@@ -507,105 +940,426 @@
         const initials = (currentUser.fullName || "SR").split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         document.getElementById('sidebar-avatar-initials').innerText = initials;
 
-        // Prepopulate form if available
+        // Prepopulate Profile form
         if (currentUser.fullName) document.getElementById('reg-name').value = currentUser.fullName;
         if (currentUser.email) document.getElementById('reg-email').value = currentUser.email;
         if (currentUser.phone) document.getElementById('reg-phone').value = currentUser.phone;
         if (currentUser.residence) document.getElementById('reg-residence').value = currentUser.residence;
         if (currentUser.organization) document.getElementById('reg-org').value = currentUser.organization;
         if (currentUser.roleTitle) document.getElementById('reg-title').value = currentUser.roleTitle;
-
-        if (currentUser.property) {
-          if (currentUser.property.name) document.getElementById('reg-asset-name').value = currentUser.property.name;
-          if (currentUser.property.placement) document.getElementById('reg-asset-placement').value = currentUser.property.placement;
-          if (currentUser.property.geo) document.getElementById('reg-asset-geo').value = currentUser.property.geo;
-          if (currentUser.property.docNumber) document.getElementById('reg-asset-doc').value = currentUser.property.docNumber;
-          if (currentUser.property.capacity) document.getElementById('reg-asset-cap').value = currentUser.property.capacity;
-          if (currentUser.property.availability) document.getElementById('reg-asset-window').value = currentUser.property.availability;
-        }
       }
 
-      const data = await window.ChronosSupabase.getInfraData();
-      
-      // Update badge counter
-      const pendingCount = (data.requests || []).filter(r => r.status === 'PENDING').length;
-      document.getElementById('badge-req-count').innerText = data.requests.length;
+      // Render Possessions
+      await renderPossessionsList();
 
-      // Render Requests
-      const reqContainer = document.getElementById('infra-requests-grid');
-      reqContainer.innerHTML = data.requests.map(req => {
-        const isApproved = req.status === 'APPROVED';
+      // Render Requests & Time Conflicts
+      await renderRequestsList();
+
+      lucide.createIcons();
+    }
+
+    // Render Possessions: EXISTING ONES SHOWN FIRST!
+    async function renderPossessionsList() {
+      const possessions = await window.ChronosSupabase.getInfraPossessions();
+      const container = document.getElementById('possessions-list-grid');
+      const countBadge = document.getElementById('badge-possessions-count');
+      if (countBadge) countBadge.innerText = `${possessions.length} Assets`;
+
+      if (!container) return;
+
+      container.innerHTML = possessions.map(pos => {
+        const hasBookings = pos.activeBookings && pos.activeBookings.length > 0;
+        const currentBooking = hasBookings ? pos.activeBookings[0] : null;
+
         return `
-          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3 flex flex-col justify-between">
-            <div class="space-y-2">
+          <div 
+            onclick="openPossessionModal('${pos.id}')"
+            class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-4 hover:border-sky-400/50 hover:bg-slate-900/90 transition cursor-pointer flex flex-col justify-between group"
+          >
+            <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${isApproved ? 'badge-sage' : 'badge-amber'}">
-                  ${req.status}
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">${pos.category}</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded font-bold ${hasBookings ? 'bg-amber-500/10 text-amber-300 border border-amber-400/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-400/20'}">
+                  ${hasBookings ? 'LOCKED / BOOKED' : '100% AVAILABLE'}
                 </span>
-                <span class="text-[10px] font-mono text-slate-400">${req.date}</span>
               </div>
 
-              <h4 class="text-sm font-bold text-white">${req.requestedAsset}</h4>
-              <p class="text-xs text-slate-400 leading-relaxed">${req.requestText}</p>
-              
-              <div class="p-2 rounded-lg bg-slate-900 border border-sky-900/30 text-[11px] font-mono text-sky-300">
-                Allocation: <strong>${req.allocatedCapacity}</strong>
+              <div>
+                <h4 class="text-base font-black text-white group-hover:text-sky-300 transition leading-snug">${pos.name}</h4>
+                <div class="text-[11px] text-slate-400 mt-1 flex items-center space-x-1">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-sky-400 shrink-0"></i>
+                  <span class="truncate">${pos.placement}</span>
+                </div>
               </div>
+
+              <!-- Land Mass & Gate Specs Grid -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+                <div class="p-2.5 rounded-xl bg-slate-950/80 border border-sky-950">
+                  <div class="text-[10px] text-slate-400">Land Mass</div>
+                  <div class="font-bold text-white">${Number(pos.landAreaSqFt).toLocaleString()} sq ft</div>
+                  <div class="text-[10px] text-sky-400">${pos.acres}</div>
+                </div>
+
+                <div class="p-2.5 rounded-xl bg-slate-950/80 border border-sky-950">
+                  <div class="text-[10px] text-slate-400">Perimeter Gates</div>
+                  <div class="font-bold text-sky-300">${pos.gatesCount} Gates</div>
+                  <div class="text-[10px] text-slate-400 truncate">Ingress/Egress</div>
+                </div>
+              </div>
+
+              <!-- NOC & Reliability Badge -->
+              <div class="p-2.5 rounded-xl bg-slate-950/80 border border-sky-950 text-[11px] font-mono flex items-center justify-between">
+                <span class="text-slate-400 truncate">NOC: <strong class="text-slate-200">${pos.nocDocNumber}</strong></span>
+                <span class="text-emerald-400 font-bold flex items-center space-x-1 shrink-0">
+                  <i data-lucide="badge-check" class="w-3 h-3 text-emerald-400"></i>
+                  <span>${pos.reliabilityScore}</span>
+                </span>
+              </div>
+
+              ${currentBooking ? `
+                <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] font-mono text-amber-300">
+                  Locked for: <strong>${currentBooking.eventTitle}</strong> (${currentBooking.startDate} to ${currentBooking.endDate})
+                </div>
+              ` : `
+                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-300">
+                  Open for Event Manager Booking Allocation
+                </div>
+              `}
             </div>
 
-            <div class="pt-3 border-t border-sky-950/60 flex items-center justify-between text-xs font-bold">
-              ${isApproved ? `
-                <span class="text-emerald-400 flex items-center space-x-1">
-                  <i data-lucide="check-check" class="w-4 h-4"></i>
-                  <span>Capacity Reserved & Approved</span>
-                </span>
-                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="text-slate-400 hover:text-rose-400 text-[11px]">Revoke</button>
-              ` : `
-                <button onclick="handleStatus('${req.id}', 'APPROVED')" class="px-3.5 py-1.5 rounded-xl btn-glacier flex items-center space-x-1">
-                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                  <span>Approve & Reserve Capacity</span>
-                </button>
-                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="px-2.5 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-rose-400 border border-sky-900/30">Decline</button>
-              `}
+            <div class="pt-3 border-t border-sky-950/60 flex items-center justify-between text-xs font-bold text-sky-400">
+              <span class="flex items-center space-x-1">
+                <i data-lucide="scan" class="w-3.5 h-3.5"></i>
+                <span>Inspect Land Mass & Geospace</span>
+              </span>
+              <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
             </div>
           </div>
         `;
       }).join('');
 
-      // Render Assets
-      const assetContainer = document.getElementById('infra-assets-grid');
-      assetContainer.innerHTML = data.assets.map(asset => `
-        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">${asset.category}</span>
-            <span class="text-[10px] font-mono text-emerald-400 font-bold">${asset.status}</span>
-          </div>
+      lucide.createIcons();
+    }
 
-          <div>
-            <h4 class="text-sm font-bold text-white leading-tight">${asset.name}</h4>
-            <div class="text-[11px] text-slate-400 mt-0.5">${asset.line}</div>
-          </div>
+    // Open Modal for Existing Possession
+    async function openPossessionModal(posId) {
+      const possessions = await window.ChronosSupabase.getInfraPossessions();
+      const pos = possessions.find(p => p.id === posId) || possessions[0];
+      if (!pos) return;
 
-          <div class="space-y-1.5 pt-1">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-400">Throughput Capacity:</span>
-              <span class="font-mono font-bold text-white">${asset.capacity}</span>
+      document.getElementById('modal-pos-name').innerText = pos.name;
+      document.getElementById('modal-pos-category').innerText = pos.category;
+      document.getElementById('modal-pos-sqft').innerText = Number(pos.landAreaSqFt).toLocaleString() + " sq ft";
+      document.getElementById('modal-pos-acres').innerText = pos.acres;
+      document.getElementById('modal-pos-gates-count').innerText = `${pos.gatesCount} Gates`;
+      document.getElementById('modal-pos-reliability').innerText = pos.reliabilityScore || "98.5%";
+      document.getElementById('modal-pos-geo').innerText = pos.geo;
+      document.getElementById('modal-pos-placement').innerText = pos.placement;
+      document.getElementById('modal-pos-gates-detail').innerText = pos.gatesDetail;
+      document.getElementById('modal-pos-noc-no').innerText = pos.nocDocNumber;
+      document.getElementById('modal-pos-noc-issuer').innerText = `Issued by: ${pos.nocIssuer}`;
+      document.getElementById('modal-pos-ocr-text').innerText = pos.ocrText;
+
+      const hasBookings = pos.activeBookings && pos.activeBookings.length > 0;
+      document.getElementById('modal-pos-booking-state').innerText = hasBookings ? "LOCKED" : "AVAILABLE";
+      document.getElementById('modal-pos-booking-state').className = hasBookings ? "text-base font-black text-rose-400" : "text-base font-black text-emerald-400";
+      
+      const bookingsContainer = document.getElementById('modal-pos-bookings-list');
+      if (hasBookings) {
+        document.getElementById('modal-pos-booking-dates').innerText = `${pos.activeBookings[0].startDate} to ${pos.activeBookings[0].endDate}`;
+        bookingsContainer.innerHTML = pos.activeBookings.map(b => `
+          <div class="p-3 rounded-xl bg-slate-900 border border-rose-500/30 space-y-1">
+            <div class="flex items-center justify-between">
+              <strong class="text-white">${b.eventTitle}</strong>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">SCHEDULE LOCKED</span>
             </div>
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-sky-950">
-              <div class="bg-gradient-to-r from-sky-400 to-blue-500 h-full rounded-full" style="width: ${asset.loadPct}%;"></div>
-            </div>
-            <div class="flex justify-between text-[10px] font-mono text-slate-400">
-              <span>Active Grid Load</span>
-              <span class="text-sky-300 font-bold">${asset.loadPct}%</span>
-            </div>
+            <div class="text-[11px] text-slate-400">Host: ${b.eventHost} &bull; Time: ${b.timeWindow || '10:00 - 23:00'}</div>
+            <div class="text-[11px] font-mono text-sky-300">Dates: <strong>${b.startDate} to ${b.endDate}</strong> (Concurrent Equipping Restricted)</div>
           </div>
+        `).join('');
+      } else {
+        document.getElementById('modal-pos-booking-dates').innerText = "Open for Assignment";
+        bookingsContainer.innerHTML = `
+          <div class="p-3 rounded-xl bg-slate-900 border border-emerald-500/30 text-emerald-300 text-xs">
+            No active locks. Ground is 100% available for upcoming event host allocations.
+          </div>
+        `;
+      }
+
+      document.getElementById('possession-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closePossessionModal() {
+      document.getElementById('possession-modal').classList.add('hidden');
+    }
+
+    // Live calculation of Acres from Sq Ft
+    function updateAcresDisplay(sqft) {
+      const val = parseFloat(sqft) || 0;
+      const acres = (val / 43560).toFixed(2);
+      document.getElementById('sqft-acres-calc').innerText = `${acres} Acres`;
+    }
+
+    // Dynamic gate specification input generator
+    function adjustGateInputs(count) {
+      const num = parseInt(count) || 4;
+      const container = document.getElementById('dynamic-gates-container');
+      if (!container) return;
+
+      const roles = [
+        "North Public Ingress (8,500 pax/hr)",
+        "VIP Pass / Official Teams Express",
+        "South Concourse Egress (12,000 pax/hr)",
+        "Emergency Fire & Ambulance Corridors",
+        "Broadcast Media & Production Fleet",
+        "F&B Logistics & Vendor Loading",
+        "Rapid Evacuation Spillway Gate",
+        "Shuttle Bus Loop Direct Gate"
+      ];
+
+      container.innerHTML = Array.from({ length: Math.min(num, 8) }).map((_, i) => `
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/30 space-y-1.5">
+          <span class="font-mono font-bold text-sky-400 text-[10px]">GATE ${i + 1}</span>
+          <input type="text" id="gate-${i + 1}-role" value="Gate ${i + 1} (${roles[i] || 'Perimeter Ingress/Egress'})" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-sky-900/30 text-white text-[11px] outline-none">
         </div>
       `).join('');
+    }
+
+    function handleNocFileSelected(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('noc-file-name-text').innerText = file.name;
+      }
+    }
+
+    // AI OCR Document Scanning Simulation
+    function runAiOcrScan() {
+      const scanBar = document.getElementById('ocr-scan-bar');
+      const outputBox = document.getElementById('ocr-output-box');
+      const progressLabel = document.getElementById('ocr-progress-label');
+      const statusPill = document.getElementById('ocr-status-pill');
+      const btnRun = document.getElementById('btn-run-ocr');
+      const btnSubmit = document.getElementById('btn-submit-possession');
+      const docNo = document.getElementById('new-pos-noc-no').value || "NOC-MH-2026-9418";
+      const sqft = document.getElementById('new-pos-sqft').value || "210,000";
+
+      scanBar.classList.remove('hidden');
+      btnRun.disabled = true;
+      progressLabel.innerText = "AI Scanning Document...";
+      outputBox.innerHTML = `
+        <div class="text-sky-400 flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+          <span>[SCANNING] Initializing Tesseract-OCR parser on ${docNo}...</span>
+        </div>
+      `;
+
+      setTimeout(() => {
+        outputBox.innerHTML += `
+          <div class="text-slate-300">[PARSING] Extracting CIDCO Safety Seal & Fire Clearance License...</div>
+          <div class="text-slate-300">[COMPLIANCE] Verified 4 Perimeter Evacuation Gates conform to NBC Part IV.</div>
+        `;
+      }, 700);
+
+      setTimeout(() => {
+        scanBar.classList.add('hidden');
+        ocrVerifiedForNewPossession = true;
+        computedNewReliability = (98.2 + Math.random() * 1.5).toFixed(1) + "%";
+
+        progressLabel.innerText = "OCR Complete (100% Valid)";
+        document.getElementById('ocr-reliability-score').innerText = computedNewReliability;
+        statusPill.className = "text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-400/20 font-bold self-start sm:self-auto";
+        statusPill.innerText = "OCR AUTHENTICATED";
+
+        outputBox.innerHTML = `
+          <div class="text-emerald-400 font-bold">[OCR RESULT: SUCCESS] Document Authenticity 100% Genuine.</div>
+          <div class="text-slate-200">CIDCO Urban Safety & Fire Directorate NOC ${docNo} active through Dec 2028.</div>
+          <div class="text-sky-300">Evacuation crowd mass capacity of ${sqft} sq ft cleared for unrestricted staging.</div>
+          <div class="text-emerald-300">Reliability Factor Approved: <strong>${computedNewReliability}</strong></div>
+        `;
+
+        btnSubmit.disabled = false;
+        btnSubmit.className = "px-6 py-3 rounded-xl btn-glacier font-black text-xs flex items-center space-x-2 transition shadow-lg shadow-sky-950/50 cursor-pointer";
+        document.getElementById('form-ready-hint').innerText = "NOC Verified. Ready to register.";
+        document.getElementById('form-ready-hint').className = "text-xs text-emerald-400 font-mono font-bold";
+
+        lucide.createIcons();
+      }, 1600);
+    }
+
+    // Add New Possession Handler
+    async function handleAddNewPossession(e) {
+      e.preventDefault();
+      if (!ocrVerifiedForNewPossession) {
+        alert("Please run the AI OCR Document Scanner to verify the NOC Certificate before registering!");
+        return;
+      }
+
+      const name = document.getElementById('new-pos-name').value;
+      const category = document.getElementById('new-pos-category').value;
+      const sqft = document.getElementById('new-pos-sqft').value;
+      const gatesCount = document.getElementById('new-pos-gates-count').value;
+      const geo = document.getElementById('new-pos-geo').value;
+      const placement = document.getElementById('new-pos-placement').value;
+      const nocNo = document.getElementById('new-pos-noc-no').value;
+      const nocIssuer = document.getElementById('new-pos-noc-issuer').value;
+
+      // Collect gate roles
+      const gateInputs = document.querySelectorAll('#dynamic-gates-container input');
+      const gatesDetail = Array.from(gateInputs).map(inp => inp.value).join('; ');
+
+      const newPossessionObj = {
+        name,
+        category,
+        landAreaSqFt: parseInt(sqft),
+        gatesCount: parseInt(gatesCount),
+        gatesDetail,
+        geo,
+        placement,
+        nocDocNumber: nocNo,
+        nocIssuer,
+        reliabilityScore: computedNewReliability,
+        ocrText: `OCR Verified: Official Document ${nocNo}. Structural integrity approved for public gathering. Fire safety compliance cleared.`
+      };
+
+      await window.ChronosSupabase.addInfraPossession(newPossessionObj);
+
+      // Reset form and re-render
+      e.target.reset();
+      ocrVerifiedForNewPossession = false;
+      document.getElementById('ocr-status-pill').className = "text-[10px] font-mono px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-400/20 font-bold self-start sm:self-auto";
+      document.getElementById('ocr-status-pill').innerText = "OCR PENDING VERIFICATION";
+      document.getElementById('ocr-output-box').innerHTML = `<div class="text-slate-400">[Waiting for OCR verification trigger...]</div>`;
+      document.getElementById('btn-submit-possession').disabled = true;
+      document.getElementById('btn-submit-possession').className = "px-6 py-3 rounded-xl bg-slate-800 text-slate-500 font-black text-xs flex items-center space-x-2 transition cursor-not-allowed border border-slate-700";
+
+      // Toast feedback
+      const toast = document.getElementById('infra-toast');
+      const toastMsg = document.getElementById('infra-toast-msg');
+      toastMsg.innerText = `New possession "${name}" successfully registered with ${computedNewReliability} reliability score!`;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+
+      // Re-render possessions
+      await renderPossessionsList();
+
+      // Scroll to top of possessions section
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render Requests & Time Conflict Engine
+    async function renderRequestsList() {
+      const data = await window.ChronosSupabase.getInfraData();
+      const requests = data.requests || [];
+      const container = document.getElementById('infra-requests-list-container');
+      const countBadge = document.getElementById('badge-req-count');
+      if (countBadge) countBadge.innerText = requests.length;
+
+      if (!container) return;
+
+      container.innerHTML = requests.map(req => {
+        const isApproved = req.status === 'APPROVED';
+        const isRestricted = req.status === 'RESTRICTED' || req.status === 'DECLINED';
+
+        // Run Real-Time Conflict Analysis for this request
+        const conflictCheck = window.ChronosSupabase.checkPossessionAvailability(
+          req.possessionId, 
+          req.startDate || "2026-09-01", 
+          req.endDate || "2026-09-04"
+        );
+
+        const hasConflict = !conflictCheck.available && !isApproved;
+
+        return `
+          <div class="dark-panel rounded-2xl p-6 border ${hasConflict ? 'border-rose-500/50 bg-rose-950/10' : isApproved ? 'border-emerald-500/40' : 'border-sky-900/40'} space-y-4">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/60 pb-3">
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${isApproved ? 'badge-sage' : isRestricted ? 'badge-coral' : 'badge-amber'}">
+                  ${req.status}
+                </span>
+                <span class="text-xs text-slate-400 font-mono">&bull; Request ID: ${req.id}</span>
+                <span class="text-xs text-slate-400 font-mono">&bull; ${new Date(req.timestamp).toLocaleDateString()}</span>
+              </div>
+              <div class="text-xs font-mono text-sky-400 font-bold">
+                Requested Ground: <span class="text-white">${req.possessionName || req.requestedAsset}</span>
+              </div>
+            </div>
+
+            <!-- Event & Host Info -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div class="sm:col-span-2 space-y-1">
+                <h4 class="text-base font-bold text-white">${req.eventTitle}</h4>
+                <div class="text-slate-400">Host: <strong class="text-slate-200">${req.eventHost}</strong> &bull; Venue: ${req.venue}</div>
+                <p class="text-slate-300 pt-1 leading-relaxed">${req.requestText}</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-950 space-y-2 font-mono">
+                <div class="text-[10px] text-slate-400 uppercase">Requested Window</div>
+                <div class="font-bold text-sky-300">${req.startDate || '2026-09-01'} to ${req.endDate || '2026-09-04'}</div>
+                <div class="text-[10px] text-slate-400">${req.timeWindow || '10:00 - 23:00'}</div>
+                <div class="text-[10px] text-emerald-400 font-bold">${req.expectedVisitors ? Number(req.expectedVisitors).toLocaleString() + ' Pax' : '50,000 Pax'}</div>
+              </div>
+            </div>
+
+            <!-- Real-Time Conflict Analysis Banner -->
+            ${hasConflict ? `
+              <div class="p-4 rounded-xl bg-rose-500/15 border border-rose-500/40 text-xs text-rose-300 space-y-1">
+                <div class="font-bold flex items-center space-x-1.5 text-rose-200">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+                  <span>SCHEDULE CONFLICT DETECTED: Ground In Active Use!</span>
+                </div>
+                <p class="leading-relaxed text-[11px]">${conflictCheck.reason}</p>
+                <div class="text-[10px] font-mono text-rose-400/90 pt-1">Rule Enforced: Concurrent ground equipping is strictly restricted for overlapping dates.</div>
+              </div>
+            ` : isApproved ? `
+              <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center space-x-2">
+                <i data-lucide="check-check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Schedule Locked for this Fixture. Concurrent bookings blocked across ${req.startDate} to ${req.endDate}.</span>
+              </div>
+            ` : `
+              <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>100% Available. No conflicting event fixtures for "${req.possessionName || req.requestedAsset}".</span>
+              </div>
+            `}
+
+            <!-- Actions Bar -->
+            <div class="pt-3 border-t border-sky-950/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div class="text-slate-400 text-[11px]">
+                Current Allocation: <strong class="text-white">${req.allocatedCapacity}</strong>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                ${isApproved ? `
+                  <button onclick="handleStatus('${req.id}', 'DECLINED', 'Revoked by Srinivasan')" class="px-3 py-1.5 rounded-xl bg-slate-900 text-rose-400 hover:bg-rose-500/20 text-xs border border-rose-500/20">
+                    Revoke Approval
+                  </button>
+                ` : hasConflict ? `
+                  <button onclick="handleStatus('${req.id}', 'RESTRICTED', 'Restricted due to concurrent schedule overlap with active match')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold flex items-center space-x-1.5 shadow-lg shadow-rose-950">
+                    <i data-lucide="ban" class="w-4 h-4"></i>
+                    <span>Enforce Restrict / Decline</span>
+                  </button>
+                ` : `
+                  <button onclick="handleStatus('${req.id}', 'APPROVED', 'Approved and schedule locked by Srinivasan R.')" class="px-4 py-2 rounded-xl btn-glacier font-bold flex items-center space-x-1.5 shadow-lg shadow-sky-950">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Accept & Lock Schedule</span>
+                  </button>
+                  <button onclick="handleStatus('${req.id}', 'DECLINED', 'Declined by Infra Manager')" class="px-3 py-2 rounded-xl bg-slate-900 text-slate-400 hover:text-rose-400 border border-sky-900/30">
+                    Restrict / Decline
+                  </button>
+                `}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
 
       lucide.createIcons();
     }
 
-    // Save Registration Form
+    // Save Registration Profile (Living Residence strictly calibrates Reliability)
     function handleSaveInfraProfile(e) {
       e.preventDefault();
       
@@ -617,34 +1371,61 @@
         organization: document.getElementById('reg-org').value,
         roleTitle: document.getElementById('reg-title').value,
         role: "infra_provider",
-        property: {
-          name: document.getElementById('reg-asset-name').value,
-          placement: document.getElementById('reg-asset-placement').value,
-          geo: document.getElementById('reg-asset-geo').value,
-          docNumber: document.getElementById('reg-asset-doc').value,
-          capacity: document.getElementById('reg-asset-cap').value,
-          availability: document.getElementById('reg-asset-window').value
-        }
+        badgeNo: document.getElementById('reg-badge-no').value,
+        catchment: document.getElementById('reg-catchment').value,
+        reliabilityScore: "99.2%"
       };
 
       window.ChronosSupabase.setCurrentUser(updatedUser);
 
-      // Show toast
+      // Toast feedback
       const toast = document.getElementById('infra-toast');
       const toastMsg = document.getElementById('infra-toast-msg');
-      toastMsg.innerText = `Registration saved for ${updatedUser.fullName}! Asset "${updatedUser.property.name}" registered.`;
+      toastMsg.innerText = `Profile & Residence updated for ${updatedUser.fullName}! Reliability Factor verified at 99.2% (Local Proximity Verified).`;
       toast.classList.remove('hidden');
 
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 4000);
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
 
       loadInfraDashboard();
     }
 
-    async function handleStatus(reqId, status) {
-      await window.ChronosSupabase.respondToInfraRequest(reqId, status, "Processed by Infra Dispatcher");
-      loadInfraDashboard();
+    async function handleStatus(reqId, status, notes) {
+      await window.ChronosSupabase.respondToInfraRequest(reqId, status, notes);
+      await renderRequestsList();
+      await renderPossessionsList();
+    }
+
+    // Interactive Test to simulate a May 5-8 overlapping request on DY Patil Ground
+    function simulateConflictingRequest() {
+      const conflictReq = {
+        id: "req_inf_conflict_" + Math.floor(100 + Math.random() * 900),
+        eventId: "evt_summer_music_2026",
+        eventTitle: "Navi Mumbai Summer Music Arena Festival",
+        eventHost: "Rohan Varma (Festival Live Co.)",
+        venue: "Dr. D.Y. Patil Sports Stadium Precinct",
+        possessionId: "pos_dypatil_ground",
+        possessionName: "DY Patil Sports Ground & Western Arena",
+        startDate: "2026-05-05",
+        endDate: "2026-05-08",
+        timeWindow: "14:00 - 23:30",
+        expectedVisitors: 30000,
+        requestedAsset: "DY Patil Sports Ground & Western Arena",
+        requestText: "Requesting Western Arena for 4-day outdoor live concert stages from May 5 to May 8.",
+        allocatedCapacity: "Pending Availability Verification",
+        status: "PENDING",
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const stored = localStorage.getItem('chronos_infra_requests');
+        let list = stored ? JSON.parse(stored) : [];
+        list.unshift(conflictReq);
+        localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
+      } catch (e) {}
+
+      alert("Simulated conflicting request generated:\n\nEvent: Navi Mumbai Summer Music Arena Festival\nRequested Dates: May 5 to May 8, 2026\nRequested Ground: DY Patil Sports Ground & Western Arena\n\nNotice that this ground is already locked from May 1 to May 12 for the National Football Championship! Inspect the conflict alert now.");
+
+      renderRequestsList();
     }
 
     document.addEventListener('DOMContentLoaded', loadInfraDashboard);
