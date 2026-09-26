@@ -3,87 +3,128 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ORCHESTRA — Intelligent Event Pre-Planning (Phase 0)</title>
+  <title>ChronosFlow — Predictive Capacity Analytics & Orchestration</title>
+  
+  <!-- Fonts: Instrument Serif, Inter, JetBrains Mono, Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Early Theme Bootstrap (Prevents theme flash as per §5) -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('pravaah:theme') || localStorage.getItem('orchestra_theme') || 'light';
+        if (t === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+        } else {
+          document.documentElement.dataset.theme = 'light';
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="styles.css">
+
   <script>
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: ['selector', '[data-theme="dark"]'],
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['var(--font-sans)'],
+            mono: ['var(--font-mono)'],
+            display: ['var(--font-display)'],
+            deva: ['var(--font-deva)']
+          },
           colors: {
-            teal: {
-              50: '#f0fdfa',
-              100: '#ccfbf1',
-              200: '#99f6e4',
-              300: '#5eead4',
-              400: '#2dd4bf',
-              500: '#14b8a6',
-              600: '#0d9488',
-              700: '#0f766e',
-              800: '#115e59',
-              900: '#134e4a',
-              950: '#042f2e',
-            }
+            ink: 'var(--color-ink)',
+            'ink-deep': 'var(--color-ink-deep)',
+            panel: 'var(--color-panel)',
+            'panel-2': 'var(--color-panel-2)',
+            line: 'var(--color-line)',
+            'line-soft': 'var(--color-line-soft)',
+            text: 'var(--color-text)',
+            dim: 'var(--color-dim)',
+            dimmer: 'var(--color-dimmer)',
+            brass: 'var(--color-brass)',
+            'brass-dim': 'var(--color-brass-dim)',
+            'brass-glow': 'var(--color-brass-glow)',
+            accent: 'var(--color-accent)',
+            'accent-dim': 'var(--color-accent-dim)',
+            'accent-glow': 'var(--color-accent-glow)',
+            danger: 'var(--color-danger)',
+            'danger-soft': 'var(--color-danger-soft)',
+            safe: 'var(--color-safe)',
+            d0: 'var(--color-d0)',
+            d1: 'var(--color-d1)',
+            d2: 'var(--color-d2)',
+            d3: 'var(--color-d3)',
+            d4: 'var(--color-d4)',
+            d5: 'var(--color-d5)'
+          },
+          boxShadow: {
+            card: 'var(--shadow-card)'
           }
         }
       }
     }
   </script>
 </head>
-<body class="min-h-screen bg-[#090d16] text-slate-100 flex flex-col">
+<body class="min-h-screen bg-[var(--color-ink)] text-[var(--color-text)] flex flex-col font-sans">
 
-  <!-- TOP APP BAR (Dark Tactical Style) -->
-  <header class="bg-[#111827]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+  <!-- TOP APP BAR -->
+  <header class="bg-[var(--color-panel)]/95 backdrop-blur-md border-b border-[var(--color-line)] sticky top-0 z-50 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/30 flex items-center justify-center shadow-sm">
+        <div class="w-9 h-9 rounded-xl bg-[var(--tone-brass)] text-[var(--color-brass)] border border-[var(--color-brass-dim)] flex items-center justify-center shadow-xs">
           <i data-lucide="git-branch" class="w-5 h-5"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="text-base font-black tracking-tight text-white">ORCHESTRA</span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-400 border border-teal-500/30">Phase 0</span>
-            <span class="hidden md:inline-flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-slate-900 border border-slate-700/80">
-              <span class="text-purple-400 font-bold flex items-center gap-1"><i data-lucide="sparkles" class="w-2.5 h-2.5"></i> Syntropy</span>
-              <span class="text-slate-600">•</span>
-              <span class="text-cyan-400 font-bold flex items-center gap-1"><i data-lucide="shield" class="w-2.5 h-2.5"></i> Plenum</span>
-              <span class="text-slate-600">•</span>
-              <span class="text-amber-400 font-bold flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> Chronos</span>
+            <span class="text-base font-black tracking-tight text-[var(--color-text)] font-sans">ChronosFlow</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold badge-brass">Phase 0</span>
+            <span class="hidden md:inline-flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[var(--color-panel-2)] border border-[var(--color-line)]">
+              <span class="text-[var(--color-brass)] font-bold flex items-center gap-1"><i data-lucide="sparkles" class="w-2.5 h-2.5"></i> Syntropy</span>
+              <span class="text-[var(--color-dimmer)]">•</span>
+              <span class="text-[var(--color-d1)] font-bold flex items-center gap-1"><i data-lucide="shield" class="w-2.5 h-2.5"></i> Plenum</span>
+              <span class="text-[var(--color-dimmer)]">•</span>
+              <span class="text-[var(--color-accent)] font-bold flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> Chronos</span>
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 font-medium">Mega-Event Hospitality & Crowd Orchestration System</p>
+          <p class="text-[11px] text-[var(--color-dim)] font-medium">Mega-Event Hospitality & Dynamic Flow Orchestration</p>
         </div>
       </div>
 
       <!-- Right Controls: Theme Toggle & Role Pill -->
       <div class="flex items-center space-x-3">
-        <!-- Theme Toggle Button -->
+        <!-- Theme Toggle Button (Light Default / Night Control-Room) -->
         <button 
           id="theme-toggle-btn"
           onclick="toggleDarkMode()" 
-          class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg dark-subpanel text-slate-300 hover:text-white transition"
-          title="Toggle Dark / Light Mode"
+          class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] text-[var(--color-text)] hover:border-[var(--color-brass-dim)] transition"
+          title="Toggle Light / Night Theme"
         >
-          <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
-          <span class="hidden sm:inline text-xs font-semibold text-slate-300">Light Mode</span>
+          <i data-lucide="moon" class="w-4 h-4 text-[var(--color-dim)]"></i>
+          <span id="theme-btn-label" class="hidden sm:inline text-xs font-semibold">Night Theme</span>
         </button>
 
-        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-slate-800/80 border border-slate-700 rounded-full text-xs font-semibold text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-xs"></span>
+        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-[var(--color-panel-2)] border border-[var(--color-line)] rounded-full text-xs font-semibold text-[var(--color-dim)]">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-safe)] shadow-xs"></span>
           <span>Pre-Planning Mode</span>
         </div>
 
-        <div class="flex items-center space-x-2 pl-2 border-l border-slate-800">
-          <div class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40 flex items-center justify-center font-bold text-xs">
+        <div class="flex items-center space-x-2 pl-2 border-l border-[var(--color-line)]">
+          <div class="w-8 h-8 rounded-full bg-[var(--tone-brass)] text-[var(--color-brass)] border border-[var(--color-brass-dim)] flex items-center justify-center font-bold text-xs">
             EM
           </div>
           <div class="text-left hidden md:block">
-            <div class="text-xs font-bold text-white leading-tight">Event Manager</div>
-            <div class="text-[10px] text-slate-400">Chief Coordinator</div>
+            <div class="text-xs font-bold text-[var(--color-text)] leading-tight">Event Manager</div>
+            <div class="text-[10px] text-[var(--color-dim)]">Chief Coordinator</div>
           </div>
         </div>
       </div>

@@ -995,23 +995,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Dark Mode Toggle Logic
+// Theme Switcher Logic (§5 of UI Design Reference: Light default, Night control-room)
 function initTheme() {
-  const savedTheme = localStorage.getItem('orchestra_theme') || 'dark';
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-mode');
-    updateThemeToggleUI(false);
-  } else {
-    document.body.classList.remove('light-mode');
+  const savedTheme = localStorage.getItem('pravaah:theme') || localStorage.getItem('orchestra_theme') || 'light';
+  if (savedTheme === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
     updateThemeToggleUI(true);
+  } else {
+    document.documentElement.dataset.theme = 'light';
+    updateThemeToggleUI(false);
   }
 }
 
 window.toggleDarkMode = function() {
-  const isLight = document.body.classList.toggle('light-mode');
-  const isDark = !isLight;
-  localStorage.setItem('orchestra_theme', isDark ? 'dark' : 'light');
-  updateThemeToggleUI(isDark);
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.dataset.theme = newTheme;
+  localStorage.setItem('pravaah:theme', newTheme);
+  updateThemeToggleUI(newTheme === 'dark');
   lucide.createIcons();
 };
 
@@ -1019,9 +1020,9 @@ function updateThemeToggleUI(isDark) {
   const btn = document.getElementById('theme-toggle-btn');
   if (!btn) return;
   if (isDark) {
-    btn.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i><span class="hidden sm:inline text-xs font-semibold text-slate-300">Light Mode</span>`;
+    btn.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-[var(--color-brass)]"></i><span class="hidden sm:inline text-xs font-semibold">Light Theme</span>`;
   } else {
-    btn.innerHTML = `<i data-lucide="moon" class="w-4 h-4 text-slate-600"></i><span class="hidden sm:inline text-xs font-semibold text-slate-700">Dark Mode</span>`;
+    btn.innerHTML = `<i data-lucide="moon" class="w-4 h-4 text-[var(--color-dim)]"></i><span class="hidden sm:inline text-xs font-semibold">Night Theme</span>`;
   }
 }
 
