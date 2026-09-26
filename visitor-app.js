@@ -19,29 +19,27 @@ const EVENT_REGISTRY = {
     stand: "EAST STAND C",
     level: "Level 2",
     seat: "ROW 14, #82",
-    defaultOrigin: { lat: 19.0178, lng: 72.8478, label: "Dadar East (Mumbai)" },
+    defaultOrigin: { lat: 19.0728, lng: 72.8826, label: "Kurla / BKC (Auto IP)" },
     shuttle: "NMMT Feeder Shuttle #14 • Staged at Nerul East",
     shuttleCoords: [19.0350, 73.0180],
     shuttleStationName: "Nerul East Station Terminal",
-    originCity: "Mumbai",
+    originCity: "Navi Mumbai / Mumbai",
     matchStartMinutes: 900,  // 03:00 PM
     durationMinutes: 270,    // 4.5 hrs (07:30 PM finish)
     gateLeadMinutes: 90,     // 1.5 hrs before match (01:30 PM)
     origins: [
       { name: "Nerul Sector 19", lat: 19.0310, lng: 73.0150 },
       { name: "Vashi Bridge", lat: 19.0700, lng: 72.9800 },
-      { name: "Kurla Junction", lat: 19.0657, lng: 72.8794 },
+      { name: "Kurla / BKC", lat: 19.0728, lng: 72.8826 },
       { name: "Dadar East", lat: 19.0178, lng: 72.8478 },
       { name: "Thane Station", lat: 19.1860, lng: 72.9750 }
     ],
     journeyWaypoints: [
-      { lat: 19.0178, lng: 72.8478, name: "Dadar East Station" },
-      { lat: 19.0450, lng: 72.8620, name: "Sion Transit Corridor" },
-      { lat: 19.0657, lng: 72.8794, name: "Kurla Harbour Junction" },
-      { lat: 19.0600, lng: 72.9050, name: "Chembur Monorail Flyover" },
+      { lat: 19.0728, lng: 72.8826, name: "Kurla Transit Hub" },
+      { lat: 19.0600, lng: 72.9050, name: "Chembur Flyover" },
       { lat: 19.0550, lng: 72.9300, name: "Vashi Creek Bridge" },
-      { lat: 19.0700, lng: 72.9800, name: "Sanpada Highway Approach" },
-      { lat: 19.0350, lng: 73.0180, name: "Nerul East Station Terminal" },
+      { lat: 19.0700, lng: 72.9800, name: "Sanpada Highway" },
+      { lat: 19.0350, lng: 73.0180, name: "Nerul East Terminal" },
       { lat: 19.0435, lng: 73.0253, name: "DY Patil Stadium Gate 4" }
     ]
   },
@@ -73,9 +71,9 @@ const EVENT_REGISTRY = {
     ],
     journeyWaypoints: [
       { lat: 19.0178, lng: 72.8478, name: "Dadar East Station" },
-      { lat: 19.0010, lng: 72.8400, name: "Parel Junction Corridor" },
-      { lat: 18.9750, lng: 72.8220, name: "Mumbai Central Express Hub" },
-      { lat: 18.9500, lng: 72.8180, name: "Marine Lines Coastal Link" },
+      { lat: 19.0010, lng: 72.8400, name: "Parel Corridor" },
+      { lat: 18.9750, lng: 72.8220, name: "Mumbai Central" },
+      { lat: 18.9500, lng: 72.8180, name: "Marine Lines" },
       { lat: 18.9322, lng: 72.8264, name: "Churchgate Terminus" },
       { lat: 18.9389, lng: 72.8258, name: "Wankhede Stadium Gate 2" }
     ]
@@ -107,13 +105,47 @@ const EVENT_REGISTRY = {
     ],
     journeyWaypoints: [
       { lat: 23.0300, lng: 72.5800, name: "Ahmedabad Central Station" },
-      { lat: 23.0550, lng: 72.5850, name: "Sabarmati Riverfront Corridor" },
-      { lat: 23.0750, lng: 72.5900, name: "Visat Junction Metro Flyover" },
-      { lat: 23.0900, lng: 72.5950, name: "Motera Stadium Metro Station" },
+      { lat: 23.0550, lng: 72.5850, name: "Sabarmati Riverfront" },
+      { lat: 23.0750, lng: 72.5900, name: "Visat Junction" },
+      { lat: 23.0900, lng: 72.5950, name: "Motera Metro" },
       { lat: 23.0925, lng: 72.5975, name: "Narendra Modi Stadium Gate 1" }
     ]
   }
 };
+
+// Regional Neighborhood Landmarks for instant zero-latency locality matching
+const REGIONAL_LOCALITIES = [
+  { name: "Nerul", lat: 19.0330, lng: 73.0297, radius: 3.5 },
+  { name: "Seawoods / Darave", lat: 19.0180, lng: 73.0180, radius: 3.0 },
+  { name: "CBD Belapur", lat: 19.0180, lng: 73.0420, radius: 3.5 },
+  { name: "Kharghar", lat: 19.0473, lng: 73.0699, radius: 4.0 },
+  { name: "Vashi", lat: 19.0771, lng: 72.9986, radius: 3.5 },
+  { name: "Sanpada", lat: 19.0650, lng: 73.0100, radius: 3.0 },
+  { name: "Panvel", lat: 18.9894, lng: 73.1175, radius: 5.0 },
+  { name: "Kurla / BKC", lat: 19.0728, lng: 72.8826, radius: 4.0 },
+  { name: "Dadar", lat: 19.0178, lng: 72.8478, radius: 3.5 },
+  { name: "Bandra", lat: 19.0596, lng: 72.8295, radius: 3.5 },
+  { name: "Andheri", lat: 19.1136, lng: 72.8697, radius: 4.5 },
+  { name: "Thane", lat: 19.2183, lng: 72.9781, radius: 5.0 },
+  { name: "Churchgate / Colaba", lat: 18.9322, lng: 72.8264, radius: 3.5 },
+  { name: "Marine Lines", lat: 18.9430, lng: 72.8230, radius: 2.5 },
+  { name: "Motera", lat: 23.0925, lng: 72.5975, radius: 3.0 },
+  { name: "Sabarmati", lat: 23.0550, lng: 72.5850, radius: 3.5 },
+  { name: "Ahmedabad Central", lat: 23.0300, lng: 72.5800, radius: 4.5 }
+];
+
+function getNearestLocality(lat, lng) {
+  let closest = null;
+  let minDistance = 999999;
+  for (const loc of REGIONAL_LOCALITIES) {
+    const d = getHaversineDistance(lat, lng, loc.lat, loc.lng);
+    if (d < loc.radius && d < minDistance) {
+      minDistance = d;
+      closest = loc.name;
+    }
+  }
+  return closest;
+}
 
 // =========================================================================
 // 2. STATE & GLOBAL CONFIGURATION
@@ -142,9 +174,9 @@ let activePass = {
 };
 
 let georgeLocation = {
-  lat: 19.0178, // Default origin
-  lng: 72.8478,
-  label: "Dadar East (Mumbai)"
+  lat: 19.0728, // Default to detected Kurla/BKC Mumbai network hub
+  lng: 72.8826,
+  label: "Kurla / BKC (Live Location)"
 };
 
 // =========================================================================
@@ -155,14 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
   parseUrlParamsAndInitialize();
   lucide.createIcons();
 
-  // Try auto-checking geolocation permission state
-  if (navigator.permissions && navigator.permissions.query) {
-    navigator.permissions.query({ name: 'geolocation' }).then(result => {
-      if (result.state === 'granted') {
-        confirmLiveGPS();
-      }
-    }).catch(() => {});
-  }
+  // Immediate location detection on startup:
+  autoAcquirePresentLocation();
 });
 
 function parseUrlParamsAndInitialize() {
@@ -354,9 +380,9 @@ function renderOriginChips() {
       <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
       <span>Live Device GPS</span>
     </button>
-    <button onclick="detectLocationViaIP()" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 transition flex items-center space-x-1">
+    <button onclick="detectLocationViaIP()" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 transition flex items-center space-x-1 font-bold">
       <i data-lucide="globe" class="w-3 h-3 text-cyan-400"></i>
-      <span>Auto IP</span>
+      <span>Auto-Detect IP</span>
     </button>
   `;
 
@@ -605,7 +631,7 @@ window.sharePassLink = function() {
 };
 
 // =========================================================================
-// 7. REAL-TIME GPS GEOLOCATION & REVERSE GEOCODING ENGINE
+// 7. REAL-TIME GPS GEOLOCATION & NETWORK DETECTION ENGINE
 // =========================================================================
 window.requestLiveGeolocation = function() {
   document.getElementById('geo-permission-modal')?.classList.remove('hidden');
@@ -617,23 +643,21 @@ window.dismissGPSModal = function() {
   initOrUpdateMobileMap();
 };
 
-async function resolveLocationName(lat, lng, defaultName) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`, {
-      headers: { 'Accept': 'application/json' }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.address) {
-        const addr = data.address;
-        const name = addr.suburb || addr.neighbourhood || addr.city_district || addr.residential || addr.town || addr.village || addr.city || addr.county;
-        if (name) return name;
+// Auto-Acquisition: Runs on page load without waiting for clicks
+function autoAcquirePresentLocation() {
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'geolocation' }).then(result => {
+      if (result.state === 'granted') {
+        confirmLiveGPS();
+      } else {
+        detectLocationViaIP();
       }
-    }
-  } catch (e) {
-    console.warn("Reverse geocode lookup warning:", e);
+    }).catch(() => {
+      detectLocationViaIP();
+    });
+  } else {
+    detectLocationViaIP();
   }
-  return defaultName;
 }
 
 window.confirmLiveGPS = function() {
@@ -651,20 +675,15 @@ window.confirmLiveGPS = function() {
       isLiveGpsActive = true;
       georgeLocation.lat = position.coords.latitude;
       georgeLocation.lng = position.coords.longitude;
-      georgeLocation.label = "Detecting locality...";
+      
+      const locality = getNearestLocality(position.coords.latitude, position.coords.longitude);
+      georgeLocation.label = locality ? `${locality} (Live GPS)` : `Your Location (±${Math.round(position.coords.accuracy)}m)`;
 
       updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
-      showMobileToast(`📍 Hardware GPS Locked: (${position.coords.latitude.toFixed(3)}, ${position.coords.longitude.toFixed(3)})`);
+      renderOriginChips();
+      showMobileToast(`📍 Present GPS Locked: ${georgeLocation.label}`);
 
-      // Reverse geocode to get real neighborhood name
-      resolveLocationName(position.coords.latitude, position.coords.longitude, "Your Location").then(locName => {
-        georgeLocation.label = locName;
-        updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
-        renderOriginChips();
-        showMobileToast(`📍 Present Location: ${locName}`);
-      });
-
-      // Keep continuous watch if user is in motion
+      // Continuous tracking
       if (!watchId) {
         watchId = navigator.geolocation.watchPosition(
           pos => {
@@ -685,35 +704,57 @@ window.confirmLiveGPS = function() {
   );
 };
 
-// Automatic IP-based Geolocation (Works over HTTP on any smartphone!)
+// High-speed, rate-limit-free Network IP Geolocation
 async function detectLocationViaIP() {
-  showMobileToast("Connecting to Network IP Geolocation...");
+  showMobileToast("📡 Syncing your present location...");
 
+  // Primary: ipwho.is (zero-latency, no rate limit)
   try {
-    const response = await fetch('https://ipapi.co/json/');
-    if (response.ok) {
-      const data = await response.json();
-      if (data.latitude && data.longitude) {
+    const res = await fetch('https://ipwho.is/');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success && data.latitude && data.longitude) {
         georgeLocation.lat = data.latitude;
         georgeLocation.lng = data.longitude;
-        georgeLocation.label = data.city || data.region || 'Local Area';
+        const locality = getNearestLocality(data.latitude, data.longitude);
+        georgeLocation.label = locality ? `${locality} (Live Location)` : (data.city ? `${data.city} (Live Location)` : "Your Present Location");
 
-        updateLocationUI(`IP: ${georgeLocation.label}`, "Approx");
+        updateLocationUI(`Live Location: ${georgeLocation.label}`, "Synced");
         renderOriginChips();
-        showMobileToast(`📍 Geolocation Synced: ${georgeLocation.label} (${data.latitude.toFixed(2)}, ${data.longitude.toFixed(2)})`);
+        showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
         return;
       }
     }
   } catch (e) {
-    console.warn("IP Geolocation fetch error:", e);
+    console.warn("ipwho.is error, trying fallback:", e);
   }
 
-  // Graceful fallback to event's default origin
+  // Secondary Fallback: freeipapi.com
+  try {
+    const res2 = await fetch('https://freeipapi.com/api/json');
+    if (res2.ok) {
+      const data2 = await res2.json();
+      if (data2 && data2.latitude && data2.longitude) {
+        georgeLocation.lat = data2.latitude;
+        georgeLocation.lng = data2.longitude;
+        const locality = getNearestLocality(data2.latitude, data2.longitude);
+        georgeLocation.label = locality ? `${locality} (Live Location)` : (data2.cityName ? `${data2.cityName} (Live Location)` : "Your Present Location");
+
+        updateLocationUI(`Live Location: ${georgeLocation.label}`, "Synced");
+        renderOriginChips();
+        showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
+        return;
+      }
+    }
+  } catch (e2) {
+    console.warn("freeipapi error:", e2);
+  }
+
+  // Tertiary fallback: Regional default
   georgeLocation.lat = activeEvent.defaultOrigin.lat;
   georgeLocation.lng = activeEvent.defaultOrigin.lng;
   georgeLocation.label = activeEvent.defaultOrigin.label;
-  updateLocationUI(activeEvent.originCity, "Stored Origin");
-  showMobileToast(`📍 Synced to Stored Transit Origin: ${activeEvent.defaultOrigin.label}`);
+  updateLocationUI(activeEvent.originCity, "Default");
 }
 
 function updateLocationUI(statusText, accuracyText) {
@@ -823,6 +864,12 @@ function initOrUpdateMobileMap() {
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19
     }).addTo(mobileMap);
+
+    // Allow user to tap anywhere on the satellite map to pin location!
+    mobileMap.on('click', (e) => {
+      const locName = getNearestLocality(e.latlng.lat, e.latlng.lng) || "Selected Location";
+      setVisitorOrigin(locName, e.latlng.lat, e.latlng.lng);
+    });
   }
 
   // Update Stadium Destination Pin

@@ -1606,7 +1606,7 @@
       const urlText = document.getElementById('book-qr-url-text');
 
       const host = (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') ? window.location.host : '192.168.108.130:8000';
-      const mobileUrl = `http://${host}/visitor-app.html?event=${encodeURIComponent(eventId || 'dypatil_nerul')}&user=${encodeURIComponent(fullName || 'George Miller')}&ticket=${encodeURIComponent(ticketId)}&gate=${encodeURIComponent(gate || 'Gate 4')}&seat=${encodeURIComponent(seat || 'Stand C')}&tier=${encodeURIComponent(tier || 'Pass')}`;
+      const mobileUrl = `http://${host}/visitor-app.html?event=${encodeURIComponent(eventId || 'dypatil_nerul')}&user=${encodeURIComponent(fullName || 'George Miller')}&ticket=${encodeURIComponent(ticketId)}&gate=${encodeURIComponent(gate || 'Gate 4')}&seat=${encodeURIComponent(seat || 'Stand C')}&tier=${encodeURIComponent(tier || 'Pass')}&cb=${Date.now()}`;
 
       if (titleEl) titleEl.innerText = event ? (event.title || event.venueName) : "Event Enrollment";
       if (subtitleEl) subtitleEl.innerText = `${gate || 'Gate 4'} • ${seat || 'Stand C'} • Holder: ${fullName || 'George Miller'}`;
