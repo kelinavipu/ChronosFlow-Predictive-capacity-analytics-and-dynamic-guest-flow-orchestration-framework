@@ -1,0 +1,626 @@
+/* ORCHESTRA: Phase 0 Pre-Planning Dark Mode & Neon Slate Stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* DARK MODE DEFAULT (Sleek, Tactical, High-Contrast Dark Slate & Neon Teal) */
+  --bg-page: #090d16;
+  --bg-card: #111827;
+  --bg-card-subtle: #162032;
+  --bg-card-hover: #1e293b;
+  --border-subtle: #1e293b;
+  --border-strong: #334155;
+  
+  --primary: #14b8a6;          /* Vibrant Neon Teal */
+  --primary-glow: rgba(20, 184, 166, 0.25);
+  --primary-hover: #2dd4bf;
+  --primary-subtle: rgba(20, 184, 166, 0.12);
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  
+  --danger: #f43f5e;
+  --danger-bg: rgba(244, 63, 94, 0.12);
+  --danger-border: rgba(244, 63, 94, 0.35);
+  --danger-glow: rgba(244, 63, 94, 0.4);
+  
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.35);
+  
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.35);
+  
+  --info: #06b6d4;
+  --info-bg: rgba(6, 182, 212, 0.12);
+  --info-border: rgba(6, 182, 212, 0.35);
+
+  --timeline-rail-color: #1e293b;
+}
+
+/* Light Mode Overrides (Optional fallback toggled via class) */
+body.light-mode {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f1f5f9;
+  --bg-card-hover: #e2e8f0;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  
+  --primary: #0d9488;
+  --primary-glow: rgba(13, 148, 136, 0.18);
+  --primary-hover: #0f766e;
+  --primary-subtle: #f0fdfa;
+  
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #94a3b8;
+  
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-border: #fca5a5;
+  
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --warning-border: #fcd34d;
+  
+  --success: #059669;
+  --success-bg: #f0fdf4;
+  --success-border: #86efac;
+  
+  --info: #0284c7;
+  --info-bg: #f0f9ff;
+  --info-border: #bae6fd;
+
+  --timeline-rail-color: #cbd5e1;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Tactical Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Glassmorphism & Surface Styles */
+.dark-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 25px -4px rgba(0, 0, 0, 0.4);
+}
+
+.dark-subpanel {
+  background-color: var(--bg-card-subtle);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Alternating Timeline Rail matching Hand-Drawn Sketch */
+.timeline-container {
+  position: relative;
+  overflow-x: auto;
+  padding: 44px 24px;
+  min-height: 310px;
+}
+
+.timeline-rail {
+  position: absolute;
+  top: 50%;
+  left: 30px;
+  right: 30px;
+  height: 4px;
+  background: linear-gradient(90deg, #1e293b 0%, #14b8a6 50%, #1e293b 100%);
+  transform: translateY(-50%);
+  z-index: 1;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(20, 184, 166, 0.3);
+}
+
+body.light-mode .timeline-rail {
+  background: linear-gradient(90deg, #cbd5e1 0%, #0d9488 50%, #cbd5e1 100%);
+  box-shadow: none;
+}
+
+.timeline-nodes-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 960px;
+  height: 220px;
+}
+
+.timeline-node-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 140px;
+}
+
+/* Alternating Stems: Top Nodes */
+.timeline-node-item.node-top {
+  align-self: flex-start;
+  margin-bottom: auto;
+  padding-bottom: 24px;
+}
+
+.timeline-node-item.node-top::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 32px;
+  background-color: var(--border-strong);
+  transition: all 0.2s ease;
+}
+
+/* Alternating Stems: Bottom Nodes */
+.timeline-node-item.node-bottom {
+  align-self: flex-end;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.timeline-node-item.node-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 32px;
+  background-color: var(--border-strong);
+  transition: all 0.2s ease;
+}
+
+/* Active Node Stems */
+.timeline-node-item.active.node-top::after,
+.timeline-node-item.active.node-bottom::before {
+  background-color: var(--primary);
+  width: 3px;
+  box-shadow: 0 0 10px var(--primary);
+}
+
+/* Circular Anchor Dot on the Rail */
+.node-anchor-dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 3px solid var(--border-strong);
+  z-index: 4;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.node-top .node-anchor-dot {
+  bottom: -8px;
+  left: calc(50% - 8px);
+}
+
+.node-bottom .node-anchor-dot {
+  top: -8px;
+  left: calc(50% - 8px);
+}
+
+.timeline-node-item.active .node-anchor-dot {
+  border-color: var(--primary);
+  background: var(--primary);
+  transform: scale(1.35);
+  box-shadow: 0 0 14px var(--primary);
+}
+
+/* Node Card Preview */
+.node-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 12px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: all 0.25s ease;
+}
+
+.timeline-node-item:hover .node-card {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35), 0 0 12px var(--primary-glow);
+}
+
+.timeline-node-item.active .node-card {
+  border-color: var(--primary);
+  background: var(--bg-card-subtle);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 16px var(--primary-glow);
+}
+
+/* Pulsing indicators for attention/high risk nodes */
+@keyframes dark-pulse-rose {
+  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+}
+
+.risk-high-indicator {
+  border-color: var(--danger) !important;
+  animation: dark-pulse-rose 2s infinite;
+}
+
+/* Progress bar transitions */
+.progress-fill {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Neon glow tags */
+.badge-neon-teal {
+  background-color: rgba(20, 184, 166, 0.12);
+  color: #2dd4bf;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+.badge-neon-rose {
+  background-color: rgba(244, 63, 94, 0.12);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.badge-neon-amber {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-neon-emerald {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-neon-cyan {
+  background-color: rgba(6, 182, 212, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+/* Digital Twin Map & Tactical Radar Styles */
+.digital-twin-canvas {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background: radial-gradient(circle at 50% 50%, #0d1527 0%, #080c16 85%, #050810 100%);
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.radar-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+/* Radar concentric rings */
+.radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(20, 184, 166, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.radar-ring-1 { width: 140px; height: 140px; }
+.radar-ring-2 { width: 260px; height: 260px; }
+.radar-ring-3 { width: 380px; height: 380px; }
+.radar-ring-4 { width: 490px; height: 490px; }
+
+.radar-ring-label {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: #14b8a6;
+  opacity: 0.7;
+  background: #090d16;
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+/* Radar scanner beam animation */
+@keyframes radar-sweep {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.radar-beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg at 50% 50%, rgba(20, 184, 166, 0.12) 0deg, transparent 60deg, transparent 360deg);
+  animation: radar-sweep 12s linear infinite;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+/* Arterial highway corridor */
+.map-arterial-line {
+  position: absolute;
+  height: 5px;
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0.75) 50%, rgba(6, 182, 212, 0.2) 100%);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+.map-rail-line {
+  position: absolute;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, #94a3b8 0px, #94a3b8 8px, transparent 8px, transparent 16px);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Map Interactive Pins */
+.twin-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.twin-pin:hover {
+  transform: translate(-50%, -50%) scale(1.22);
+  z-index: 25;
+}
+
+.twin-pin.active-pin {
+  transform: translate(-50%, -50%) scale(1.3);
+  z-index: 30;
+}
+
+.twin-pin-inner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  border: 2px solid;
+  transition: all 0.2s ease;
+}
+
+/* Node Variants */
+.pin-stadium .twin-pin-inner {
+  width: 48px;
+  height: 48px;
+  background: rgba(20, 184, 166, 0.3);
+  border-color: #2dd4bf;
+  color: #2dd4bf;
+  box-shadow: 0 0 25px rgba(20, 184, 166, 0.7);
+}
+
+.pin-rail .twin-pin-inner {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.pin-hotel .twin-pin-inner {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: #c084fc;
+  color: #c084fc;
+}
+
+.pin-hospital .twin-pin-inner {
+  background: rgba(244, 63, 94, 0.25);
+  border-color: #fb7185;
+  color: #fb7185;
+  animation: pulse-hospital 2s infinite;
+}
+
+.pin-parking .twin-pin-inner {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+.pin-choke .twin-pin-inner {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #f87171;
+  color: #f87171;
+  animation: pulse-choke 1.5s infinite;
+}
+
+@keyframes pulse-hospital {
+  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+}
+
+@keyframes pulse-choke {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.twin-pin-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.twin-pin.active-pin .twin-pin-label {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(15, 23, 42, 0.98);
+}
+
+/* Venue Search Autocomplete Dropdown */
+.venue-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 60;
+}
+
+.venue-suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  transition: all 0.15s ease;
+}
+
+.venue-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.venue-suggestion-item:hover {
+  background: #1e293b;
+}
+
+.venue-suggestion-item.active-suggestion {
+  background: rgba(20, 184, 166, 0.15);
+  border-left: 3px solid #14b8a6;
+}
+
+/* =========================================================================
+   THE TRIAD: SYNTROPY • PLENUM • CHRONOS STYLES
+   ========================================================================= */
+
+.triad-nav-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.triad-nav-btn.active-tab {
+  background: #1e293b;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* 1. SYNTROPY (The Order Creator) */
+.dept-card-syntropy {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%), #111827;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  transition: all 0.25s ease;
+}
+.dept-card-syntropy:hover {
+  border-color: rgba(139, 92, 246, 0.65);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.18);
+  transform: translateY(-2px);
+}
+.badge-syntropy {
+  background: rgba(139, 92, 246, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+/* 2. PLENUM (The Space Master) */
+.dept-card-plenum {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(2, 132, 199, 0.05) 100%), #111827;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  transition: all 0.25s ease;
+}
+.dept-card-plenum:hover {
+  border-color: rgba(6, 182, 212, 0.65);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.18);
+  transform: translateY(-2px);
+}
+.badge-plenum {
+  background: rgba(6, 182, 212, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+/* 3. CHRONOS (The Time Synchronization Hub) */
+.dept-card-chronos {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%), #111827;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  transition: all 0.25s ease;
+}
+.dept-card-chronos:hover {
+  border-color: rgba(245, 158, 11, 0.65);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.18);
+  transform: translateY(-2px);
+}
+.badge-chronos {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* Department Active Indicator Bar */
+.dept-indicator-syntropy {
+  border-left: 4px solid #a855f7;
+}
+.dept-indicator-plenum {
+  border-left: 4px solid #06b6d4;
+}
+.dept-indicator-chronos {
+  border-left: 4px solid #f59e0b;
+}
+
+
+
