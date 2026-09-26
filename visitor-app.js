@@ -750,33 +750,6 @@ window.exportPassJSON = function() {
   showMobileToast(`💾 Pass exported for ${activePass.user}!`);
 };
 
-  // 3. Desktop Companion Side Card (Dynamic Sync!)
-  const compImg = document.getElementById('companion-qr-img');
-  const compUrl = document.getElementById('companion-qr-url');
-  const currentFullUrl = window.location.href;
-  if (compImg) {
-    compImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(currentFullUrl)}`;
-  }
-  if (compUrl) {
-    compUrl.innerText = currentFullUrl;
-  }
-
-  // 4. Calculate Distance & Live ETA from Present Location
-  const distKm = parseFloat(calculateDistance());
-  const etaMins = getEtaMinutes(distKm);
-
-  // 5. Update Navigation Guidance Card & Origin Buttons
-  updateTransitGuidanceUI(distKm, etaMins);
-  renderOriginChips();
-
-  // 6. Render Dynamic Location-Based Timeline & Events
-  renderMobileTimeline(distKm, etaMins);
-  renderMobileEventsList();
-
-  // 7. Refresh Icons
-  lucide.createIcons();
-}
-
 // =========================================================================
 // 4. TRANSIT GUIDANCE & DYNAMIC ORIGIN CHIPS
 // =========================================================================
@@ -1518,17 +1491,6 @@ function renderGatekeeperQuickChips() {
     `;
   }).join('');
 }
-
-window.confirmLiveGPS = function() {
-  closeLocationPickerModal();
-  document.getElementById('geo-permission-modal')?.classList.add('hidden');
-
-  if (!navigator.geolocation) {
-    showMobileToast("⚠️ Geolocation API not supported on this browser.");
-    return;
-  }
-
-  showMobileToast("📡 Requesting device GPS sensor...");
 
 window.startLiveGPSWatcher = function() {
   if (!navigator.geolocation) return;
