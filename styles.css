@@ -1,48 +1,48 @@
 /* =========================================================================
-   ORCHESTRA — MINIMAL DARK TRAVEL & HOSPITALITY DESIGN SYSTEM
-   Vibe: Calm, minimal travel itinerary, warm luxury expedition dispatch
-   NO NEONS: Earthy, warm obsidian, sand, terracotta, sage, slate blue
+   ORCHESTRA — CALM GLACIER & ARCTIC BLUE DESIGN SYSTEM
+   Vibe: Calm blue, crisp winter air, frosted glass, tranquil expedition grid
+   NO NEONS: Deep slate blue, ice cyan, calm azure, soft mint, muted coral
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   /* Fonts */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
 
-  /* Travel Dark Palette (Earthy, Warm Obsidian, Matte) */
-  --color-ink: #121316;              /* Deep Warm Obsidian */
-  --color-ink-deep: #17181e;         /* Map & Radar Canvas Background */
-  --color-panel: #1a1b20;            /* Matte Card Background */
-  --color-panel-2: #22242b;          /* Secondary Rows, Inputs, Sub-panels */
-  --color-line: #2a2c35;             /* Subtle Card Border */
-  --color-line-soft: #23252d;        /* Gentle Row Divider */
+  /* Calm Dark Blue Palette */
+  --color-ink: #080c14;              /* Deep Arctic Midnight */
+  --color-ink-deep: #0b1120;         /* Radar & Map Deep Slate Canvas */
+  --color-panel: #0f172a;            /* Frosted Dark Slate Panel (Slate 900) */
+  --color-panel-2: #1e293b;          /* Secondary Sub-panels / Rows (Slate 800) */
+  --color-line: rgba(56, 189, 248, 0.16); /* Calm Glacier Sky Tint Border */
+  --color-line-soft: rgba(56, 189, 248, 0.08); /* Gentle Sky Divider */
   
-  --color-text: #ede8e1;             /* Warm Linen Primary Text */
-  --color-dim: #9e9b93;              /* Sand Gray Secondary Text */
-  --color-dimmer: #6b6862;           /* Muted Stone Eyebrows */
+  --color-text: #f1f5f9;             /* White Ice / Crisp Primary Text */
+  --color-dim: #94a3b8;              /* Calm Slate Gray Secondary */
+  --color-dimmer: #64748b;           /* Muted Ice Eyebrows */
   
-  /* Travel Accent Tones (NO NEONS) */
-  --color-sand: #d4a373;             /* Warm Sand / Travel Ochre (Primary Accent) */
-  --color-sand-dim: #4a3e31;         /* Muted Sand Border */
-  --color-sand-glow: #e2b78d;        /* Hover Accent */
+  /* Calm Sky / Glacier Blue Accent Tones */
+  --color-sand: #38bdf8;             /* Calm Glacier Sky Blue (Primary Accent) */
+  --color-sand-dim: #0284c7;         /* Deep Glacier Blue Border */
+  --color-sand-glow: #7dd3fc;        /* Ice Hover Glow */
   
-  --color-terracotta: #c96a54;       /* Warm Terracotta / Clay (Danger / Gap) */
-  --color-terracotta-soft: #2d1c18;  /* Subtle Terracotta Background */
+  --color-terracotta: #f87171;       /* Soft Coral (Attention / Alert) */
+  --color-terracotta-soft: rgba(239, 68, 68, 0.12);
   
-  --color-sage: #709775;             /* Muted Forest Sage (Safe / Adequate) */
-  --color-sage-soft: #1d2b20;        /* Subtle Sage Background */
+  --color-sage: #34d399;             /* Soft Mint / Emerald (Optimal / Safe) */
+  --color-sage-soft: rgba(16, 185, 129, 0.12);
   
-  --color-slate-blue: #607d8b;       /* River Slate Blue (Transit / Rail) */
-  --color-slate-blue-soft: #1c262c;  /* Subtle Blue Background */
+  --color-slate-blue: #38bdf8;       /* River Glacier Sky (Transit / Rail) */
+  --color-slate-blue-soft: rgba(56, 189, 248, 0.12);
   
-  --color-amber-clay: #cc7744;       /* Burnt Amber (Attention / Choke) */
-  --color-amber-soft: #2d1e16;       /* Subtle Amber Background */
+  --color-amber-clay: #60a5fa;       /* Calm Soft Blue */
+  --color-amber-soft: rgba(96, 165, 250, 0.12);
   
   /* Shadows & Motion */
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
-  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 8px 32px rgba(2, 6, 23, 0.7);
+  --shadow-subtle: 0 4px 16px rgba(2, 6, 23, 0.5);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -127,15 +127,18 @@ html, body {
 }
 
 /* Minimal Buttons */
-.btn-sand {
-  background-color: var(--color-sand);
-  color: #121316;
+.btn-sand, .btn-glacier {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  color: #080c14;
   font-weight: 700;
-  border: 1px solid transparent;
-  transition: all 0.15s ease;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);
+  transition: all 0.2s ease;
 }
-.btn-sand:hover {
-  background-color: var(--color-sand-glow);
+.btn-sand:hover, .btn-glacier:hover {
+  background: linear-gradient(135deg, #7dd3fc 0%, #0369a1 100%);
+  box-shadow: 0 6px 22px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-ghost {
@@ -146,61 +149,61 @@ html, body {
   transition: all 0.15s ease;
 }
 .btn-ghost:hover {
-  border-color: var(--color-sand-dim);
+  border-color: var(--color-sand);
   color: var(--color-sand);
 }
 
-/* Badges (Subtle, Muted Travel Hues — NO NEONS) */
+/* Badges (Calm Glacier Blue Hues — NO NEONS) */
 .badge-sand {
-  background-color: rgba(212, 163, 115, 0.12);
-  border: 1px solid rgba(212, 163, 115, 0.3);
-  color: var(--color-sand);
+  background-color: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  color: #38bdf8;
 }
 
 .badge-sage {
   background-color: var(--color-sage-soft);
-  border: 1px solid rgba(112, 151, 117, 0.35);
+  border: 1px solid rgba(52, 211, 153, 0.3);
   color: var(--color-sage);
 }
 
 .badge-terracotta {
   background-color: var(--color-terracotta-soft);
-  border: 1px solid rgba(201, 106, 84, 0.35);
+  border: 1px solid rgba(248, 113, 113, 0.3);
   color: var(--color-terracotta);
 }
 
 .badge-slate {
-  background-color: var(--color-slate-blue-soft);
-  border: 1px solid rgba(96, 125, 139, 0.35);
-  color: var(--color-slate-blue);
+  background-color: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
 }
 
 .badge-amber {
   background-color: var(--color-amber-soft);
-  border: 1px solid rgba(204, 119, 68, 0.35);
+  border: 1px solid rgba(96, 165, 250, 0.3);
   color: var(--color-amber-clay);
 }
 
-/* Legacy Badge Class Aliases (Softened to match travel palette) */
+/* Legacy Badge Class Aliases */
 .badge-neon-teal, .badge-neon-emerald {
   background-color: var(--color-sage-soft);
-  border: 1px solid rgba(112, 151, 117, 0.35);
+  border: 1px solid rgba(52, 211, 153, 0.3);
   color: var(--color-sage);
 }
 .badge-neon-amber {
   background-color: var(--color-amber-soft);
-  border: 1px solid rgba(204, 119, 68, 0.35);
+  border: 1px solid rgba(96, 165, 250, 0.3);
   color: var(--color-amber-clay);
 }
 .badge-neon-rose {
   background-color: var(--color-terracotta-soft);
-  border: 1px solid rgba(201, 106, 84, 0.35);
+  border: 1px solid rgba(248, 113, 113, 0.3);
   color: var(--color-terracotta);
 }
 .badge-neon-cyan {
-  background-color: var(--color-slate-blue-soft);
-  border: 1px solid rgba(96, 125, 139, 0.35);
-  color: var(--color-slate-blue);
+  background-color: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  color: #38bdf8;
 }
 
 /* =========================================================================
@@ -273,7 +276,7 @@ html, body {
 .timeline-node-item.active .node-anchor-dot {
   background: var(--color-sand);
   border-color: var(--color-panel);
-  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.3);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35);
 }
 
 /* Vertical Stems */
@@ -325,14 +328,14 @@ html, body {
 
 .timeline-node-item:hover .timeline-card,
 .timeline-node-item:hover .node-card {
-  border-color: var(--color-sand-dim);
+  border-color: var(--color-sand);
   transform: translateY(-2px);
 }
 
 .timeline-node-item.active-stage .timeline-card,
 .timeline-node-item.active .node-card {
   border-color: var(--color-sand);
-  background: rgba(212, 163, 115, 0.08);
+  background: rgba(56, 189, 248, 0.12);
 }
 
 /* Time Pill */
@@ -391,7 +394,7 @@ html, body {
   padding: 0 4px;
 }
 
-/* Subtle, Calm Sweep Beam (Warm Sand - NO NEONS) */
+/* Subtle, Calm Sweep Beam (Glacier Sky Blue - NO NEONS) */
 .radar-beam {
   position: absolute;
   top: 50%;
@@ -399,7 +402,7 @@ html, body {
   width: 250px;
   height: 250px;
   transform-origin: top left;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(212, 163, 115, 0.08) 50deg, transparent 65deg);
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(56, 189, 248, 0.1) 50deg, transparent 65deg);
   border-radius: 50%;
   animation: radarSweep 10s linear infinite;
   pointer-events: none;
@@ -414,7 +417,7 @@ html, body {
 .map-arterial-line {
   position: absolute;
   height: 4px;
-  background: rgba(212, 163, 115, 0.35);
+  background: rgba(56, 189, 248, 0.35);
   border-radius: 9999px;
   pointer-events: none;
 }
@@ -558,7 +561,7 @@ html, body {
 }
 
 .venue-suggestion-item.active-suggestion {
-  background: rgba(212, 163, 115, 0.1);
+  background: rgba(56, 189, 248, 0.12);
   border-left: 3px solid var(--color-sand);
 }
 
@@ -567,69 +570,97 @@ html, body {
    ========================================================================= */
 
 .text-white, .text-slate-100 {
-  color: var(--color-text) !important;
+  color: #f8fafc !important;
 }
 
 .text-slate-200, .text-slate-300 {
-  color: #d1ccc2 !important;
+  color: #e2e8f0 !important;
 }
 
 .text-slate-400 {
-  color: var(--color-dim) !important;
+  color: #94a3b8 !important;
 }
 
 .text-slate-500, .text-slate-600 {
-  color: var(--color-dimmer) !important;
+  color: #64748b !important;
 }
 
 .text-teal-400, .text-teal-300, .text-teal-500, .text-purple-400, .text-purple-300 {
-  color: var(--color-sand) !important;
+  color: #38bdf8 !important;
 }
 
 .text-cyan-400, .text-cyan-300 {
-  color: var(--color-slate-blue) !important;
+  color: #7dd3fc !important;
 }
 
 .text-amber-400, .text-amber-300 {
-  color: var(--color-amber-clay) !important;
+  color: #60a5fa !important;
 }
 
 .text-rose-400, .text-rose-300 {
-  color: var(--color-terracotta) !important;
+  color: #f87171 !important;
 }
 
 .text-emerald-400, .text-emerald-300 {
-  color: var(--color-sage) !important;
+  color: #34d399 !important;
 }
 
 .bg-teal-500, .bg-purple-500 {
-  background-color: var(--color-sand) !important;
-  color: #121316 !important;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
+  color: #080c14 !important;
 }
 
 .bg-teal-500\/10, .bg-teal-500\/20, .bg-purple-500\/10, .bg-purple-500\/20 {
-  background-color: rgba(212, 163, 115, 0.1) !important;
+  background-color: rgba(56, 189, 248, 0.12) !important;
 }
 
 .border-teal-500, .border-teal-500\/30, .border-teal-500\/40, .border-purple-500\/30 {
-  border-color: var(--color-sand-dim) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
 }
 
 .border-slate-800, .border-slate-700, .border-slate-700\/80, .border-slate-800\/80 {
-  border-color: var(--color-line) !important;
+  border-color: rgba(56, 189, 248, 0.15) !important;
 }
 
 .bg-slate-900, .bg-slate-900\/90, .bg-slate-900\/80, .bg-slate-950, .bg-slate-800, .bg-slate-800\/60, .bg-slate-800\/80 {
-  background-color: var(--color-panel-2) !important;
+  background-color: #0f172a !important;
 }
 
-.bg-\[\#090d16\], .bg-\[\#111827\] {
-  background-color: var(--color-ink) !important;
+.bg-\[\#090d16\], .bg-\[\#111827\], .bg-\[\#121316\] {
+  background-color: #080c14 !important;
 }
 
-/* Range Input Styled for Travel Aesthetic */
+.bg-\[\#1a1b20\] {
+  background-color: #0f172a !important;
+}
+
+.bg-\[\#22242b\] {
+  background-color: #1e293b !important;
+}
+
+.border-\[\#2a2c35\] {
+  border-color: rgba(56, 189, 248, 0.16) !important;
+}
+
+.text-\[\#ede8e1\] {
+  color: #f1f5f9 !important;
+}
+
+.text-\[\#9e9b93\] {
+  color: #94a3b8 !important;
+}
+
+.text-\[\#d4a373\] {
+  color: #38bdf8 !important;
+}
+
+.border-\[\#d4a373\] {
+  border-color: #38bdf8 !important;
+}
+
+/* Range Input Styled for Calm Blue Aesthetic */
 input[type="range"] {
-  accent-color: var(--color-sand);
+  accent-color: #38bdf8;
 }
 
 .progress-fill {

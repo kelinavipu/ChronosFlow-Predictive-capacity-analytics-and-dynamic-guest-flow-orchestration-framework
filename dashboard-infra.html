@@ -13,7 +13,7 @@
 
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-[#121316] text-[#ede8e1] min-h-screen flex flex-col font-sans selection:bg-[#d4a373] selection:text-[#121316]">
+<body class="bg-[#080c14] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-400 selection:text-slate-950">
 
   <!-- Global Shared Navbar -->
   <div id="global-navbar"></div>
@@ -22,21 +22,21 @@
   <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
 
     <!-- Header & Persona Badge -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
       <div class="space-y-1">
         <div class="flex items-center space-x-2">
           <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold badge-slate">LOGISTICS TIER</span>
-          <span class="text-xs text-[#9e9b93] font-mono">Infra Manager Command</span>
+          <span class="text-xs text-sky-400 font-mono">Infra Manager Command</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Infrastructure & Transit Operations</h1>
-        <p class="text-xs text-[#9e9b93]">
+        <h1 class="text-2xl sm:text-3xl font-black text-white">Infrastructure & Transit Operations</h1>
+        <p class="text-xs text-slate-400">
           Manage physical assets, review event host pipeline, allocate transit corridors, and coordinate multi-agency requests.
         </p>
       </div>
 
       <div class="flex items-center space-x-2">
-        <div class="px-3 py-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs font-mono text-[#9e9b93] flex items-center space-x-2">
-          <i data-lucide="shield-check" class="w-4 h-4 text-[#709775]"></i>
+        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
           <span>Agency: Central Railway & NMMT Dispatch</span>
         </div>
       </div>
@@ -48,62 +48,62 @@
     <section class="space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="calendar-clock" class="w-5 h-5 text-[#d4a373]"></i>
+          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <i data-lucide="calendar-clock" class="w-5 h-5 text-sky-400"></i>
             <span>Active Event Host Pipeline</span>
           </h2>
-          <p class="text-xs text-[#9e9b93]">Verified event managers preparing to host mega-events in your jurisdiction</p>
+          <p class="text-xs text-slate-400">Verified event managers preparing to host mega-events in your jurisdiction</p>
         </div>
-        <span class="text-xs font-mono text-[#d4a373]">1 Ready to Host</span>
+        <span class="text-xs font-mono text-sky-400 font-bold">1 Ready to Host</span>
       </div>
 
       <!-- Host Event Card -->
-      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:border-[#d4a373]/50 transition">
+      <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:border-sky-400/50 transition">
         <div class="space-y-3 max-w-2xl">
           <div class="flex flex-wrap items-center gap-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-sand">READY TO HOST</span>
-            <span class="text-xs text-[#9e9b93] font-mono">&bull; Event ID: dypatil_nerul</span>
-            <span class="text-xs text-[#709775] font-mono">&bull; Baseline Locked</span>
+            <span class="text-xs text-slate-400 font-mono">&bull; Event ID: dypatil_nerul</span>
+            <span class="text-xs text-emerald-400 font-mono">&bull; Baseline Locked</span>
           </div>
 
           <div>
-            <h3 class="text-xl font-black text-[#ede8e1]">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
-            <div class="flex items-center space-x-2 text-xs text-[#9e9b93] mt-1">
-              <i data-lucide="user" class="w-3.5 h-3.5 text-[#d4a373]"></i>
-              <span>Hosted by <strong>Alicia Stone</strong> (Event Master Orchestrator)</span>
+            <h3 class="text-xl font-black text-white">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
+            <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
+              <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>Hosted by <strong class="text-white">Alicia Stone</strong> (Event Master Orchestrator)</span>
               <span>&bull;</span>
-              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#d4a373]"></i>
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
               <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
             </div>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
-            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Dates</div>
-              <div class="font-bold text-[#ede8e1]">Sep 1 - Sep 4</div>
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400">Dates</div>
+              <div class="font-bold text-white">Sep 1 - Sep 4</div>
             </div>
-            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Daily Spectators</div>
-              <div class="font-bold text-[#d4a373]">50,000 / Day</div>
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400">Daily Spectators</div>
+              <div class="font-bold text-sky-300">50,000 / Day</div>
             </div>
-            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Rail Demand</div>
-              <div class="font-bold text-[#709775]">24,000 pax/hr</div>
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400">Rail Demand</div>
+              <div class="font-bold text-emerald-400">24,000 pax/hr</div>
             </div>
-            <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35]">
-              <div class="text-[10px] text-[#9e9b93]">Shuttle Fleet</div>
-              <div class="font-bold text-[#607d8b]">65 Buses Req</div>
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
+              <div class="text-[10px] text-slate-400">Shuttle Fleet</div>
+              <div class="font-bold text-sky-400">65 Buses Req</div>
             </div>
           </div>
         </div>
 
         <div class="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 w-full sm:w-auto">
-          <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2">
+          <a href="preplans.html" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center justify-center space-x-2">
             <i data-lucide="radar" class="w-4 h-4"></i>
             <span>Inspect 5km Twin</span>
           </a>
-          <button onclick="scrollToRequests()" class="px-4 py-2.5 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35] text-xs font-semibold flex items-center justify-center space-x-2">
-            <i data-lucide="inbox" class="w-4 h-4 text-[#d4a373]"></i>
+          <button onclick="scrollToRequests()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-sky-900/40 text-xs font-semibold flex items-center justify-center space-x-2">
+            <i data-lucide="inbox" class="w-4 h-4 text-sky-400"></i>
             <span>View Host Requests</span>
           </button>
         </div>
@@ -116,13 +116,13 @@
     <section class="space-y-4" id="infra-requests-section">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="git-pull-request" class="w-5 h-5 text-[#607d8b]"></i>
+          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <i data-lucide="git-pull-request" class="w-5 h-5 text-sky-400"></i>
             <span>Infrastructure Requests & Responses</span>
           </h2>
-          <p class="text-xs text-[#9e9b93]">Capacity and corridor allocation requests submitted by event managers</p>
+          <p class="text-xs text-slate-400">Capacity and corridor allocation requests submitted by event managers</p>
         </div>
-        <span class="text-xs font-mono text-[#709775]">Live Synchronized</span>
+        <span class="text-xs font-mono text-emerald-400 font-bold">Live Synchronized</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="infra-requests-grid">
@@ -136,14 +136,14 @@
     <section class="space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="layers" class="w-5 h-5 text-[#d4a373]"></i>
+          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <i data-lucide="layers" class="w-5 h-5 text-sky-400"></i>
             <span>My Registered Physical Assets</span>
           </h2>
-          <p class="text-xs text-[#9e9b93]">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
+          <p class="text-xs text-slate-400">Rail terminals, expressway corridors, and municipal parking facilities under your management</p>
         </div>
 
-        <button onclick="alert('Asset registration wizard will open.')" class="px-3 py-1.5 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
+        <button onclick="alert('Asset registration wizard will open.')" class="px-3 py-1.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           <span>Register Asset</span>
         </button>
@@ -166,36 +166,36 @@
       reqContainer.innerHTML = data.requests.map(req => {
         const isApproved = req.status === 'APPROVED';
         return `
-          <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3 flex flex-col justify-between">
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3 flex flex-col justify-between">
             <div class="space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded ${isApproved ? 'badge-sage' : 'badge-amber'}">
                   ${req.status}
                 </span>
-                <span class="text-[10px] font-mono text-[#9e9b93]">${req.date}</span>
+                <span class="text-[10px] font-mono text-slate-400">${req.date}</span>
               </div>
 
-              <h4 class="text-sm font-bold text-[#ede8e1]">${req.requestedAsset}</h4>
-              <p class="text-xs text-[#9e9b93] leading-relaxed">${req.requestText}</p>
+              <h4 class="text-sm font-bold text-white">${req.requestedAsset}</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">${req.requestText}</p>
               
-              <div class="p-2 rounded-lg bg-[#22242b] border border-[#2a2c35] text-[11px] font-mono text-[#d4a373]">
+              <div class="p-2 rounded-lg bg-slate-900 border border-sky-900/30 text-[11px] font-mono text-sky-300">
                 Allocation: <strong>${req.allocatedCapacity}</strong>
               </div>
             </div>
 
-            <div class="pt-3 border-t border-[#2a2c35] flex items-center justify-between text-xs font-bold">
+            <div class="pt-3 border-t border-sky-950/60 flex items-center justify-between text-xs font-bold">
               ${isApproved ? `
-                <span class="text-[#709775] flex items-center space-x-1">
+                <span class="text-emerald-400 flex items-center space-x-1">
                   <i data-lucide="check-check" class="w-4 h-4"></i>
                   <span>Capacity Reserved & Approved</span>
                 </span>
-                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="text-[#9e9b93] hover:text-[#c96a54] text-[11px]">Revoke</button>
+                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="text-slate-400 hover:text-rose-400 text-[11px]">Revoke</button>
               ` : `
-                <button onclick="handleStatus('${req.id}', 'APPROVED')" class="px-3.5 py-1.5 rounded-xl btn-sand flex items-center space-x-1">
+                <button onclick="handleStatus('${req.id}', 'APPROVED')" class="px-3.5 py-1.5 rounded-xl btn-glacier flex items-center space-x-1">
                   <i data-lucide="check" class="w-3.5 h-3.5"></i>
                   <span>Approve & Reserve Capacity</span>
                 </button>
-                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="px-2.5 py-1.5 rounded-xl bg-[#22242b] text-[#9e9b93] hover:text-[#c96a54]">Decline</button>
+                <button onclick="handleStatus('${req.id}', 'DECLINED')" class="px-2.5 py-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-rose-400 border border-sky-900/30">Decline</button>
               `}
             </div>
           </div>
@@ -205,28 +205,28 @@
       // Render Assets
       const assetContainer = document.getElementById('infra-assets-grid');
       assetContainer.innerHTML = data.assets.map(asset => `
-        <div class="dark-panel rounded-2xl p-5 border border-[#2a2c35] space-y-3">
+        <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">${asset.category}</span>
-            <span class="text-[10px] font-mono text-[#709775]">${asset.status}</span>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold">${asset.status}</span>
           </div>
 
           <div>
-            <h4 class="text-sm font-bold text-[#ede8e1] leading-tight">${asset.name}</h4>
-            <div class="text-[11px] text-[#9e9b93] mt-0.5">${asset.line}</div>
+            <h4 class="text-sm font-bold text-white leading-tight">${asset.name}</h4>
+            <div class="text-[11px] text-slate-400 mt-0.5">${asset.line}</div>
           </div>
 
           <div class="space-y-1.5 pt-1">
             <div class="flex justify-between text-xs">
-              <span class="text-[#9e9b93]">Throughput Capacity:</span>
-              <span class="font-mono font-bold text-[#ede8e1]">${asset.capacity}</span>
+              <span class="text-slate-400">Throughput Capacity:</span>
+              <span class="font-mono font-bold text-white">${asset.capacity}</span>
             </div>
-            <div class="w-full bg-[#1a1b20] h-1.5 rounded-full overflow-hidden">
-              <div class="bg-[#d4a373] h-full" style="width: ${asset.loadPct}%;"></div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-sky-950">
+              <div class="bg-gradient-to-r from-sky-400 to-blue-500 h-full rounded-full" style="width: ${asset.loadPct}%;"></div>
             </div>
-            <div class="flex justify-between text-[10px] font-mono text-[#9e9b93]">
+            <div class="flex justify-between text-[10px] font-mono text-slate-400">
               <span>Active Grid Load</span>
-              <span class="text-[#d4a373] font-bold">${asset.loadPct}%</span>
+              <span class="text-sky-300 font-bold">${asset.loadPct}%</span>
             </div>
           </div>
         </div>
