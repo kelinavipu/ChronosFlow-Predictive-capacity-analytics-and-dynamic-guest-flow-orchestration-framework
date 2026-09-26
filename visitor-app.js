@@ -207,6 +207,12 @@ let routePolyline = null;
 let isLiveGpsActive = false;
 let watchId = null;
 
+// Gatekeeper Unit State
+let gatekeeperLocation = null;
+let gatekeeperMap = null;
+let gatekeeperMarker = null;
+let isGatekeeperUnlocked = false;
+
 let activeEventKey = 'dypatil_nerul';
 let activeEvent = EVENT_REGISTRY['dypatil_nerul'];
 
@@ -233,10 +239,8 @@ let georgeLocation = {
 document.addEventListener('DOMContentLoaded', () => {
   startMobileClock();
   parseUrlParamsAndInitialize();
+  initGatekeeper();
   lucide.createIcons();
-
-  // Immediate location detection on startup:
-  autoAcquirePresentLocation();
 });
 
 function parseUrlParamsAndInitialize() {
@@ -691,7 +695,7 @@ window.sharePassLink = function() {
 // 7. REAL-TIME GPS GEOLOCATION & FAILSAFE LOCATION ENGINE
 // =========================================================================
 window.requestLiveGeolocation = function() {
-  openLocationPickerModal();
+  openGeolocationGatekeeper();
 };
 
 window.dismissGPSModal = function() {
@@ -702,73 +706,338 @@ window.dismissGPSModal = function() {
   }
 };
 
-// Auto-Acquisition: Runs on page load without prematurely falling back to Kurla IP
-function autoAcquirePresentLocation() {
-  // 1. Check if user previously selected or saved a location in localStorage
+// =========================================================================
+// 7. REAL-TIME GEOLOCATION GATEKEEPER & SATELLITE RADAR UNIT
+// BLOCKS ENTIRE APP UNTIL REAL ACCURATE USER GEOLOCATION IS CONFIRMED
+// =========================================================================
+function initGatekeeper() {
+  const gatekeeper = document.getElementById('geo-lock-gatekeeper');
+  if (!gatekeeper) return;
+
+  // 1. Render 1-tap area presets
+  renderGatekeeperQuickChips();
+
+  // 2. Initialize satellite radar map
+  setTimeout(() => {
+    initGatekeeperMap();
+  }, 150);
+
+  // 3. Check if user previously calibrated an origin in localStorage
   try {
     const saved = localStorage.getItem('chronos_user_origin');
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed && parsed.lat && parsed.lng && parsed.name) {
-        georgeLocation.lat = parsed.lat;
-        georgeLocation.lng = parsed.lng;
-        georgeLocation.label = parsed.name;
-        updateLocationUI(parsed.name, "Saved Origin");
-        return;
+        setGatekeeperCoordinates(parsed.lat, parsed.lng, 'Saved Calibration');
+        const unlockBtn = document.getElementById('btn-gk-unlock');
+        if (unlockBtn) {
+          unlockBtn.disabled = false;
+          unlockBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:opacity-95 text-slate-950 font-black text-xs font-mono flex items-center justify-center space-x-2 shadow-2xl shadow-emerald-500/30 cursor-pointer active:scale-95 transition";
+          unlockBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-slate-950"></i><span>ENTER WITH SAVED: ${parsed.name.toUpperCase()} &rarr;</span>`;
+          lucide.createIcons();
+        }
       }
     }
   } catch (e) {}
 
-  // 2. Default to active event's local origin (Nerul Sector 19 for DY Patil)
-  georgeLocation.lat = activeEvent.defaultOrigin.lat;
-  georgeLocation.lng = activeEvent.defaultOrigin.lng;
-  georgeLocation.label = activeEvent.defaultOrigin.label;
-  updateLocationUI(georgeLocation.label, "Venue Sector");
+  // 4. Request hardware GPS sensor immediately
+  gatekeeperRequestGPS();
+}
 
-  // 3. Directly attempt hardware GPS prompt if browser supports geolocation
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async position => {
-        isLiveGpsActive = true;
-        georgeLocation.lat = position.coords.latitude;
-        georgeLocation.lng = position.coords.longitude;
-        
-        const locality = getNearestLocality(position.coords.latitude, position.coords.longitude);
-        georgeLocation.label = locality ? `${locality} (Live GPS)` : `Your Location (±${Math.round(position.coords.accuracy)}m)`;
+function initGatekeeperMap() {
+  const container = document.getElementById('gk-satellite-map');
+  if (!container || gatekeeperMap) return;
 
-        updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
-        renderOriginChips();
-        renderPickerChips();
-        showMobileToast(`📍 Present GPS Locked: ${georgeLocation.label}`);
+  const initialLat = (gatekeeperLocation && gatekeeperLocation.lat) ? gatekeeperLocation.lat : activeEvent.defaultOrigin.lat;
+  const initialLng = (gatekeeperLocation && gatekeeperLocation.lng) ? gatekeeperLocation.lng : activeEvent.defaultOrigin.lng;
 
-        // Refine with reverse geocoding
-        const refined = await fetchReverseGeocode(position.coords.latitude, position.coords.longitude);
-        if (refined) {
-          georgeLocation.label = `${refined} (Live GPS)`;
-          updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
-        }
+  gatekeeperMap = L.map('gk-satellite-map', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView([initialLat, initialLng], 13);
 
-        // Keep continuous tracking active
-        if (!watchId) {
-          watchId = navigator.geolocation.watchPosition(
-            pos => {
-              georgeLocation.lat = pos.coords.latitude;
-              georgeLocation.lng = pos.coords.longitude;
-              updateLocationUI("Live GPS Tracking", `±${Math.round(pos.coords.accuracy)}m`);
-            },
-            err => console.warn("Watch position err:", err),
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
-          );
-        }
-      },
-      error => {
-        console.warn("Hardware GPS prompt ignored or unavailable:", error);
-        // Do NOT force Kurla! Keep Nerul Sector 19 and notify user
-        showMobileToast(`📍 Location: ${georgeLocation.label}. Tap header to change or search.`);
-      },
-      { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
-    );
+  // ESRI Satellite Imagery Base
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19
+  }).addTo(gatekeeperMap);
+
+  // ESRI World Boundaries and Places reference layer
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    opacity: 0.95
+  }).addTo(gatekeeperMap);
+
+  // Add Venue Destination Pin
+  const venueIcon = L.divIcon({
+    className: 'gk-venue-pin',
+    html: `
+      <div style="background:#080c14; border:2px solid #34d399; color:#34d399; border-radius:8px; padding:2px 6px; font-size:10px; font-family:monospace; font-weight:bold; white-space:nowrap; transform:translate(-50%,-50%); box-shadow:0 0 10px #34d399;">
+        🏟️ ${activePass.gate}
+      </div>
+    `,
+    iconSize: [60, 24],
+    iconAnchor: [30, 12]
+  });
+  L.marker([activeEvent.lat, activeEvent.lng], { icon: venueIcon }).addTo(gatekeeperMap);
+
+  // Click map anywhere to pinpoint accurate coordinates!
+  gatekeeperMap.on('click', (e) => {
+    setGatekeeperCoordinates(e.latlng.lat, e.latlng.lng, 'Satellite Radar Pin');
+  });
+
+  if (gatekeeperLocation) {
+    updateGatekeeperMarker(gatekeeperLocation.lat, gatekeeperLocation.lng);
   }
+}
+
+window.gatekeeperRequestGPS = function() {
+  const statusText = document.getElementById('gk-status-text');
+  const statusDot = document.getElementById('gk-status-dot');
+  const gpsNotice = document.getElementById('gk-gps-notice');
+
+  if (statusText) statusText.innerText = "Querying GNSS Hardware Sensors...";
+  if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping";
+
+  if (!navigator.geolocation) {
+    if (gpsNotice) gpsNotice.innerText = "⚠️ Browser Geolocation API not supported. Pinpoint location on satellite radar below:";
+    if (statusText) statusText.innerText = "Please Pinpoint on Radar Map";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const acc = position.coords.accuracy;
+
+      setGatekeeperCoordinates(lat, lng, 'Hardware GNSS', acc);
+
+      if (gpsNotice) {
+        gpsNotice.innerHTML = `<span class="text-emerald-400 font-bold">✅ Hardware GNSS Sensor Locked (Accuracy: ±${Math.round(acc)}m)</span>`;
+      }
+      showMobileToast(`🛰️ Hardware GPS Locked: ±${Math.round(acc)}m`);
+    },
+    error => {
+      console.warn("Hardware GPS prompt unavailable/denied over HTTP:", error);
+      let reason = "⚠️ Mobile browser blocked GPS over HTTP. Pinpoint your location on satellite radar below:";
+      if (error.code === 1) reason = "⚠️ Permission denied in browser. Pinpoint your location on satellite radar below:";
+      if (gpsNotice) gpsNotice.innerText = reason;
+      if (statusText && !gatekeeperLocation) {
+        statusText.innerText = "Awaiting Radar Pinpoint...";
+      }
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+};
+
+window.setGatekeeperCoordinates = async function(lat, lng, source, accuracy) {
+  gatekeeperLocation = {
+    lat: lat,
+    lng: lng,
+    source: source || 'Calibrated',
+    accuracy: accuracy || null
+  };
+
+  const latEl = document.getElementById('gk-lat-val');
+  const lngEl = document.getElementById('gk-lng-val');
+  const areaEl = document.getElementById('gk-area-name');
+  const distEl = document.getElementById('gk-venue-dist');
+  const statusDot = document.getElementById('gk-status-dot');
+  const statusText = document.getElementById('gk-status-text');
+  const accBadge = document.getElementById('gk-accuracy-badge');
+
+  if (latEl) latEl.innerText = `${lat.toFixed(4)}° N`;
+  if (lngEl) lngEl.innerText = `${lng.toFixed(4)}° E`;
+
+  const d = getHaversineDistance(lat, lng, activeEvent.lat, activeEvent.lng).toFixed(1);
+  if (distEl) distEl.innerText = `${d} km to ${activePass.gate}`;
+
+  const localName = getNearestLocality(lat, lng) || "Selected Coordinates";
+  gatekeeperLocation.label = localName;
+  if (areaEl) areaEl.innerText = localName;
+
+  if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+  if (statusText) statusText.innerText = `POSITION LOCKED (${source})`;
+  if (accBadge) accBadge.innerText = accuracy ? `±${Math.round(accuracy)}m` : 'High Precision';
+
+  // Move marker on radar map
+  updateGatekeeperMarker(lat, lng);
+
+  // Enable Unlock Button
+  const unlockBtn = document.getElementById('btn-gk-unlock');
+  if (unlockBtn) {
+    unlockBtn.disabled = false;
+    unlockBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:opacity-95 text-slate-950 font-black text-xs font-mono flex items-center justify-center space-x-2 shadow-2xl shadow-emerald-500/30 cursor-pointer active:scale-95 transition";
+    unlockBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-slate-950"></i><span>CONFIRM ACCURATE GEOLOCATION &amp; ENTER COMPANION &rarr;</span>`;
+    lucide.createIcons();
+  }
+
+  // Refine in background via BigDataCloud reverse geocoder
+  const refined = await fetchReverseGeocode(lat, lng);
+  if (refined && refined !== localName) {
+    gatekeeperLocation.label = refined;
+    if (areaEl) areaEl.innerText = refined;
+  }
+};
+
+function updateGatekeeperMarker(lat, lng) {
+  if (!gatekeeperMap) return;
+
+  if (gatekeeperMarker) {
+    gatekeeperMarker.setLatLng([lat, lng]);
+  } else {
+    const userGpsIcon = L.divIcon({
+      className: 'gk-user-gps',
+      html: `
+        <div style="position:relative; width:22px; height:22px; transform:translate(-50%,-50%);">
+          <div style="position:absolute; inset:-4px; border-radius:50%; background:rgba(56,189,248,0.45); animation:ping 1.5s infinite;"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; background:#38bdf8; border:2.5px solid #ffffff; box-shadow:0 0 12px #38bdf8;"></div>
+        </div>
+      `,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+    gatekeeperMarker = L.marker([lat, lng], { icon: userGpsIcon }).addTo(gatekeeperMap);
+  }
+
+  gatekeeperMap.panTo([lat, lng]);
+}
+
+window.gatekeeperUnlockApp = function() {
+  if (!gatekeeperLocation) {
+    showMobileToast("⚠️ Please acquire GPS or pinpoint your position first.");
+    return;
+  }
+
+  isGatekeeperUnlocked = true;
+  georgeLocation.lat = gatekeeperLocation.lat;
+  georgeLocation.lng = gatekeeperLocation.lng;
+  georgeLocation.label = gatekeeperLocation.label || getNearestLocality(gatekeeperLocation.lat, gatekeeperLocation.lng) || "Your Verified Location";
+
+  // Persist to localStorage
+  try {
+    localStorage.setItem('chronos_user_origin', JSON.stringify({
+      name: georgeLocation.label,
+      lat: georgeLocation.lat,
+      lng: georgeLocation.lng,
+      source: gatekeeperLocation.source
+    }));
+  } catch (e) {}
+
+  // Hide Gatekeeper Unit and reveal app
+  const gatekeeper = document.getElementById('geo-lock-gatekeeper');
+  if (gatekeeper) {
+    gatekeeper.classList.add('hidden');
+  }
+
+  // Update complete UI
+  applyPassToUI();
+  updateLocationUI(georgeLocation.label, gatekeeperLocation.source || "Calibrated");
+
+  showMobileToast(`✅ Geolocation Calibrated: ${georgeLocation.label} (${calculateDistance()} km to venue)`);
+};
+
+window.openGeolocationGatekeeper = function() {
+  const gatekeeper = document.getElementById('geo-lock-gatekeeper');
+  if (gatekeeper) {
+    gatekeeper.classList.remove('hidden');
+    if (gatekeeperMap) {
+      setTimeout(() => {
+        gatekeeperMap.invalidateSize();
+        if (gatekeeperLocation) {
+          gatekeeperMap.setView([gatekeeperLocation.lat, gatekeeperLocation.lng], 14);
+        }
+      }, 100);
+    } else {
+      setTimeout(initGatekeeperMap, 100);
+    }
+    renderGatekeeperQuickChips();
+    lucide.createIcons();
+  }
+};
+
+window.handleGatekeeperSearch = function(query) {
+  const container = document.getElementById('gk-search-results');
+  if (!container) return;
+
+  if (!query || query.trim().length === 0) {
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    return;
+  }
+
+  const q = query.toLowerCase().trim();
+  const matches = REGIONAL_LOCALITIES.filter(loc => 
+    loc.name.toLowerCase().includes(q) || 
+    (loc.category && loc.category.toLowerCase().includes(q))
+  );
+
+  if (matches.length === 0) {
+    container.innerHTML = `
+      <div class="p-2 text-slate-400 text-center text-[10px]">
+        No match for "${query}". Tap directly on satellite radar map to drop pin.
+      </div>
+    `;
+    container.classList.remove('hidden');
+    return;
+  }
+
+  container.innerHTML = matches.slice(0, 6).map(loc => {
+    const dist = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(1);
+    return `
+      <div 
+        onclick="selectGatekeeperSearchResult('${loc.name.replace(/'/g, "\\'")}', ${loc.lat}, ${loc.lng})"
+        class="p-2 rounded-lg hover:bg-sky-900/40 cursor-pointer flex items-center justify-between transition border border-transparent hover:border-sky-500/30"
+      >
+        <div class="flex items-center space-x-1.5">
+          <span class="text-cyan-400">📍</span>
+          <div>
+            <div class="text-white font-bold text-xs">${loc.name}</div>
+            <div class="text-[8px] text-slate-400">${loc.category || 'Area'}</div>
+          </div>
+        </div>
+        <div class="text-emerald-400 font-bold text-xs">${dist} km</div>
+      </div>
+    `;
+  }).join('');
+
+  container.classList.remove('hidden');
+};
+
+window.selectGatekeeperSearchResult = function(name, lat, lng) {
+  setGatekeeperCoordinates(lat, lng, 'Locality Search');
+  const container = document.getElementById('gk-search-results');
+  if (container) container.classList.add('hidden');
+  const input = document.getElementById('gk-search-input');
+  if (input) input.value = name;
+};
+
+function renderGatekeeperQuickChips() {
+  const container = document.getElementById('gk-quick-chips');
+  if (!container) return;
+
+  const popular = [
+    { name: "Nerul Sector 19", lat: 19.0310, lng: 73.0150 },
+    { name: "Seawoods", lat: 19.0180, lng: 73.0180 },
+    { name: "CBD Belapur", lat: 19.0180, lng: 73.0420 },
+    { name: "Kharghar", lat: 19.0473, lng: 73.0699 },
+    { name: "Sanpada", lat: 19.0650, lng: 73.0100 },
+    { name: "Vashi", lat: 19.0771, lng: 72.9986 },
+    { name: "Dadar East", lat: 19.0178, lng: 72.8478 },
+    { name: "Thane Station", lat: 19.1860, lng: 72.9750 }
+  ];
+
+  container.innerHTML = popular.map(loc => {
+    const d = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(0);
+    return `
+      <button 
+        onclick="setGatekeeperCoordinates(${loc.lat}, ${loc.lng}, 'Preset Chip')"
+        class="px-2 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-sky-900/40 text-[9px] font-mono transition"
+      >
+        📍 ${loc.name} (${d}km)
+      </button>
+    `;
+  }).join('');
 }
 
 window.confirmLiveGPS = function() {

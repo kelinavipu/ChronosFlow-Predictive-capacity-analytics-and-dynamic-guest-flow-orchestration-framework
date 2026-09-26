@@ -81,6 +81,114 @@
   <!-- ========================================================================= -->
   <div class="mobile-device-shell w-full flex flex-col relative bg-[#080c14] overflow-hidden">
     
+    <!-- ========================================================================= -->
+    <!-- GEOLOCATION GATEKEEPER & SATELLITE CALIBRATION UNIT                       -->
+    <!-- BLOCKS ALL ACCESS UNTIL ACCURATE GEOLOCATION IS ACQUIRED AND CONFIRMED   -->
+    <!-- ========================================================================= -->
+    <div id="geo-lock-gatekeeper" class="absolute inset-0 z-50 bg-[#04070e] flex flex-col p-4 sm:p-5 text-white overflow-y-auto no-scrollbar space-y-3">
+      <!-- 1. Header with Tactical Radar HUD -->
+      <div class="text-center space-y-1 pt-1">
+        <div class="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-[9px] font-mono text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+          <span class="font-bold tracking-wider uppercase">GEOLOCATION GATEKEEPER</span>
+        </div>
+        <h2 class="text-base font-black text-white tracking-tight">Accurate Geolocation Required</h2>
+        <p class="text-[10px] text-slate-400 font-mono leading-relaxed">
+          Access is locked until your present location is verified to calibrate live gate ingress, transit headway, and turnstile release.
+        </p>
+      </div>
+
+      <!-- 2. Primary Action: Hardware Device GPS Sensor Request -->
+      <div class="space-y-1">
+        <button id="btn-gk-request-gps" onclick="gatekeeperRequestGPS()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-emerald-400 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center space-x-2 shadow-xl shadow-cyan-500/25 active:scale-95 transition">
+          <i data-lucide="satellite" class="w-4 h-4 text-slate-950 animate-spin"></i>
+          <span>ACQUIRE DEVICE HARDWARE GPS</span>
+        </button>
+        <div id="gk-gps-notice" class="text-[9px] font-mono text-center text-slate-400">
+          Tap above to request hardware GNSS location
+        </div>
+      </div>
+
+      <!-- 3. Live Target Coordinate Lock HUD -->
+      <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-sky-800/70 space-y-2 font-mono shadow-inner">
+        <div class="flex justify-between items-center text-xs">
+          <span class="flex items-center space-x-1.5 text-slate-300">
+            <span id="gk-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <span id="gk-status-text" class="text-[11px] font-bold text-amber-300">Awaiting Coordinate Lock</span>
+          </span>
+          <span id="gk-accuracy-badge" class="px-2 py-0.5 rounded-md bg-slate-900 border border-sky-900 text-slate-400 text-[9px]">Uncalibrated</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2 rounded-xl bg-slate-900/90 border border-sky-950">
+            <div class="text-[8px] text-slate-400 uppercase tracking-wider">Latitude</div>
+            <div id="gk-lat-val" class="font-bold text-cyan-300 text-xs">--.----° N</div>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-900/90 border border-sky-950">
+            <div class="text-[8px] text-slate-400 uppercase tracking-wider">Longitude</div>
+            <div id="gk-lng-val" class="font-bold text-cyan-300 text-xs">--.----° E</div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] pt-1 border-t border-sky-950">
+          <div class="text-slate-400 truncate max-w-[170px]">
+            <span>Area: </span>
+            <strong id="gk-area-name" class="text-white">None Locked</strong>
+          </div>
+          <div class="text-emerald-400 font-bold" id="gk-venue-dist">-- km to Gate</div>
+        </div>
+      </div>
+
+      <!-- 4. Precision Satellite Radar Map & Area Search -->
+      <div class="space-y-1.5 font-mono">
+        <div class="flex items-center justify-between text-[10px] text-slate-300">
+          <span class="font-bold text-cyan-400 flex items-center space-x-1">
+            <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
+            <span>Or Pinpoint / Search Your Location:</span>
+          </span>
+          <span class="text-[9px] text-slate-400">Tap map below</span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative">
+          <div class="relative flex items-center">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-cyan-400 absolute left-3 pointer-events-none"></i>
+            <input 
+              id="gk-search-input" 
+              type="text" 
+              placeholder="Search area (Nerul, Seawoods, Kharghar, Vashi, Dadar)..." 
+              oninput="handleGatekeeperSearch(this.value)"
+              class="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-900/90 border border-sky-800/70 text-xs text-white placeholder-slate-400 focus:border-cyan-400 outline-none font-mono"
+            >
+          </div>
+          <div id="gk-search-results" class="mt-1 max-h-36 overflow-y-auto rounded-xl bg-slate-950 border border-sky-800 shadow-xl hidden space-y-0.5 p-1 font-mono text-xs"></div>
+        </div>
+
+        <!-- Satellite Radar Map Viewport -->
+        <div class="w-full h-40 rounded-2xl overflow-hidden border border-sky-800/70 relative shadow-2xl">
+          <div id="gk-satellite-map" class="w-full h-full"></div>
+          
+          <div class="absolute top-2 left-2 z-[400] px-2 py-0.5 rounded-lg bg-slate-950/90 text-[8px] font-mono text-cyan-300 border border-sky-800/60 shadow flex items-center space-x-1 pointer-events-none">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+            <span>Tap satellite map to drop pin</span>
+          </div>
+        </div>
+
+        <!-- Quick 1-Tap Area Presets -->
+        <div class="flex flex-wrap gap-1 pt-0.5" id="gk-quick-chips">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- 5. Final Unlock & Confirm Button -->
+      <div class="pt-1">
+        <button id="btn-gk-unlock" disabled onclick="gatekeeperUnlockApp()" class="w-full py-3.5 rounded-2xl bg-slate-800/90 text-slate-500 font-black text-xs font-mono flex items-center justify-center space-x-2 transition cursor-not-allowed">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>GEOLOCATION LOCK REQUIRED TO ENTER</span>
+        </button>
+      </div>
+    </div>
+
     <!-- 1. Native Mobile Status Bar (Notch / Dynamic Island) -->
     <div class="w-full h-11 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between text-xs font-mono text-slate-300 shrink-0 z-40 select-none border-b border-sky-950/40">
       <span id="mobile-clock" class="font-bold text-white">12:30</span>
@@ -109,18 +217,18 @@
             <span id="vis-user-name" class="text-xs font-bold text-white leading-tight">George Miller</span>
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
           </div>
-          <button onclick="openLocationPickerModal()" class="text-[10px] font-mono text-cyan-300 hover:text-white flex items-center space-x-1 bg-sky-950/70 px-2 py-0.5 rounded-full border border-sky-800/50 mt-0.5 transition">
+          <button onclick="openGeolocationGatekeeper()" class="text-[10px] font-mono text-cyan-300 hover:text-white flex items-center space-x-1 bg-sky-950/70 px-2 py-0.5 rounded-full border border-sky-800/50 mt-0.5 transition">
             <i data-lucide="map-pin" class="w-2.5 h-2.5 text-cyan-400"></i>
             <span id="vis-user-sub">Nerul Sector 19 &bull; Spectator</span>
-            <i data-lucide="chevron-down" class="w-2.5 h-2.5 text-slate-400"></i>
+            <i data-lucide="refresh-cw" class="w-2 h-2 text-slate-400 ml-0.5"></i>
           </button>
         </div>
       </div>
 
       <!-- Quick Geolocation Status Badge -->
-      <button onclick="openLocationPickerModal()" class="px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-[10px] font-mono text-sky-300 flex items-center space-x-1 hover:bg-sky-500/20 transition">
-        <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
-        <span id="badge-gps-status">GPS Active</span>
+      <button onclick="openGeolocationGatekeeper()" class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/40 text-[10px] font-mono text-emerald-300 flex items-center space-x-1 hover:bg-emerald-500/20 transition">
+        <i data-lucide="crosshair" class="w-3 h-3 text-emerald-400"></i>
+        <span id="badge-gps-status">GPS Calibrated</span>
       </button>
     </div>
 
@@ -673,7 +781,7 @@
   </div>
 
   <!-- Mobile Companion Logic Script (Cache-busted for instant handset refresh) -->
-  <script src="visitor-app.js?v=20260927_03"></script>
+  <script src="visitor-app.js?v=20260927_04"></script>
 
 </body>
 </html>
