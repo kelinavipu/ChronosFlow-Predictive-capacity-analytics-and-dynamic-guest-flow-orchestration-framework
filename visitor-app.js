@@ -423,9 +423,9 @@ function updateTransitGuidanceUI(distKm, etaMins) {
     ];
   } else if (activeEventKey === 'dypatil_nerul') {
     guidanceSteps = [
-      { step: "1", title: `Depart from ${locLabel}`, desc: `Take suburban rail or highway corridor towards Nerul East Hub (${dist} km, ~${Math.round(eta * 0.65)} mins).` },
-      { step: "2", title: `Board Dedicated NMMT Feeder Shuttle`, desc: `Nerul East Station Terminal Bay 2 • Feeder Shuttle #14 staged on 3-min loop.` },
-      { step: "3", title: `Alight at ${activePass.gate} Shaded Walkway`, desc: `120m misted corridor straight to optical turnstiles.` }
+      { step: "1", title: `Live Ingress Route from ${locLabel}`, desc: `Direct transit corridor to DY Patil Stadium (${dist} km, ~${Math.round(eta * 0.7)} mins travel time). Access via Sector 7 feeder corridor or Sion-Panvel arterial.` },
+      { step: "2", title: `Venue Feeder Shuttle or Vehicle Drop-off`, desc: `Direct approach to outer stadium perimeter loop. Follow electronic digital signage.` },
+      { step: "3", title: `Alight at ${activePass.gate} Shaded Ingress`, desc: `Covered misted concourse directly to ${activePass.gate} optical turnstiles.` }
     ];
   } else if (activeEventKey === 'wankhede_mumbai') {
     guidanceSteps = [
@@ -1507,42 +1507,17 @@ function initOrUpdateMobileMap() {
     mobileMap.removeLayer(routePolyline);
   }
 
-  const routePoints = [];
-  routePoints.push([georgeLocation.lat, georgeLocation.lng]);
-
-  const dist = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, activeEvent.lat, activeEvent.lng);
-  
-  if (activeEventKey === 'dypatil_nerul') {
-    if (dist > 3.0) {
-      if (georgeLocation.lng < 72.96) {
-        routePoints.push([19.0550, 72.9300]); // Vashi Creek Bridge
-        routePoints.push([19.0700, 72.9800]); // Sanpada Highway
-      }
-      routePoints.push([19.0350, 73.0180]); // Nerul East Terminal
-    }
-  } else if (activeEventKey === 'wankhede_mumbai') {
-    if (dist > 2.0) {
-      if (georgeLocation.lat > 19.00) {
-        routePoints.push([18.9750, 72.8220]); // Mumbai Central
-      }
-      routePoints.push([18.9322, 72.8264]); // Churchgate
-    }
-  } else if (activeEventKey === 'narendra_modi') {
-    if (dist > 2.0) {
-      if (georgeLocation.lat < 23.06) {
-        routePoints.push([23.0550, 72.5850]); // Sabarmati
-      }
-      routePoints.push([23.0900, 72.5950]); // Motera Metro
-    }
-  }
-
-  routePoints.push([activeEvent.lat, activeEvent.lng]);
+  // Live Location Vector: Purely from user's verified present coordinates to stadium gate
+  const routePoints = [
+    [georgeLocation.lat, georgeLocation.lng],
+    [activeEvent.lat, activeEvent.lng]
+  ];
 
   routePolyline = L.polyline(routePoints, {
     color: '#38bdf8',
     weight: 4,
-    opacity: 0.9,
-    dashArray: '7, 7'
+    opacity: 0.95,
+    dashArray: '8, 8'
   }).addTo(mobileMap);
 
   // Staged Feeder Bus Marker

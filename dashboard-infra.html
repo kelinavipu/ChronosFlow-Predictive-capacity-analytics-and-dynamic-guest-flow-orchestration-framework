@@ -352,10 +352,16 @@
             <p class="text-xs text-slate-400">Commercial grounds, stadiums, concert halls, and transit complexes held and managed under Srinivasan's jurisdiction</p>
           </div>
 
-          <a href="#add-possession-form-container" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-2 self-start sm:self-auto">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add New Possession Below</span>
-          </a>
+          <div class="flex items-center space-x-2 self-start sm:self-auto flex-wrap gap-2">
+            <a href="synthetic-stadium-site.geojson" download="synthetic-stadium-site.geojson" class="px-3.5 py-2.5 rounded-xl bg-sky-950/80 hover:bg-sky-900 border border-sky-400/50 text-cyan-300 font-bold text-xs flex items-center space-x-2 transition shadow">
+              <i data-lucide="download" class="w-4 h-4 text-cyan-400"></i>
+              <span>Download Synthetic D.Y. Patil GeoJSON</span>
+            </a>
+            <a href="#add-possession-form-container" class="px-4 py-2.5 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-2">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add New Possession Below</span>
+            </a>
+          </div>
         </div>
 
         <!-- =================================================================== -->
@@ -394,6 +400,34 @@
             <span class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20">
               GEOSPACE FILING
             </span>
+          </div>
+
+          <!-- GeoJSON Ingestion & 1-Click Synthetic Stadium Preloader -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-950/70 via-slate-950 to-emerald-950/50 border border-sky-500/40 space-y-3 font-mono">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="map" class="w-5 h-5 text-cyan-400"></i>
+                <div>
+                  <h4 class="text-xs font-bold text-white uppercase tracking-wider">Spatial GeoJSON Ingestion & NOC Package</h4>
+                  <p class="text-[10px] text-slate-400 font-sans">Upload your stadium GeoJSON or 1-click import the synthetic D. Y. Patil site structure (Sector 7, Nerul, 45,000 Capacity, 3 Gates)</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 flex-wrap gap-2">
+                <button type="button" onclick="loadDefaultSyntheticStadiumAsset()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500/30 to-teal-500/30 border border-emerald-400/60 hover:bg-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center space-x-1.5 transition active:scale-95 shadow">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>⚡ 1-Click Load Synthetic D.Y. Patil Asset</span>
+                </button>
+                <label class="px-3.5 py-2 rounded-xl bg-sky-900/60 hover:bg-sky-800 border border-sky-400/40 text-cyan-300 text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition">
+                  <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
+                  <span>Upload .GeoJSON File</span>
+                  <input type="file" id="geojson-file-input" accept=".geojson,.json" onchange="handleGeoJsonUpload(event)" class="hidden">
+                </label>
+              </div>
+            </div>
+            <div id="geojson-loaded-summary" class="hidden p-3 rounded-xl bg-slate-950/90 border border-emerald-500/40 text-[11px] text-emerald-300 flex items-center justify-between">
+              <span id="geojson-summary-text">✅ Synthetic D. Y. Patil Stadium GeoJSON attached (15 spatial features, 3 gates, 45,000 capacity).</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[9px]">VERIFIED SYNTHETIC DATA</span>
+            </div>
           </div>
 
           <form onsubmit="handleAddNewPossession(event)" class="space-y-6">
@@ -785,9 +819,10 @@
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-sky-950/80 pb-4">
         <div class="space-y-1">
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-2 flex-wrap gap-1">
             <span class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold" id="modal-pos-category">Holding Category</span>
             <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/10 text-emerald-400" id="modal-pos-ocr-badge">OCR VERIFIED</span>
+            <span class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30" id="modal-pos-geojson-badge">🗺️ SYNTHETIC GEOJSON ATTACHED</span>
           </div>
           <h3 class="text-xl sm:text-2xl font-black text-white" id="modal-pos-name">Possession Title</h3>
         </div>
@@ -1025,84 +1060,149 @@
         opacity: 0.82
       }).addTo(possessionMap);
 
-      // 3. Draw Land Mass Polygon (Cyan Perimeter with Semi-Transparent Blue Fill)
-      const defaultPolygon = [
-        [lat + 0.0014, lng - 0.0016],
-        [lat + 0.0014, lng + 0.0016],
-        [lat - 0.0014, lng + 0.0016],
-        [lat - 0.0014, lng - 0.0016]
-      ];
-      const polygonCoords = pos.polygon && pos.polygon.length > 0 ? pos.polygon : defaultPolygon;
-
-      possessionPolygonLayer = L.polygon(polygonCoords, {
-        color: '#38bdf8',
-        weight: 2.5,
-        fillColor: '#0284c7',
-        fillOpacity: 0.24,
-        dashArray: '5, 5'
-      }).addTo(possessionMap);
-
-      possessionPolygonLayer.bindTooltip(`
-        <div style="font-family: monospace; font-size: 11px;">
-          <strong style="color: #38bdf8;">${pos.name}</strong><br>
-          <span>Area: ${Number(pos.landAreaSqFt).toLocaleString()} sq ft (${pos.acres})</span>
-        </div>
-      `, { permanent: false, direction: 'center' });
-
-      // Fit bounds to polygon
-      try {
-        possessionMap.fitBounds(possessionPolygonLayer.getBounds(), { padding: [30, 30] });
-      } catch (e) {
-        possessionMap.setView([lat, lng], 17);
-      }
-
-      // 4. Perimeter Gates Placement on Real Satellite Geometry
-      possessionGatesLayer = L.layerGroup().addTo(possessionMap);
-
-      const gateRoles = (pos.gatesDetail || "Gate 1 (Main Ingress); Gate 2 (VIP Pass); Gate 3 (Rapid Egress); Gate 4 (Emergency Fire)").split(';');
-      const numGates = pos.gatesCount || gateRoles.length || 4;
-
-      const dLat = 0.0011;
-      const dLng = 0.0013;
-      const offsets = [
-        { name: "Gate 1", latOff: dLat, lngOff: 0, color: '#38bdf8', icon: '🚪' },
-        { name: "Gate 2", latOff: 0, lngOff: dLng, color: '#f59e0b', icon: '⭐' },
-        { name: "Gate 3", latOff: -dLat, lngOff: 0, color: '#34d399', icon: '🚶' },
-        { name: "Gate 4", latOff: 0, lngOff: -dLng, color: '#f87171', icon: '🚨' },
-        { name: "Gate 5", latOff: dLat * 0.7, lngOff: dLng * 0.7, color: '#a78bfa', icon: '🚛' },
-        { name: "Gate 6", latOff: -dLat * 0.7, lngOff: -dLng * 0.7, color: '#94a3b8', icon: '🔧' }
-      ];
-
-      for (let i = 0; i < Math.min(numGates, offsets.length); i++) {
-        const roleText = gateRoles[i] ? gateRoles[i].trim() : `Gate ${i + 1}`;
-        const off = offsets[i];
-        const gateLat = lat + off.latOff;
-        const gateLng = lng + off.lngOff;
-
-        const gateIcon = L.divIcon({
-          className: 'gate-sat-pin',
-          html: `
-            <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
-              <div style="width:26px; height:26px; border-radius:8px; background:rgba(15,23,42,0.94); border:2px solid ${off.color}; color:${off.color}; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 10px rgba(0,0,0,0.8);">
-                ${off.icon}
+      // 3. Render Spatial Geometry: Authentic GeoJSON Feature Collection or Default Polygon
+      if (pos.geojsonData) {
+        const geoLayer = L.geoJSON(pos.geojsonData, {
+          style: function(feature) {
+            const cat = feature.properties.category || '';
+            if (cat === 'playing_field') return { color: '#10b981', weight: 2.5, fillColor: '#10b981', fillOpacity: 0.55 };
+            if (cat === 'roof_structure') return { color: '#38bdf8', weight: 2.5, fillColor: '#0284c7', fillOpacity: 0.35, dashArray: '4, 4' };
+            if (cat === 'spectator_seating') return { color: '#f59e0b', weight: 2, fillColor: '#d97706', fillOpacity: 0.45 };
+            if (cat === 'main_pavilion') return { color: '#a855f7', weight: 2, fillColor: '#9333ea', fillOpacity: 0.6 };
+            if (cat === 'circulation_road') return { color: '#f43f5e', weight: 2, fillColor: '#e11d48', fillOpacity: 0.25 };
+            if (cat === 'open_concourse') return { color: '#06b6d4', weight: 1.5, fillColor: '#0891b2', fillOpacity: 0.25 };
+            if (cat === 'parking_and_transit' || cat === 'parking_secure') return { color: '#64748b', weight: 1.5, fillColor: '#475569', fillOpacity: 0.35 };
+            if (cat === 'external_sports_campus') return { color: '#84cc16', weight: 1.5, fillColor: '#65a30d', fillOpacity: 0.3 };
+            return { color: '#38bdf8', weight: 2, fillColor: '#0284c7', fillOpacity: 0.2 };
+          },
+          pointToLayer: function(feature, latlng) {
+            const p = feature.properties;
+            const isA = p.gate_id === 'DUMMY_GATE_A';
+            const isB = p.gate_id === 'DUMMY_GATE_B';
+            const color = isA ? '#38bdf8' : (isB ? '#f59e0b' : '#f87171');
+            const iconChar = isA ? '🚪' : (isB ? '⭐' : '🚨');
+            const gateIcon = L.divIcon({
+              className: 'gate-sat-pin',
+              html: `
+                <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
+                  <div style="width:28px; height:28px; border-radius:8px; background:rgba(15,23,42,0.96); border:2px solid ${color}; color:${color}; display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 0 12px ${color};">
+                    ${iconChar}
+                  </div>
+                  <div style="margin-top:2px; font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:rgba(8,12,20,0.95); padding:1px 6px; border-radius:4px; border:1px solid ${color}; white-space:nowrap;">
+                    ${p.gate_id}: ${p.gate_name}
+                  </div>
+                </div>
+              `,
+              iconSize: [120, 42],
+              iconAnchor: [60, 21]
+            });
+            return L.marker(latlng, { icon: gateIcon }).bindPopup(`
+              <div style="font-family: monospace; font-size: 11px; padding: 4px; min-width: 190px;">
+                <div style="font-weight:bold; color: ${color}; font-size: 12px; margin-bottom: 3px;">${p.gate_name} (${p.gate_id})</div>
+                <div style="color: #cbd5e1;">Role: <strong>${p.access_role}</strong></div>
+                <div style="color: #94a3b8;">Type: ${p.gate_type}</div>
+                <div style="color: #34d399; margin-top: 4px;">Throughput: ${p.nominal_throughput_pax_hr || '8,500'} pax/hr</div>
+                <div style="color: #38bdf8; font-size: 9px; margin-top: 2px;">⚡ Synthetic Hackathon Model</div>
               </div>
-              <div style="margin-top:2px; font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:rgba(8,12,20,0.95); padding:1px 6px; border-radius:4px; border:1px solid ${off.color}88; white-space:nowrap;">
-                ${roleText.split('(')[0].trim() || `Gate ${i+1}`}
-              </div>
-            </div>
-          `,
-          iconSize: [80, 40],
-          iconAnchor: [40, 20]
-        });
+            `);
+          },
+          onEachFeature: function(feature, layer) {
+            if (feature.geometry.type !== 'Point' && feature.properties.name) {
+              layer.bindTooltip(`
+                <div style="font-family: monospace; font-size: 10px;">
+                  <strong style="color: #38bdf8;">${feature.properties.name}</strong><br>
+                  <span style="color: #94a3b8;">Category: ${feature.properties.category || 'Structure'}</span>
+                </div>
+              `, { direction: 'center' });
+            }
+          }
+        }).addTo(possessionMap);
 
-        const gateMarker = L.marker([gateLat, gateLng], { icon: gateIcon }).addTo(possessionGatesLayer);
-        gateMarker.bindPopup(`
-          <div style="padding:4px; min-width:180px;">
-            <div style="font-weight:bold; font-size:12px; color:${off.color}; margin-bottom:2px;">${roleText}</div>
-            <div style="font-size:11px; color:#94a3b8;">GPS: ${gateLat.toFixed(5)}° N, ${gateLng.toFixed(5)}° E</div>
-            <div style="font-size:10px; color:#38bdf8; font-family:monospace; margin-top:3px;">Compliance: NBC Standard Ingress/Egress</div>
+        try {
+          possessionMap.fitBounds(geoLayer.getBounds(), { padding: [30, 30] });
+        } catch (e) {
+          possessionMap.setView([lat, lng], 17);
+        }
+      } else {
+        // Fallback default polygon
+        const defaultPolygon = [
+          [lat + 0.0014, lng - 0.0016],
+          [lat + 0.0014, lng + 0.0016],
+          [lat - 0.0014, lng + 0.0016],
+          [lat - 0.0014, lng - 0.0016]
+        ];
+        const polygonCoords = pos.polygon && pos.polygon.length > 0 ? pos.polygon : defaultPolygon;
+
+        possessionPolygonLayer = L.polygon(polygonCoords, {
+          color: '#38bdf8',
+          weight: 2.5,
+          fillColor: '#0284c7',
+          fillOpacity: 0.24,
+          dashArray: '5, 5'
+        }).addTo(possessionMap);
+
+        possessionPolygonLayer.bindTooltip(`
+          <div style="font-family: monospace; font-size: 11px;">
+            <strong style="color: #38bdf8;">${pos.name}</strong><br>
+            <span>Area: ${Number(pos.landAreaSqFt).toLocaleString()} sq ft (${pos.acres})</span>
           </div>
-        `);
+        `, { permanent: false, direction: 'center' });
+
+        // Fit bounds to polygon
+        try {
+          possessionMap.fitBounds(possessionPolygonLayer.getBounds(), { padding: [30, 30] });
+        } catch (e) {
+          possessionMap.setView([lat, lng], 17);
+        }
+
+        // 4. Perimeter Gates Placement on Real Satellite Geometry
+        possessionGatesLayer = L.layerGroup().addTo(possessionMap);
+
+        const gateRoles = (pos.gatesDetail || "Gate 1 (Main Ingress); Gate 2 (VIP Pass); Gate 3 (Rapid Egress); Gate 4 (Emergency Fire)").split(';');
+        const numGates = pos.gatesCount || gateRoles.length || 4;
+
+        const dLat = 0.0011;
+        const dLng = 0.0013;
+        const offsets = [
+          { name: "Gate 1", latOff: dLat, lngOff: 0, color: '#38bdf8', icon: '🚪' },
+          { name: "Gate 2", latOff: 0, lngOff: dLng, color: '#f59e0b', icon: '⭐' },
+          { name: "Gate 3", latOff: -dLat, lngOff: 0, color: '#34d399', icon: '🚶' },
+          { name: "Gate 4", latOff: 0, lngOff: -dLng, color: '#f87171', icon: '🚨' },
+          { name: "Gate 5", latOff: dLat * 0.7, lngOff: dLng * 0.7, color: '#a78bfa', icon: '🚛' },
+          { name: "Gate 6", latOff: -dLat * 0.7, lngOff: -dLng * 0.7, color: '#94a3b8', icon: '🔧' }
+        ];
+
+        for (let i = 0; i < Math.min(numGates, offsets.length); i++) {
+          const roleText = gateRoles[i] ? gateRoles[i].trim() : `Gate ${i + 1}`;
+          const off = offsets[i];
+          const gateLat = lat + off.latOff;
+          const gateLng = lng + off.lngOff;
+
+          const gateIcon = L.divIcon({
+            className: 'gate-sat-pin',
+            html: `
+              <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
+                <div style="width:26px; height:26px; border-radius:8px; background:rgba(15,23,42,0.94); border:2px solid ${off.color}; color:${off.color}; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 10px rgba(0,0,0,0.8);">
+                  ${off.icon}
+                </div>
+                <div style="margin-top:2px; font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:rgba(8,12,20,0.95); padding:1px 6px; border-radius:4px; border:1px solid ${off.color}88; white-space:nowrap;">
+                  ${roleText.split('(')[0].trim() || `Gate ${i+1}`}
+                </div>
+              </div>
+            `,
+            iconSize: [80, 40],
+            iconAnchor: [40, 20]
+          });
+
+          const gateMarker = L.marker([gateLat, gateLng], { icon: gateIcon }).addTo(possessionGatesLayer);
+          gateMarker.bindPopup(`
+            <div style="padding:4px; min-width:180px;">
+              <div style="font-weight:bold; font-size:12px; color:${off.color}; margin-bottom:2px;">${roleText}</div>
+              <div style="font-size:11px; color:#94a3b8;">GPS: ${gateLat.toFixed(5)}° N, ${gateLng.toFixed(5)}° E</div>
+              <div style="font-size:10px; color:#38bdf8; font-family:monospace; margin-top:3px;">Compliance: NBC Standard Ingress/Egress</div>
+            </div>
+          `);
+        }
       }
 
       // Essential: Resize Leaflet map after modal becomes visible
@@ -1223,7 +1323,23 @@
     async function openPossessionModal(posId) {
       const possessions = await window.ChronosSupabase.getInfraPossessions();
       const pos = possessions.find(p => p.id === posId) || possessions[0];
-      if (!pos) return;
+      if (!pos.geojsonData && (pos.id === 'pos_dypatil_ground' || pos.name.includes('DY Patil') || pos.name.includes('D. Y. Patil'))) {
+        try {
+          const res = await fetch('synthetic-stadium-site.geojson');
+          if (res.ok) {
+            pos.geojsonData = await res.json();
+          }
+        } catch (e) {}
+      }
+
+      const geoBadge = document.getElementById('modal-pos-geojson-badge');
+      if (geoBadge) {
+        if (pos.geojsonData) {
+          geoBadge.classList.remove('hidden');
+        } else {
+          geoBadge.classList.add('hidden');
+        }
+      }
 
       document.getElementById('modal-pos-name').innerText = pos.name;
       document.getElementById('modal-pos-category').innerText = pos.category;
@@ -1315,6 +1431,87 @@
       }
     }
 
+    // GeoJSON Upload & Synthetic Stadium Preloader Engine
+    let uploadedGeojsonData = null;
+
+    function handleGeoJsonUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const geojson = JSON.parse(event.target.result);
+          applyGeoJsonToPossessionForm(geojson, file.name);
+        } catch (err) {
+          alert("Invalid GeoJSON file format. Please ensure valid JSON structure.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function loadDefaultSyntheticStadiumAsset() {
+      try {
+        const res = await fetch('synthetic-stadium-site.geojson');
+        if (!res.ok) throw new Error("Could not fetch synthetic-stadium-site.geojson");
+        const geojson = await res.json();
+        applyGeoJsonToPossessionForm(geojson, "synthetic-stadium-site.geojson");
+      } catch (err) {
+        console.error("Auto load error:", err);
+        alert("Could not load synthetic-stadium-site.geojson file automatically.");
+      }
+    }
+
+    function applyGeoJsonToPossessionForm(geojson, sourceName) {
+      uploadedGeojsonData = geojson;
+      
+      // Extract gates from GeoJSON
+      const gateFeatures = (geojson.features || []).filter(f => f.geometry && f.geometry.type === 'Point' && f.properties && f.properties.gate_id);
+      
+      document.getElementById('new-pos-name').value = "D. Y. Patil Stadium (Synthetic Hackathon Ground)";
+      document.getElementById('new-pos-category').value = "Sports Ground & Arena";
+      document.getElementById('new-pos-sqft').value = "480000";
+      updateAcresDisplay(480000);
+      
+      document.getElementById('new-pos-geo').value = "19.0436° N, 73.0248° E (Sector 7, Nerul)";
+      document.getElementById('new-pos-placement').value = "Sector 7, Nerul, Navi Mumbai (Sion-Panvel Arterial & Nerul Railway Corridor)";
+      
+      document.getElementById('new-pos-noc-no').value = "NOC-MH-CIDCO-STAD-2026-45K";
+      document.getElementById('new-pos-noc-issuer').value = "CIDCO Urban Safety & Navi Mumbai Fire Directorate";
+      document.getElementById('noc-file-name-text').innerText = "NOC-Safety-Certificate-DYPatil-45k.pdf";
+      
+      // Set gates count and roles
+      if (gateFeatures.length > 0) {
+        document.getElementById('new-pos-gates-count').value = gateFeatures.length;
+        adjustGateInputs(gateFeatures.length);
+        gateFeatures.forEach((gf, idx) => {
+          const inp = document.getElementById(`gate-${idx + 1}-role`);
+          if (inp) {
+            inp.value = `${gf.properties.gate_name} (${gf.properties.gate_id} - ${gf.properties.access_role}, ${gf.properties.nominal_throughput_pax_hr || '8,500'} pax/hr)`;
+          }
+        });
+      }
+
+      // Show summary banner
+      const summaryBox = document.getElementById('geojson-loaded-summary');
+      const summaryText = document.getElementById('geojson-summary-text');
+      if (summaryBox && summaryText) {
+        summaryBox.classList.remove('hidden');
+        summaryText.innerText = `✅ Attached: "${sourceName}" (${(geojson.features || []).length} spatial features, ${gateFeatures.length} gates, 45,000 Nominal Capacity).`;
+      }
+
+      // Pre-authenticate OCR automatically for smooth hackathon demo
+      runAiOcrScan();
+
+      const toast = document.getElementById('infra-toast');
+      const toastMsg = document.getElementById('infra-toast-msg');
+      if (toast && toastMsg) {
+        toastMsg.innerText = `Spatial GeoJSON "${sourceName}" ingested! Click "Register New Possession" below to commit asset.`;
+        toast.classList.remove('hidden');
+        setTimeout(() => { toast.classList.add('hidden'); }, 3500);
+      }
+    }
+
     // AI OCR Document Scanning Simulation
     function runAiOcrScan() {
       const scanBar = document.getElementById('ocr-scan-bar');
@@ -1401,13 +1598,16 @@
         nocDocNumber: nocNo,
         nocIssuer,
         reliabilityScore: computedNewReliability,
-        ocrText: `OCR Verified: Official Document ${nocNo}. Structural integrity approved for public gathering. Fire safety compliance cleared.`
+        ocrText: `OCR Verified: Official Document ${nocNo}. Structural integrity approved for public gathering. Fire safety compliance cleared.`,
+        geojsonData: uploadedGeojsonData || null
       };
 
       await window.ChronosSupabase.addInfraPossession(newPossessionObj);
 
       // Reset form and re-render
       e.target.reset();
+      uploadedGeojsonData = null;
+      document.getElementById('geojson-loaded-summary').classList.add('hidden');
       ocrVerifiedForNewPossession = false;
       document.getElementById('ocr-status-pill').className = "text-[10px] font-mono px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-400/20 font-bold self-start sm:self-auto";
       document.getElementById('ocr-status-pill').innerText = "OCR PENDING VERIFICATION";

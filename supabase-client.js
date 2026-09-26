@@ -527,22 +527,22 @@ const ChronosSupabase = {
       },
       {
         id: "pos_dypatil_ground",
-        name: "DY Patil Sports Ground & Western Arena",
-        category: "Sports Ground & Concert Hall",
-        landAreaSqFt: 320000,
-        acres: "7.35 Acres",
-        gatesCount: 6,
-        gatesDetail: "Gates A, B, C (Spectator Turnstiles), Gate D (VIP & Media), Gate E (Athletes / Stage Entry), Gate F (Emergency Evac)",
-        lat: 19.0435,
-        lng: 73.0253,
-        geo: "19.0435° N, 73.0253° E",
-        placement: "Sector 7, Dr. D.Y. Patil University Campus, Nerul",
-        polygon: [[19.0452, 73.0236], [19.0452, 73.0270], [19.0418, 73.0270], [19.0418, 73.0236]],
-        nocDocNumber: "NOC-MH-FIRE-2024-1109",
+        name: "D. Y. Patil Stadium (Synthetic Hackathon Ground)",
+        category: "Sports Ground & Arena",
+        landAreaSqFt: 480000,
+        acres: "11.02 Acres",
+        gatesCount: 3,
+        gatesDetail: "DUMMY_GATE_A (North Public Entry - 14,000 pax/hr), DUMMY_GATE_B (VIP / Official Entry - 3,500 pax/hr), DUMMY_GATE_C (Service / Operations Entry - 1,800 pax/hr)",
+        lat: 19.0436,
+        lng: 73.0248,
+        geo: "19.0436° N, 73.0248° E",
+        placement: "Sector 7, Nerul, Navi Mumbai (Sion-Panvel Arterial Corridor)",
+        polygon: [[19.0459, 73.0218], [19.0459, 73.0282], [19.0408, 73.0282], [19.0408, 73.0218]],
+        nocDocNumber: "NOC-MH-CIDCO-STAD-2026-45K",
         nocVerified: true,
-        nocIssuer: "Navi Mumbai Fire Brigade & Municipal Urban Planning",
-        reliabilityScore: "98.8%",
-        ocrText: "OCR Verified: Crowd Load Capacity Certified up to 55,000 pax. Seismic & Structural Stability Approved. Emergency exits cleared.",
+        nocIssuer: "CIDCO Urban Safety & Navi Mumbai Fire Directorate",
+        reliabilityScore: "99.2%",
+        ocrText: "OCR Verified: Official Document NOC-MH-CIDCO-STAD-2026-45K. Structural integrity approved for 45,000 pax capacity. 3 Perimeter Evacuation Gates verified (DUMMY_GATE_A, DUMMY_GATE_B, DUMMY_GATE_C).",
         activeBookings: [
           {
             eventId: "evt_football_cup",
@@ -610,7 +610,7 @@ const ChronosSupabase = {
       lng: lng,
       geo: possession.geo || `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`,
       placement: possession.placement || "Nerul Corridor, Navi Mumbai",
-      polygon: [
+      polygon: possession.polygon || [
         [lat + 0.0015, lng - 0.0015],
         [lat + 0.0015, lng + 0.0015],
         [lat - 0.0015, lng + 0.0015],
@@ -619,8 +619,9 @@ const ChronosSupabase = {
       nocDocNumber: possession.nocDocNumber || ("NOC-MH-" + Math.floor(1000 + Math.random() * 9000)),
       nocVerified: true,
       nocIssuer: possession.nocIssuer || "CIDCO Urban Safety & Fire Department",
-      reliabilityScore: (97.5 + Math.random() * 2.3).toFixed(1) + "%",
-      ocrText: `OCR Verified: Official Document ${possession.nocDocNumber || 'NOC-MH-2026'}. Structural integrity approved for public gathering. Fire safety compliance cleared.`,
+      reliabilityScore: possession.reliabilityScore || ((97.5 + Math.random() * 2.3).toFixed(1) + "%"),
+      ocrText: possession.ocrText || `OCR Verified: Official Document ${possession.nocDocNumber || 'NOC-MH-2026'}. Structural integrity approved for public gathering. Fire safety compliance cleared.`,
+      geojsonData: possession.geojsonData || null,
       activeBookings: []
     };
 
