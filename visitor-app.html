@@ -109,13 +109,17 @@
             <span id="vis-user-name" class="text-xs font-bold text-white leading-tight">George Miller</span>
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
           </div>
-          <span id="vis-user-sub" class="text-[10px] font-mono text-cyan-400 block leading-none">Dadar East &bull; Spectator</span>
+          <button onclick="openLocationPickerModal()" class="text-[10px] font-mono text-cyan-300 hover:text-white flex items-center space-x-1 bg-sky-950/70 px-2 py-0.5 rounded-full border border-sky-800/50 mt-0.5 transition">
+            <i data-lucide="map-pin" class="w-2.5 h-2.5 text-cyan-400"></i>
+            <span id="vis-user-sub">Nerul Sector 19 &bull; Spectator</span>
+            <i data-lucide="chevron-down" class="w-2.5 h-2.5 text-slate-400"></i>
+          </button>
         </div>
       </div>
 
       <!-- Quick Geolocation Status Badge -->
-      <button onclick="requestLiveGeolocation()" class="px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-[10px] font-mono text-sky-300 flex items-center space-x-1 hover:bg-sky-500/20 transition">
-        <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400 animate-spin"></i>
+      <button onclick="openLocationPickerModal()" class="px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-[10px] font-mono text-sky-300 flex items-center space-x-1 hover:bg-sky-500/20 transition">
+        <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
         <span id="badge-gps-status">GPS Active</span>
       </button>
     </div>
@@ -195,58 +199,100 @@
         <!-- Live Distance Alert Card -->
         <div class="p-4 rounded-2xl bg-slate-900/80 border border-sky-900/40 flex items-center justify-between font-mono text-xs">
           <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center shrink-0">
               <i data-lucide="navigation" class="w-4 h-4 text-cyan-400"></i>
             </div>
             <div>
               <span class="text-[10px] text-slate-400 uppercase">Live GPS Distance</span>
-              <div class="font-bold text-white"><span id="live-distance-km">28.4</span> km from Stadium</div>
+              <div class="font-bold text-white"><span id="live-distance-km">1.2</span> km to Stadium Gate</div>
+              <div class="text-[10px] text-cyan-400 truncate max-w-[150px]" id="live-distance-origin">From Nerul Sector 19</div>
             </div>
           </div>
-          <button onclick="switchMobileTab('nav')" class="px-3 py-1.5 rounded-xl btn-glacier text-[11px] font-bold">
-            Start Nav &rarr;
-          </button>
+          <div class="flex items-center space-x-1.5">
+            <button onclick="openLocationPickerModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono border border-sky-900/40 transition">
+              Change
+            </button>
+            <button onclick="switchMobileTab('nav')" class="px-3 py-1.5 rounded-xl btn-glacier text-[11px] font-bold">
+              Nav &rarr;
+            </button>
+          </div>
         </div>
 
       </section>
 
       <!-- TAB 2: LIVE GPS NAVIGATION & SHUTTLE MAP -->
-      <section id="tab-sec-nav" class="tab-content space-y-4 hidden">
+      <section id="tab-sec-nav" class="tab-content space-y-3.5 hidden">
         <div class="space-y-1">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-black text-white">Live GPS Journey Navigation</h2>
-            <span id="nav-eta-badge" class="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">ETA: 38 Mins</span>
+            <span id="nav-eta-badge" class="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">ETA: 12 Mins</span>
           </div>
-          <p id="nav-route-sub" class="text-xs text-slate-400">Real-time GPS tracking from your location to Nerul Gate 4</p>
+          <p id="nav-route-sub" class="text-xs text-slate-400">Live navigation from your location to DY Patil Gate 4</p>
+        </div>
+
+        <!-- Instant Locality Search Bar with Live Autocomplete -->
+        <div class="relative">
+          <div class="relative flex items-center">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-cyan-400 absolute left-3 pointer-events-none"></i>
+            <input 
+              id="nav-inline-search" 
+              type="text" 
+              placeholder="Search area (e.g. Nerul, Kharghar, Vashi, Dadar)..." 
+              oninput="handleLocationSearch(this.value, 'nav-search-dropdown')"
+              onfocus="handleLocationSearch(this.value, 'nav-search-dropdown')"
+              class="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-900/95 border border-sky-800/70 text-xs text-white placeholder-slate-400 focus:border-cyan-400 outline-none font-mono"
+            >
+            <button onclick="clearNavSearch()" class="absolute right-2 text-slate-400 hover:text-white p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <!-- Dropdown suggestions -->
+          <div id="nav-search-dropdown" class="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto rounded-xl bg-slate-950/98 border border-sky-800 backdrop-blur-xl shadow-2xl z-[500] hidden space-y-0.5 p-1 font-mono text-xs">
+          </div>
         </div>
 
         <!-- Handset Satellite Map Viewport -->
-        <div class="w-full h-64 rounded-2xl overflow-hidden border border-sky-900/50 relative shadow-2xl">
+        <div class="w-full h-72 rounded-2xl overflow-hidden border border-sky-900/50 relative shadow-2xl">
           <div id="mobile-gps-map" class="w-full h-full"></div>
 
-          <!-- Floating Map HUD Badge -->
-          <div class="absolute bottom-2 left-2 z-[400] px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md text-[9px] font-mono text-cyan-300 border border-sky-900/40 pointer-events-none">
-            GPS: <span id="map-live-coords">19.0178° N, 72.8478° E</span>
+          <!-- Top-Left Helper Pin Pill -->
+          <div class="absolute top-2 left-2 z-[400] px-2 py-1 rounded-lg bg-slate-950/90 backdrop-blur-md text-[9px] font-mono text-cyan-300 border border-sky-800/60 shadow-lg flex items-center space-x-1.5 pointer-events-none">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            <span>Tap map to drop pin</span>
           </div>
+
+          <!-- Floating Map HUD Badge -->
+          <div class="absolute bottom-2 left-2 z-[400] px-2 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md text-[9px] font-mono text-cyan-300 border border-sky-900/40 pointer-events-none">
+            GPS: <span id="map-live-coords">19.0310° N, 73.0150° E</span>
+          </div>
+
+          <!-- Re-Center Route Button -->
+          <button onclick="fitMapToRoute()" class="absolute bottom-2 right-2 z-[400] w-8 h-8 rounded-xl bg-slate-950/90 text-cyan-300 border border-sky-800/80 flex items-center justify-center hover:bg-slate-800 shadow-xl transition active:scale-95" title="Re-center Route">
+            <i data-lucide="crosshair" class="w-4 h-4"></i>
+          </button>
         </div>
 
-        <!-- Quick Origin Selector Chips & Live Journey Simulator -->
+        <!-- Starting Origin Selector Bar & Chips -->
         <div class="space-y-1.5 font-mono text-[10px]">
           <div class="flex items-center justify-between text-slate-400">
-            <span>Starting Origin:</span>
-            <button onclick="toggleJourneySimulation()" id="btn-journey-sim" class="text-emerald-400 hover:underline flex items-center space-x-1 font-bold">
-              <i data-lucide="play" class="w-3 h-3"></i>
-              <span>Simulate Journey</span>
-            </button>
+            <span class="flex items-center space-x-1">
+              <span>Origin:</span>
+              <strong class="text-white" id="nav-current-origin-label">Nerul Sector 19</strong>
+            </span>
+            <div class="flex items-center space-x-2">
+              <button onclick="openLocationPickerModal()" class="text-cyan-400 hover:underline font-bold flex items-center space-x-0.5">
+                <i data-lucide="edit-3" class="w-3 h-3"></i>
+                <span>Change Area</span>
+              </button>
+              <button onclick="toggleJourneySimulation()" id="btn-journey-sim" class="text-emerald-400 hover:underline flex items-center space-x-1 font-bold">
+                <i data-lucide="play" class="w-3 h-3"></i>
+                <span>Simulate</span>
+              </button>
+            </div>
           </div>
+          <!-- Quick Area Chips -->
           <div class="flex flex-wrap gap-1.5" id="origin-chips-container">
-            <button onclick="confirmLiveGPS()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1 font-bold">
-              <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
-              <span>Live Device GPS</span>
-            </button>
-            <button onclick="detectLocationViaIP()" class="px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 transition">
-              🌐 Auto IP
-            </button>
+            <!-- Populated dynamically by visitor-app.js -->
           </div>
         </div>
 
@@ -510,9 +556,89 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- GEOLOCATION PERMISSION MODAL PROMPT                                       -->
+  <!-- LOCATION PICKER & SEARCH MODAL (FAILSAFE MULTI-USER LOCATION ENGINE)       -->
   <!-- ========================================================================= -->
-  <div id="geo-permission-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+  <div id="location-picker-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="glass-panel rounded-3xl p-5 max-w-sm w-full border border-sky-400/40 text-left space-y-4 shadow-2xl relative bg-slate-900/95 max-h-[92vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b border-sky-950 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center border border-cyan-500/30 shadow-md">
+            <i data-lucide="map-pin" class="w-5 h-5 text-cyan-400"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-white">Select Your Present Location</h3>
+            <p class="text-[10px] font-mono text-slate-400">Drives your live GPS route &amp; timeline</p>
+          </div>
+        </div>
+        <button onclick="closeLocationPickerModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- Live GPS Hardware Trigger -->
+      <button onclick="confirmLiveGPS()" class="w-full py-2.5 px-3 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono flex items-center justify-between transition shadow-lg shadow-emerald-500/10">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="crosshair" class="w-4 h-4 text-emerald-400 animate-spin"></i>
+          <span>Acquire Device GPS Sensor</span>
+        </div>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200">Hardware GPS</span>
+      </button>
+
+      <!-- Instant Search Input -->
+      <div class="relative">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-cyan-400 absolute left-3 pointer-events-none"></i>
+          <input 
+            id="loc-picker-search" 
+            type="text" 
+            placeholder="Type your area (e.g. Nerul, Kharghar, Vashi, Dadar)..." 
+            oninput="handleLocationSearch(this.value, 'loc-picker-results')"
+            class="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-sky-800/70 text-xs text-white placeholder-slate-400 focus:border-cyan-400 outline-none font-mono"
+          >
+        </div>
+        <!-- Search Results List -->
+        <div id="loc-picker-results" class="mt-1 max-h-40 overflow-y-auto rounded-xl bg-slate-950 border border-sky-800 shadow-xl hidden space-y-0.5 p-1 font-mono text-xs"></div>
+      </div>
+
+      <!-- Quick Area Presets (Scrollable) -->
+      <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1">
+        <div>
+          <div class="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+            <span>Navi Mumbai (Near DY Patil)</span>
+            <span class="text-[9px] text-slate-500 font-normal">Close Proximity</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 font-mono text-[11px]" id="picker-chips-navimumbai">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-mono font-bold text-sky-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+            <span>Mumbai &amp; Suburbs</span>
+            <span class="text-[9px] text-slate-500 font-normal">Transit Corridors</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 font-mono text-[11px]" id="picker-chips-mumbai">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="pt-2 border-t border-sky-950 flex items-center justify-between text-xs font-mono">
+        <button onclick="switchToNavAndDropPin()" class="text-cyan-400 hover:text-cyan-300 font-bold flex items-center space-x-1">
+          <i data-lucide="map" class="w-3.5 h-3.5"></i>
+          <span>Or Drop Pin on Satellite Map &rarr;</span>
+        </button>
+        <button onclick="closeLocationPickerModal()" class="text-slate-400 hover:text-white">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legacy Geolocation Permission Modal (Hidden by Default) -->
+  <div id="geo-permission-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="glass-panel rounded-3xl p-6 max-w-sm w-full border border-sky-400/40 text-center space-y-4 shadow-2xl relative">
       <div class="w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-300 border border-sky-400/40 flex items-center justify-center mx-auto shadow-lg">
         <i data-lucide="map-pin" class="w-7 h-7 text-cyan-400 animate-bounce"></i>
@@ -521,14 +647,8 @@
       <div class="space-y-1">
         <h3 class="text-base font-black text-white">Enable Real-Time GPS Geolocation?</h3>
         <p class="text-xs text-slate-300 leading-relaxed">
-          ChronosFlow uses George's handset GPS location to calculate live transit distance, feeder shuttle schedules, and optimal Gate 4 arrival windows.
+          ChronosFlow uses your handset GPS to calculate live transit distance, feeder shuttle schedules, and optimal gate arrival windows.
         </p>
-      </div>
-
-      <div class="p-3 rounded-2xl bg-slate-950/80 border border-sky-950 text-left text-[11px] font-mono space-y-1 text-slate-400">
-        <div>📍 Handset: <strong class="text-white">George's Phone</strong></div>
-        <div>🏡 Stored Origin: <strong class="text-sky-300">Dadar East, Mumbai</strong></div>
-        <div>🏟️ Destination: <strong class="text-emerald-400">DY Patil Nerul (Gate 4)</strong></div>
       </div>
 
       <div class="space-y-2 pt-2">
@@ -538,7 +658,7 @@
         </button>
 
         <button onclick="dismissGPSModal()" class="w-full py-2.5 rounded-2xl text-xs font-mono text-slate-400 hover:text-white transition">
-          Use Simulated Dadar GPS Tracker
+          Continue with Selected Area
         </button>
       </div>
     </div>
@@ -553,7 +673,7 @@
   </div>
 
   <!-- Mobile Companion Logic Script (Cache-busted for instant handset refresh) -->
-  <script src="visitor-app.js?v=20260927_02"></script>
+  <script src="visitor-app.js?v=20260927_03"></script>
 
 </body>
 </html>

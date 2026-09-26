@@ -19,26 +19,25 @@ const EVENT_REGISTRY = {
     stand: "EAST STAND C",
     level: "Level 2",
     seat: "ROW 14, #82",
-    defaultOrigin: { lat: 19.0728, lng: 72.8826, label: "Kurla / BKC (Auto IP)" },
+    defaultOrigin: { lat: 19.0310, lng: 73.0150, label: "Nerul Sector 19" },
     shuttle: "NMMT Feeder Shuttle #14 • Staged at Nerul East",
     shuttleCoords: [19.0350, 73.0180],
     shuttleStationName: "Nerul East Station Terminal",
-    originCity: "Navi Mumbai / Mumbai",
+    originCity: "Navi Mumbai",
     matchStartMinutes: 900,  // 03:00 PM
     durationMinutes: 270,    // 4.5 hrs (07:30 PM finish)
     gateLeadMinutes: 90,     // 1.5 hrs before match (01:30 PM)
     origins: [
       { name: "Nerul Sector 19", lat: 19.0310, lng: 73.0150 },
+      { name: "Seawoods", lat: 19.0180, lng: 73.0180 },
+      { name: "CBD Belapur", lat: 19.0180, lng: 73.0420 },
+      { name: "Kharghar", lat: 19.0473, lng: 73.0699 },
       { name: "Vashi Bridge", lat: 19.0700, lng: 72.9800 },
-      { name: "Kurla / BKC", lat: 19.0728, lng: 72.8826 },
       { name: "Dadar East", lat: 19.0178, lng: 72.8478 },
       { name: "Thane Station", lat: 19.1860, lng: 72.9750 }
     ],
     journeyWaypoints: [
-      { lat: 19.0728, lng: 72.8826, name: "Kurla Transit Hub" },
-      { lat: 19.0600, lng: 72.9050, name: "Chembur Flyover" },
-      { lat: 19.0550, lng: 72.9300, name: "Vashi Creek Bridge" },
-      { lat: 19.0700, lng: 72.9800, name: "Sanpada Highway" },
+      { lat: 19.0310, lng: 73.0150, name: "Nerul Sector 19 Transit Point" },
       { lat: 19.0350, lng: 73.0180, name: "Nerul East Terminal" },
       { lat: 19.0435, lng: 73.0253, name: "DY Patil Stadium Gate 4" }
     ]
@@ -54,7 +53,7 @@ const EVENT_REGISTRY = {
     stand: "SUNIL GAVASKAR PAVILION",
     level: "Level 3",
     seat: "ROW 08, #24",
-    defaultOrigin: { lat: 19.0178, lng: 72.8478, label: "Dadar East (Mumbai)" },
+    defaultOrigin: { lat: 18.9322, lng: 72.8264, label: "Churchgate Plaza" },
     shuttle: "BEST Coastal Shuttle #108 • Staged at Churchgate",
     shuttleCoords: [18.9322, 72.8264],
     shuttleStationName: "Churchgate Terminus",
@@ -89,7 +88,7 @@ const EVENT_REGISTRY = {
     stand: "CLUB CONCOURSE WEST",
     level: "Level 1",
     seat: "ROW 05, #112",
-    defaultOrigin: { lat: 23.0300, lng: 72.5800, label: "Ahmedabad Central" },
+    defaultOrigin: { lat: 23.0900, lng: 72.5950, label: "Motera Metro Plaza" },
     shuttle: "AMTS Metro Feeder Shuttle #42 • Staged at Motera Metro",
     shuttleCoords: [23.0900, 72.5950],
     shuttleStationName: "Motera Stadium Metro Station",
@@ -113,25 +112,52 @@ const EVENT_REGISTRY = {
   }
 };
 
-// Regional Neighborhood Landmarks for instant zero-latency locality matching
+// Comprehensive Regional Neighborhood Directory for Instant Matching & Search
 const REGIONAL_LOCALITIES = [
-  { name: "Nerul", lat: 19.0330, lng: 73.0297, radius: 3.5 },
-  { name: "Seawoods / Darave", lat: 19.0180, lng: 73.0180, radius: 3.0 },
-  { name: "CBD Belapur", lat: 19.0180, lng: 73.0420, radius: 3.5 },
-  { name: "Kharghar", lat: 19.0473, lng: 73.0699, radius: 4.0 },
-  { name: "Vashi", lat: 19.0771, lng: 72.9986, radius: 3.5 },
-  { name: "Sanpada", lat: 19.0650, lng: 73.0100, radius: 3.0 },
-  { name: "Panvel", lat: 18.9894, lng: 73.1175, radius: 5.0 },
-  { name: "Kurla / BKC", lat: 19.0728, lng: 72.8826, radius: 4.0 },
-  { name: "Dadar", lat: 19.0178, lng: 72.8478, radius: 3.5 },
-  { name: "Bandra", lat: 19.0596, lng: 72.8295, radius: 3.5 },
-  { name: "Andheri", lat: 19.1136, lng: 72.8697, radius: 4.5 },
-  { name: "Thane", lat: 19.2183, lng: 72.9781, radius: 5.0 },
-  { name: "Churchgate / Colaba", lat: 18.9322, lng: 72.8264, radius: 3.5 },
-  { name: "Marine Lines", lat: 18.9430, lng: 72.8230, radius: 2.5 },
-  { name: "Motera", lat: 23.0925, lng: 72.5975, radius: 3.0 },
-  { name: "Sabarmati", lat: 23.0550, lng: 72.5850, radius: 3.5 },
-  { name: "Ahmedabad Central", lat: 23.0300, lng: 72.5800, radius: 4.5 }
+  // Navi Mumbai (close to DY Patil Nerul Stadium)
+  { name: "Nerul Sector 19", lat: 19.0310, lng: 73.0150, radius: 2.0, category: "Navi Mumbai" },
+  { name: "Nerul West (Station)", lat: 19.0330, lng: 73.0297, radius: 2.0, category: "Navi Mumbai" },
+  { name: "Seawoods / Darave", lat: 19.0180, lng: 73.0180, radius: 2.5, category: "Navi Mumbai" },
+  { name: "Seawoods Grand Central", lat: 19.0210, lng: 73.0175, radius: 2.0, category: "Navi Mumbai" },
+  { name: "CBD Belapur", lat: 19.0180, lng: 73.0420, radius: 3.0, category: "Navi Mumbai" },
+  { name: "Kharghar Central Park", lat: 19.0550, lng: 73.0720, radius: 3.5, category: "Navi Mumbai" },
+  { name: "Kharghar Sector 12/20", lat: 19.0473, lng: 73.0699, radius: 3.0, category: "Navi Mumbai" },
+  { name: "Juinagar", lat: 19.0520, lng: 73.0170, radius: 2.5, category: "Navi Mumbai" },
+  { name: "Sanpada Highway", lat: 19.0650, lng: 73.0100, radius: 2.5, category: "Navi Mumbai" },
+  { name: "Vashi Sector 17", lat: 19.0735, lng: 72.9990, radius: 3.0, category: "Navi Mumbai" },
+  { name: "Vashi Bridge / Station", lat: 19.0771, lng: 72.9986, radius: 3.0, category: "Navi Mumbai" },
+  { name: "Kopar Khairane", lat: 19.1030, lng: 73.0070, radius: 3.5, category: "Navi Mumbai" },
+  { name: "Ghansoli", lat: 19.1250, lng: 73.0090, radius: 3.5, category: "Navi Mumbai" },
+  { name: "Airoli", lat: 19.1550, lng: 72.9980, radius: 4.0, category: "Navi Mumbai" },
+  { name: "Ulwe", lat: 18.9750, lng: 73.0250, radius: 4.0, category: "Navi Mumbai" },
+  { name: "Panvel Station", lat: 18.9894, lng: 73.1175, radius: 5.0, category: "Navi Mumbai" },
+  { name: "Kamothe", lat: 19.0180, lng: 73.0850, radius: 3.5, category: "Navi Mumbai" },
+  { name: "Khandeshwar", lat: 19.0060, lng: 73.0980, radius: 3.5, category: "Navi Mumbai" },
+
+  // Mumbai & Central Suburbs
+  { name: "Dadar East / Central", lat: 19.0178, lng: 72.8478, radius: 3.0, category: "Mumbai" },
+  { name: "Dadar West / Shivaji Park", lat: 19.0230, lng: 72.8390, radius: 3.0, category: "Mumbai" },
+  { name: "Bandra Kurla Complex (BKC)", lat: 19.0657, lng: 72.8680, radius: 3.0, category: "Mumbai" },
+  { name: "Bandra West / Bandstand", lat: 19.0596, lng: 72.8295, radius: 3.5, category: "Mumbai" },
+  { name: "Kurla / Phoenix Marketcity", lat: 19.0728, lng: 72.8826, radius: 3.5, category: "Mumbai" },
+  { name: "Chembur", lat: 19.0522, lng: 72.8994, radius: 3.0, category: "Mumbai" },
+  { name: "Ghatkopar", lat: 19.0860, lng: 72.9090, radius: 3.5, category: "Mumbai" },
+  { name: "Andheri West", lat: 19.1136, lng: 72.8697, radius: 4.0, category: "Mumbai" },
+  { name: "Andheri East / Airport", lat: 19.1020, lng: 72.8750, radius: 4.0, category: "Mumbai" },
+  { name: "Thane West / Viviana", lat: 19.1970, lng: 72.9630, radius: 4.5, category: "Thane" },
+  { name: "Thane Station Terminal", lat: 19.1860, lng: 72.9750, radius: 4.0, category: "Thane" },
+  { name: "Mulund", lat: 19.1726, lng: 72.9565, radius: 3.5, category: "Mumbai" },
+  { name: "Borivali", lat: 19.2307, lng: 72.8567, radius: 5.0, category: "Mumbai" },
+  { name: "Churchgate Terminus", lat: 18.9322, lng: 72.8264, radius: 2.5, category: "South Mumbai" },
+  { name: "Marine Lines", lat: 18.9430, lng: 72.8230, radius: 2.5, category: "South Mumbai" },
+  { name: "CSMT / Fort", lat: 18.9400, lng: 72.8353, radius: 3.0, category: "South Mumbai" },
+  { name: "Colaba / Gateway", lat: 18.9067, lng: 72.8147, radius: 3.0, category: "South Mumbai" },
+
+  // Ahmedabad (for Narendra Modi Stadium)
+  { name: "Motera Metro Plaza", lat: 23.0900, lng: 72.5950, radius: 2.5, category: "Ahmedabad" },
+  { name: "Sabarmati Riverfront", lat: 23.0550, lng: 72.5850, radius: 3.5, category: "Ahmedabad" },
+  { name: "Ahmedabad Central Station", lat: 23.0300, lng: 72.5800, radius: 4.5, category: "Ahmedabad" },
+  { name: "SG Highway Hub", lat: 23.0500, lng: 72.5100, radius: 5.0, category: "Ahmedabad" }
 ];
 
 function getNearestLocality(lat, lng) {
@@ -145,6 +171,28 @@ function getNearestLocality(lat, lng) {
     }
   }
   return closest;
+}
+
+// Free, fast reverse geocoder using BigDataCloud
+async function fetchReverseGeocode(lat, lng) {
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        if (data.localityInfo && data.localityInfo.administrative) {
+          const admin = data.localityInfo.administrative;
+          const ward = admin.find(a => a.order >= 12 && a.name);
+          if (ward) return ward.name;
+        }
+        if (data.locality) return data.locality;
+        if (data.city) return data.city;
+      }
+    }
+  } catch (e) {
+    console.warn("Reverse geocode fetch error:", e);
+  }
+  return null;
 }
 
 // =========================================================================
@@ -174,9 +222,9 @@ let activePass = {
 };
 
 let georgeLocation = {
-  lat: 19.0728, // Default to detected Kurla/BKC Mumbai network hub
-  lng: 72.8826,
-  label: "Kurla / BKC (Live Location)"
+  lat: 19.0310,
+  lng: 73.0150,
+  label: "Nerul Sector 19"
 };
 
 // =========================================================================
@@ -376,27 +424,36 @@ function renderOriginChips() {
   const currentEventOrigins = activeEvent.origins || [];
   
   let html = `
-    <button onclick="confirmLiveGPS()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1 font-bold">
+    <button onclick="confirmLiveGPS()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1 font-bold text-[10px]">
       <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
       <span>Live Device GPS</span>
-    </button>
-    <button onclick="detectLocationViaIP()" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 transition flex items-center space-x-1 font-bold">
-      <i data-lucide="globe" class="w-3 h-3 text-cyan-400"></i>
-      <span>Auto-Detect IP</span>
     </button>
   `;
 
   currentEventOrigins.forEach(orig => {
-    const isSelected = (georgeLocation.label.includes(orig.name) || orig.name.includes(georgeLocation.label));
-    const dist = getHaversineDistance(orig.lat, orig.lng, activeEvent.lat, activeEvent.lng).toFixed(0);
+    const isSelected = (georgeLocation.label.toLowerCase().includes(orig.name.toLowerCase()) || orig.name.toLowerCase().includes(georgeLocation.label.toLowerCase()));
+    const dist = getHaversineDistance(orig.lat, orig.lng, activeEvent.lat, activeEvent.lng).toFixed(1);
     html += `
-      <button onclick="setVisitorOrigin('${orig.name}', ${orig.lat}, ${orig.lng})" class="px-2.5 py-1 rounded-lg ${isSelected ? 'bg-sky-500/30 text-white border-sky-400 font-bold' : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-sky-900/40'} border transition">
+      <button onclick="setVisitorOrigin('${orig.name}', ${orig.lat}, ${orig.lng})" class="px-2 py-1 rounded-lg ${isSelected ? 'bg-sky-500/30 text-white border-sky-400 font-bold shadow-md shadow-sky-500/20' : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-sky-900/40'} border transition text-[10px]">
         📍 ${orig.name} (${dist}km)
       </button>
     `;
   });
 
+  html += `
+    <button onclick="openLocationPickerModal()" class="px-2.5 py-1 rounded-lg bg-sky-950/80 hover:bg-sky-900/60 text-cyan-300 border border-sky-800/50 transition text-[10px] font-bold flex items-center space-x-1">
+      <i data-lucide="more-horizontal" class="w-3 h-3 text-cyan-400"></i>
+      <span>More Areas</span>
+    </button>
+  `;
+
   container.innerHTML = html;
+
+  const navOriginLabel = document.getElementById('nav-current-origin-label');
+  if (navOriginLabel) {
+    navOriginLabel.innerText = georgeLocation.label;
+  }
+
   lucide.createIcons();
 }
 
@@ -631,47 +688,102 @@ window.sharePassLink = function() {
 };
 
 // =========================================================================
-// 7. REAL-TIME GPS GEOLOCATION & NETWORK DETECTION ENGINE
+// 7. REAL-TIME GPS GEOLOCATION & FAILSAFE LOCATION ENGINE
 // =========================================================================
 window.requestLiveGeolocation = function() {
-  document.getElementById('geo-permission-modal')?.classList.remove('hidden');
+  openLocationPickerModal();
 };
 
 window.dismissGPSModal = function() {
   document.getElementById('geo-permission-modal')?.classList.add('hidden');
   showMobileToast(`Using Origin: ${georgeLocation.label}`);
-  initOrUpdateMobileMap();
+  if (mobileMap) {
+    fitMapToRoute();
+  }
 };
 
-// Auto-Acquisition: Runs on page load without waiting for clicks
+// Auto-Acquisition: Runs on page load without prematurely falling back to Kurla IP
 function autoAcquirePresentLocation() {
-  if (navigator.permissions && navigator.permissions.query) {
-    navigator.permissions.query({ name: 'geolocation' }).then(result => {
-      if (result.state === 'granted') {
-        confirmLiveGPS();
-      } else {
-        detectLocationViaIP();
+  // 1. Check if user previously selected or saved a location in localStorage
+  try {
+    const saved = localStorage.getItem('chronos_user_origin');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.lat && parsed.lng && parsed.name) {
+        georgeLocation.lat = parsed.lat;
+        georgeLocation.lng = parsed.lng;
+        georgeLocation.label = parsed.name;
+        updateLocationUI(parsed.name, "Saved Origin");
+        return;
       }
-    }).catch(() => {
-      detectLocationViaIP();
-    });
-  } else {
-    detectLocationViaIP();
+    }
+  } catch (e) {}
+
+  // 2. Default to active event's local origin (Nerul Sector 19 for DY Patil)
+  georgeLocation.lat = activeEvent.defaultOrigin.lat;
+  georgeLocation.lng = activeEvent.defaultOrigin.lng;
+  georgeLocation.label = activeEvent.defaultOrigin.label;
+  updateLocationUI(georgeLocation.label, "Venue Sector");
+
+  // 3. Directly attempt hardware GPS prompt if browser supports geolocation
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async position => {
+        isLiveGpsActive = true;
+        georgeLocation.lat = position.coords.latitude;
+        georgeLocation.lng = position.coords.longitude;
+        
+        const locality = getNearestLocality(position.coords.latitude, position.coords.longitude);
+        georgeLocation.label = locality ? `${locality} (Live GPS)` : `Your Location (±${Math.round(position.coords.accuracy)}m)`;
+
+        updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
+        renderOriginChips();
+        renderPickerChips();
+        showMobileToast(`📍 Present GPS Locked: ${georgeLocation.label}`);
+
+        // Refine with reverse geocoding
+        const refined = await fetchReverseGeocode(position.coords.latitude, position.coords.longitude);
+        if (refined) {
+          georgeLocation.label = `${refined} (Live GPS)`;
+          updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
+        }
+
+        // Keep continuous tracking active
+        if (!watchId) {
+          watchId = navigator.geolocation.watchPosition(
+            pos => {
+              georgeLocation.lat = pos.coords.latitude;
+              georgeLocation.lng = pos.coords.longitude;
+              updateLocationUI("Live GPS Tracking", `±${Math.round(pos.coords.accuracy)}m`);
+            },
+            err => console.warn("Watch position err:", err),
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+          );
+        }
+      },
+      error => {
+        console.warn("Hardware GPS prompt ignored or unavailable:", error);
+        // Do NOT force Kurla! Keep Nerul Sector 19 and notify user
+        showMobileToast(`📍 Location: ${georgeLocation.label}. Tap header to change or search.`);
+      },
+      { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
+    );
   }
 }
 
 window.confirmLiveGPS = function() {
+  closeLocationPickerModal();
   document.getElementById('geo-permission-modal')?.classList.add('hidden');
 
   if (!navigator.geolocation) {
-    detectLocationViaIP();
+    showMobileToast("⚠️ Geolocation API not supported on this browser.");
     return;
   }
 
-  showMobileToast("Requesting device GPS sensor...");
+  showMobileToast("📡 Requesting device GPS sensor...");
 
   navigator.geolocation.getCurrentPosition(
-    position => {
+    async position => {
       isLiveGpsActive = true;
       georgeLocation.lat = position.coords.latitude;
       georgeLocation.lng = position.coords.longitude;
@@ -681,34 +793,38 @@ window.confirmLiveGPS = function() {
 
       updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
       renderOriginChips();
+      renderPickerChips();
       showMobileToast(`📍 Present GPS Locked: ${georgeLocation.label}`);
 
-      // Continuous tracking
-      if (!watchId) {
-        watchId = navigator.geolocation.watchPosition(
-          pos => {
-            georgeLocation.lat = pos.coords.latitude;
-            georgeLocation.lng = pos.coords.longitude;
-            updateLocationUI("Live GPS Tracking", `±${Math.round(pos.coords.accuracy)}m`);
-          },
-          err => console.warn("Watch position err:", err),
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
-        );
+      const refined = await fetchReverseGeocode(position.coords.latitude, position.coords.longitude);
+      if (refined) {
+        georgeLocation.label = `${refined} (Live GPS)`;
+        updateLocationUI("Live GPS Active", `±${Math.round(position.coords.accuracy)}m`);
       }
     },
     error => {
-      console.warn("Hardware GPS unavailable over HTTP, falling back to IP Geolocation:", error);
-      detectLocationViaIP();
+      console.warn("Hardware GPS error:", error);
+      let errMsg = "⚠️ GPS sensor unavailable.";
+      if (error.code === 1) {
+        errMsg = "⚠️ Location permission denied by browser over HTTP. Choose your area below:";
+      } else if (error.code === 2) {
+        errMsg = "⚠️ Position unavailable. Select your area below:";
+      } else if (error.code === 3) {
+        errMsg = "⚠️ GPS sensor timed out. Select your area below:";
+      }
+      showMobileToast(errMsg);
+      setTimeout(() => {
+        openLocationPickerModal();
+      }, 700);
     },
-    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
   );
 };
 
-// High-speed, rate-limit-free Network IP Geolocation
+// Optional Manual Network IP Geolocation
 async function detectLocationViaIP() {
   showMobileToast("📡 Syncing your present location...");
 
-  // Primary: ipwho.is (zero-latency, no rate limit)
   try {
     const res = await fetch('https://ipwho.is/');
     if (res.ok) {
@@ -717,10 +833,11 @@ async function detectLocationViaIP() {
         georgeLocation.lat = data.latitude;
         georgeLocation.lng = data.longitude;
         const locality = getNearestLocality(data.latitude, data.longitude);
-        georgeLocation.label = locality ? `${locality} (Live Location)` : (data.city ? `${data.city} (Live Location)` : "Your Present Location");
+        georgeLocation.label = locality ? `${locality} (Network)` : (data.city ? `${data.city} (Network)` : "Your Present Location");
 
-        updateLocationUI(`Live Location: ${georgeLocation.label}`, "Synced");
+        updateLocationUI(`Location: ${georgeLocation.label}`, "Synced");
         renderOriginChips();
+        renderPickerChips();
         showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
         return;
       }
@@ -729,32 +846,8 @@ async function detectLocationViaIP() {
     console.warn("ipwho.is error, trying fallback:", e);
   }
 
-  // Secondary Fallback: freeipapi.com
-  try {
-    const res2 = await fetch('https://freeipapi.com/api/json');
-    if (res2.ok) {
-      const data2 = await res2.json();
-      if (data2 && data2.latitude && data2.longitude) {
-        georgeLocation.lat = data2.latitude;
-        georgeLocation.lng = data2.longitude;
-        const locality = getNearestLocality(data2.latitude, data2.longitude);
-        georgeLocation.label = locality ? `${locality} (Live Location)` : (data2.cityName ? `${data2.cityName} (Live Location)` : "Your Present Location");
-
-        updateLocationUI(`Live Location: ${georgeLocation.label}`, "Synced");
-        renderOriginChips();
-        showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
-        return;
-      }
-    }
-  } catch (e2) {
-    console.warn("freeipapi error:", e2);
-  }
-
-  // Tertiary fallback: Regional default
-  georgeLocation.lat = activeEvent.defaultOrigin.lat;
-  georgeLocation.lng = activeEvent.defaultOrigin.lng;
-  georgeLocation.label = activeEvent.defaultOrigin.label;
-  updateLocationUI(activeEvent.originCity, "Default");
+  showMobileToast("⚠️ Network detection unavailable. Please select your area.");
+  openLocationPickerModal();
 }
 
 function updateLocationUI(statusText, accuracyText) {
@@ -780,11 +873,15 @@ function updateLocationUI(statusText, accuracyText) {
 
   // Update holographic pass distance alert
   const passDistOrigin = document.getElementById('live-distance-origin');
-  if (passDistOrigin) passDistOrigin.innerText = `${activeEvent.shortVenue} (from ${georgeLocation.label})`;
+  if (passDistOrigin) passDistOrigin.innerText = `From ${georgeLocation.label}`;
 
   // Update header subtext
   const subEl = document.getElementById('vis-user-sub');
   if (subEl) subEl.innerText = `${georgeLocation.label} • Spectator`;
+
+  // Update origin label in nav tab
+  const navOriginLabel = document.getElementById('nav-current-origin-label');
+  if (navOriginLabel) navOriginLabel.innerText = georgeLocation.label;
 
   // Update timeline dynamically based on location & ETA
   renderMobileTimeline(distKm, etaMins);
@@ -792,8 +889,10 @@ function updateLocationUI(statusText, accuracyText) {
   // Update transit guidance steps based on location & ETA
   updateTransitGuidanceUI(distKm, etaMins);
 
-  // Update satellite map
-  initOrUpdateMobileMap();
+  // Update satellite map if initialized
+  if (mobileMap) {
+    initOrUpdateMobileMap();
+  }
 }
 
 // Preset Origin Switcher
@@ -801,10 +900,157 @@ window.setVisitorOrigin = function(name, lat, lng) {
   georgeLocation.lat = lat;
   georgeLocation.lng = lng;
   georgeLocation.label = name;
-  updateLocationUI(name, "Manual Origin");
+
+  try {
+    localStorage.setItem('chronos_user_origin', JSON.stringify({
+      name: name,
+      lat: lat,
+      lng: lng
+    }));
+  } catch (e) {}
+
+  updateLocationUI(name, "Selected");
   renderOriginChips();
+  renderPickerChips();
   showMobileToast(`Origin set to ${name} (${calculateDistance()} km to ${activePass.gate})`);
 };
+
+// =========================================================================
+// 8. INTERACTIVE LOCATION SEARCH & PICKER MODAL ENGINE
+// =========================================================================
+window.openLocationPickerModal = function() {
+  const modal = document.getElementById('location-picker-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    renderPickerChips();
+    lucide.createIcons();
+    const searchInput = document.getElementById('loc-picker-search');
+    if (searchInput) searchInput.focus();
+  }
+};
+
+window.closeLocationPickerModal = function() {
+  const modal = document.getElementById('location-picker-modal');
+  if (modal) modal.classList.add('hidden');
+  const searchResults = document.getElementById('loc-picker-results');
+  if (searchResults) searchResults.classList.add('hidden');
+};
+
+window.switchToNavAndDropPin = function() {
+  closeLocationPickerModal();
+  switchMobileTab('nav');
+  showMobileToast("📍 Tap anywhere on the satellite map to drop your location pin!");
+};
+
+window.clearNavSearch = function() {
+  const input = document.getElementById('nav-inline-search');
+  if (input) input.value = '';
+  const dropdown = document.getElementById('nav-search-dropdown');
+  if (dropdown) {
+    dropdown.innerHTML = '';
+    dropdown.classList.add('hidden');
+  }
+};
+
+window.handleLocationSearch = function(query, resultsContainerId) {
+  const container = document.getElementById(resultsContainerId);
+  if (!container) return;
+
+  if (!query || query.trim().length === 0) {
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    return;
+  }
+
+  const q = query.toLowerCase().trim();
+  const matches = REGIONAL_LOCALITIES.filter(loc => 
+    loc.name.toLowerCase().includes(q) || 
+    (loc.category && loc.category.toLowerCase().includes(q))
+  );
+
+  if (matches.length === 0) {
+    container.innerHTML = `
+      <div class="p-2.5 text-slate-400 text-center text-[11px]">
+        No match for "${query}". <br/>
+        <button onclick="switchToNavAndDropPin()" class="text-cyan-400 underline font-bold mt-1 inline-block">Tap satellite map to drop pin</button>
+      </div>
+    `;
+    container.classList.remove('hidden');
+    return;
+  }
+
+  container.innerHTML = matches.slice(0, 8).map(loc => {
+    const dist = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(1);
+    const eta = getEtaMinutes(parseFloat(dist));
+    return `
+      <div 
+        onclick="selectSearchedLocation('${loc.name.replace(/'/g, "\\'")}', ${loc.lat}, ${loc.lng}, '${resultsContainerId}')"
+        class="p-2 rounded-lg hover:bg-sky-900/40 cursor-pointer flex items-center justify-between transition border border-transparent hover:border-sky-500/30"
+      >
+        <div class="flex items-center space-x-2">
+          <span class="text-cyan-400">📍</span>
+          <div>
+            <div class="text-white font-bold text-xs">${loc.name}</div>
+            <div class="text-[9px] text-slate-400">${loc.category || 'Region'}</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-emerald-400 font-bold text-xs">${dist} km</span>
+          <div class="text-[9px] text-slate-400">~${eta}m</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.classList.remove('hidden');
+};
+
+window.selectSearchedLocation = function(name, lat, lng, containerId) {
+  setVisitorOrigin(name, lat, lng);
+  const container = document.getElementById(containerId);
+  if (container) container.classList.add('hidden');
+  closeLocationPickerModal();
+  clearNavSearch();
+};
+
+function renderPickerChips() {
+  const naviContainer = document.getElementById('picker-chips-navimumbai');
+  const mumbaiContainer = document.getElementById('picker-chips-mumbai');
+
+  if (naviContainer) {
+    const naviLocs = REGIONAL_LOCALITIES.filter(l => l.category === 'Navi Mumbai');
+    naviContainer.innerHTML = naviLocs.map(loc => {
+      const dist = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(1);
+      const isSelected = georgeLocation.label.toLowerCase().includes(loc.name.toLowerCase());
+      return `
+        <button 
+          onclick="selectSearchedLocation('${loc.name.replace(/'/g, "\\'")}', ${loc.lat}, ${loc.lng}, 'loc-picker-results')"
+          class="p-2 rounded-xl text-left border transition ${isSelected ? 'bg-cyan-500/25 border-cyan-400 text-white font-bold' : 'bg-slate-950/80 border-sky-900/40 text-slate-300 hover:border-sky-500/40 hover:bg-slate-900'}"
+        >
+          <div class="truncate text-white text-[11px] font-bold">${loc.name}</div>
+          <div class="text-[9px] text-emerald-400 mt-0.5">${dist} km &bull; Gate ETA</div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  if (mumbaiContainer) {
+    const mumLocs = REGIONAL_LOCALITIES.filter(l => l.category === 'Mumbai' || l.category === 'South Mumbai' || l.category === 'Thane');
+    mumbaiContainer.innerHTML = mumLocs.map(loc => {
+      const dist = getHaversineDistance(loc.lat, loc.lng, activeEvent.lat, activeEvent.lng).toFixed(1);
+      const isSelected = georgeLocation.label.toLowerCase().includes(loc.name.toLowerCase());
+      return `
+        <button 
+          onclick="selectSearchedLocation('${loc.name.replace(/'/g, "\\'")}', ${loc.lat}, ${loc.lng}, 'loc-picker-results')"
+          class="p-2 rounded-xl text-left border transition ${isSelected ? 'bg-cyan-500/25 border-cyan-400 text-white font-bold' : 'bg-slate-950/80 border-sky-900/40 text-slate-300 hover:border-sky-500/40 hover:bg-slate-900'}"
+        >
+          <div class="truncate text-white text-[11px] font-bold">${loc.name}</div>
+          <div class="text-[9px] text-sky-400 mt-0.5">${dist} km &bull; Transit</div>
+        </button>
+      `;
+    }).join('');
+  }
+}
 
 // Calculate Haversine Distance
 function calculateDistance() {
@@ -849,7 +1095,7 @@ function formatTimeHourMinute(totalMinutes) {
 }
 
 // =========================================================================
-// 8. HANDSET SATELLITE NAVIGATION MAP (LEAFLET + ESRI TILES)
+// 9. HANDSET SATELLITE NAVIGATION MAP (LEAFLET + ESRI SATELLITE & PLACES)
 // =========================================================================
 function initOrUpdateMobileMap() {
   const mapContainer = document.getElementById('mobile-gps-map');
@@ -857,22 +1103,36 @@ function initOrUpdateMobileMap() {
 
   if (!mobileMap) {
     mobileMap = L.map('mobile-gps-map', {
-      zoomControl: false,
+      zoomControl: true,
       attributionControl: false
-    }).setView([georgeLocation.lat, georgeLocation.lng], 12);
+    }).setView([georgeLocation.lat, georgeLocation.lng], 14);
 
+    // High-resolution Satellite Imagery Base
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19
     }).addTo(mobileMap);
 
-    // Allow user to tap anywhere on the satellite map to pin location!
-    mobileMap.on('click', (e) => {
+    // Reference Roads, Sectors, and Place Labels Overlay
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      opacity: 0.95
+    }).addTo(mobileMap);
+
+    // Allow user to tap anywhere on the satellite map to pin their location!
+    mobileMap.on('click', async (e) => {
       const locName = getNearestLocality(e.latlng.lat, e.latlng.lng) || "Selected Location";
       setVisitorOrigin(locName, e.latlng.lat, e.latlng.lng);
+      showMobileToast(`📍 Pinned: ${locName}`);
+
+      const refined = await fetchReverseGeocode(e.latlng.lat, e.latlng.lng);
+      if (refined && refined !== locName) {
+        georgeLocation.label = `${refined} (Pinned)`;
+        updateLocationUI(georgeLocation.label, "Map Pin");
+      }
     });
   }
 
-  // Update Stadium Destination Pin
+  // Update Stadium Destination Marker
   if (stadiumMarker) {
     mobileMap.removeLayer(stadiumMarker);
   }
@@ -880,20 +1140,20 @@ function initOrUpdateMobileMap() {
     className: 'mobile-map-pin',
     html: `
       <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
-        <div style="width:28px; height:28px; border-radius:8px; background:#080c14; border:2px solid #34d399; color:#34d399; display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 0 12px #34d399;">
+        <div style="width:30px; height:30px; border-radius:10px; background:#080c14; border:2px solid #34d399; color:#34d399; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 0 14px #34d399;">
           🏟️
         </div>
-        <div style="font-size:8px; font-family:monospace; font-weight:bold; color:#fff; background:#080c14; padding:1px 4px; border-radius:3px; margin-top:2px; white-space:nowrap; border:1px solid #34d399;">
+        <div style="font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:#080c14; padding:2px 5px; border-radius:4px; margin-top:2px; white-space:nowrap; border:1px solid #34d399;">
           ${activePass.gate}
         </div>
       </div>
     `,
-    iconSize: [80, 40],
-    iconAnchor: [40, 20]
+    iconSize: [80, 44],
+    iconAnchor: [40, 22]
   });
   stadiumMarker = L.marker([activeEvent.lat, activeEvent.lng], { icon: stadiumIcon }).addTo(mobileMap);
 
-  // Dynamic Transit Route Polyline (Cyan Electric Vector)
+  // Dynamic Transit Route Polyline (Electric Cyan Vector)
   if (routePolyline) {
     mobileMap.removeLayer(routePolyline);
   }
@@ -904,27 +1164,25 @@ function initOrUpdateMobileMap() {
   const dist = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, activeEvent.lat, activeEvent.lng);
   
   if (activeEventKey === 'dypatil_nerul') {
-    if (georgeLocation.lng < 72.95) {
-      if (georgeLocation.lat < 19.05) {
-        routePoints.push([19.0657, 72.8794]); // Kurla Junction
+    if (dist > 3.0) {
+      if (georgeLocation.lng < 72.96) {
+        routePoints.push([19.0550, 72.9300]); // Vashi Creek Bridge
+        routePoints.push([19.0700, 72.9800]); // Sanpada Highway
       }
-      routePoints.push([19.0550, 72.9300]); // Vashi Creek Bridge
-    }
-    if (dist > 3) {
       routePoints.push([19.0350, 73.0180]); // Nerul East Terminal
     }
   } else if (activeEventKey === 'wankhede_mumbai') {
-    if (georgeLocation.lat > 19.00) {
-      routePoints.push([18.9750, 72.8220]); // Mumbai Central
-    }
-    if (dist > 1.5) {
+    if (dist > 2.0) {
+      if (georgeLocation.lat > 19.00) {
+        routePoints.push([18.9750, 72.8220]); // Mumbai Central
+      }
       routePoints.push([18.9322, 72.8264]); // Churchgate
     }
   } else if (activeEventKey === 'narendra_modi') {
-    if (georgeLocation.lat < 23.06) {
-      routePoints.push([23.0550, 72.5850]); // Sabarmati
-    }
-    if (dist > 1.5) {
+    if (dist > 2.0) {
+      if (georgeLocation.lat < 23.06) {
+        routePoints.push([23.0550, 72.5850]); // Sabarmati
+      }
       routePoints.push([23.0900, 72.5950]); // Motera Metro
     }
   }
@@ -933,9 +1191,9 @@ function initOrUpdateMobileMap() {
 
   routePolyline = L.polyline(routePoints, {
     color: '#38bdf8',
-    weight: 3.5,
+    weight: 4,
     opacity: 0.9,
-    dashArray: '6, 6'
+    dashArray: '7, 7'
   }).addTo(mobileMap);
 
   // Staged Feeder Bus Marker
@@ -961,25 +1219,44 @@ function initOrUpdateMobileMap() {
     const userGpsIcon = L.divIcon({
       className: 'mobile-user-gps',
       html: `
-        <div style="position:relative; width:22px; height:22px; transform:translate(-50%,-50%);">
-          <div style="position:absolute; inset:-4px; border-radius:50%; background:rgba(56,189,248,0.4); animation:ping 1.5s infinite;"></div>
-          <div style="position:absolute; inset:0; border-radius:50%; background:#38bdf8; border:2px solid #ffffff; box-shadow:0 0 10px #38bdf8;"></div>
+        <div style="position:relative; width:24px; height:24px; transform:translate(-50%,-50%);">
+          <div style="position:absolute; inset:-5px; border-radius:50%; background:rgba(56,189,248,0.45); animation:ping 1.5s infinite;"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; background:#38bdf8; border:2.5px solid #ffffff; box-shadow:0 0 12px #38bdf8;"></div>
         </div>
       `,
-      iconSize: [22, 22],
-      iconAnchor: [11, 11]
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
     userMarker = L.marker([georgeLocation.lat, georgeLocation.lng], { icon: userGpsIcon }).addTo(mobileMap);
   }
 
   // Smooth fitBounds to frame origin & destination
-  if (mobileMap && routePoints.length > 0) {
-    mobileMap.fitBounds(L.latLngBounds(routePoints).pad(0.2));
+  fitMapToRoute();
+}
+
+// Clamps map bounds cleanly preventing world map zoom-0 collapse
+function fitMapToRoute() {
+  if (!mobileMap) return;
+  mobileMap.invalidateSize();
+
+  const d = getHaversineDistance(georgeLocation.lat, georgeLocation.lng, activeEvent.lat, activeEvent.lng);
+  if (d < 0.6) {
+    mobileMap.setView([georgeLocation.lat, georgeLocation.lng], 16);
+  } else {
+    const bounds = L.latLngBounds([
+      [georgeLocation.lat, georgeLocation.lng],
+      [activeEvent.lat, activeEvent.lng]
+    ]);
+    mobileMap.fitBounds(bounds, {
+      padding: [45, 45],
+      maxZoom: 15,
+      animate: false
+    });
   }
 }
 
 // =========================================================================
-// 9. MOBILE BOTTOM TAB NAVIGATION
+// 10. MOBILE BOTTOM TAB NAVIGATION
 // =========================================================================
 window.switchMobileTab = function(tabName) {
   currentTab = tabName;
@@ -1004,10 +1281,14 @@ window.switchMobileTab = function(tabName) {
   if (target) target.classList.remove('hidden');
 
   if (tabName === 'nav') {
-    initOrUpdateMobileMap();
     setTimeout(() => {
-      if (mobileMap) mobileMap.invalidateSize();
-    }, 200);
+      if (!mobileMap) {
+        initOrUpdateMobileMap();
+      } else {
+        mobileMap.invalidateSize();
+        fitMapToRoute();
+      }
+    }, 120);
   }
 
   lucide.createIcons();
