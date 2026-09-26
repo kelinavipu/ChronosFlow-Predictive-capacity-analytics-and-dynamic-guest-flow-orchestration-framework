@@ -1207,30 +1207,30 @@ window.gatekeeperRequestGPS = function() {
   const statusDot = document.getElementById('gk-status-dot');
   const gpsNotice = document.getElementById('gk-gps-notice');
 
-  if (statusText) statusText.innerText = "Querying GNSS Hardware Sensors...";
+  if (statusText) statusText.innerText = "Acquiring Present Hardware Location...";
   if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping";
 
   if (!navigator.geolocation) {
-    detectLocationViaIP();
+    detectLocationViaIPAndUnlock();
     return;
   }
 
   // Tier 1: Try High Accuracy GPS
   navigator.geolocation.getCurrentPosition(
     async position => {
-      onGpsSuccess(position, 'Hardware GNSS');
+      await onGpsSuccess(position, 'Hardware GNSS');
     },
     error => {
       console.warn("High-accuracy GNSS failed/timed out, attempting standard accuracy:", error);
       // Tier 2: Try Standard Accuracy
       navigator.geolocation.getCurrentPosition(
         async position => {
-          onGpsSuccess(position, 'Standard GNSS');
+          await onGpsSuccess(position, 'Standard GNSS');
         },
         error2 => {
           console.warn("Standard GNSS failed, attempting Network IP fallback:", error2);
           // Tier 3: IP Geolocation Fallback
-          detectLocationViaIP();
+          detectLocationViaIPAndUnlock();
         },
         { enableHighAccuracy: false, timeout: 6000, maximumAge: 10000 }
       );
@@ -1238,20 +1238,30 @@ window.gatekeeperRequestGPS = function() {
     { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
   );
 
-  function onGpsSuccess(position, source) {
+  async function onGpsSuccess(position, source) {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const acc = position.coords.accuracy;
 
-    setGatekeeperCoordinates(lat, lng, source, acc);
+    await setGatekeeperCoordinates(lat, lng, source, acc);
 
     if (gpsNotice) {
       gpsNotice.innerHTML = `<span class="text-emerald-400 font-bold">✅ Present Location Locked (Accuracy: ±${Math.round(acc)}m)</span>`;
     }
     showMobileToast(`🛰️ Present GPS Locked: ±${Math.round(acc)}m`);
     startLiveGPSWatcher();
+    setTimeout(() => {
+      gatekeeperUnlockApp();
+    }, 450);
   }
 };
+
+async function detectLocationViaIPAndUnlock() {
+  await detectLocationViaIP();
+  setTimeout(() => {
+    gatekeeperUnlockApp();
+  }, 450);
+}
 
 window.setGatekeeperCoordinates = async function(lat, lng, source, accuracy) {
   gatekeeperLocation = {
