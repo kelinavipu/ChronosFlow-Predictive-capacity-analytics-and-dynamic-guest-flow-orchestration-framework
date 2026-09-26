@@ -26,8 +26,28 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 def main():
     os.chdir(DIRECTORY)
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        url = f"http://localhost:{PORT}"
+    socketserver.TCPServer.allow_reuse_address = True
+    
+    port = PORT
+    httpd = None
+    
+    # Try PORT first, then try incremental ports if occupied
+    for try_port in range(PORT, PORT + 10):
+        try:
+            httpd = socketserver.TCPServer(("", try_port), Handler)
+            port = try_port
+            break
+        except OSError as e:
+            if e.winerror == 10048 or e.errno == 98:
+                continue
+            raise e
+
+    if not httpd:
+        print(f"Error: Could not bind to any port between {PORT} and {PORT + 9}.")
+        sys.exit(1)
+
+    with httpd:
+        url = f"http://localhost:{port}"
         print("=" * 60)
         print(" ORCHESTRA: Phase 0 Intelligent Event Pre-Planning")
         print("=" * 60)

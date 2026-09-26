@@ -242,7 +242,7 @@
       <!-- Link to Sign In -->
       <div class="text-center text-xs text-[#9e9b93] pt-2 border-t border-[#2a2c35]">
         Already have an account? 
-        <a href="signin.html" id="link-signin" class="font-bold text-[#d4a373] hover:underline">Sign In here</a>
+        <a href="index.html?tab=signin" id="link-signin" class="font-bold text-[#d4a373] hover:underline">Sign In here</a>
       </div>
 
     </div>
@@ -292,7 +292,7 @@
         document.getElementById('signup-email').placeholder = "e.g. alicia@eventm.com";
       }
 
-      document.getElementById('link-signin').href = `signin.html?role=${role}`;
+      document.getElementById('link-signin').href = `index.html?tab=signin&role=${role}`;
       lucide.createIcons();
     }
 

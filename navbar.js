@@ -1,5 +1,5 @@
 /**
- * Shared Navigation Component for ChronosFlow — Calm Glacier Blue Design
+ * Shared Navigation Component for ChronosFlow — Role-Aware Navigation
  */
 
 function renderNavbar(activePage = '') {
@@ -9,10 +9,10 @@ function renderNavbar(activePage = '') {
   const user = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
 
   const roleBadges = {
-    event_manager: { label: "Event Manager", class: "badge-sand" },
-    visitor: { label: "Visitor / Spectator", class: "badge-sage" },
-    service_provider: { label: "Service Provider", class: "badge-amber" },
-    infra_provider: { label: "Infra Provider", class: "badge-slate" }
+    event_manager: { label: "Event Manager", class: "badge-sand", homeDashboard: "preplans.html" },
+    visitor: { label: "Visitor / Spectator", class: "badge-sage", homeDashboard: "dashboard-visitor.html" },
+    service_provider: { label: "Service Provider", class: "badge-amber", homeDashboard: "dashboard-service.html" },
+    infra_provider: { label: "Infra Provider", class: "badge-slate", homeDashboard: "dashboard-infra.html" }
   };
 
   const userRole = user?.role || 'event_manager';
@@ -22,8 +22,83 @@ function renderNavbar(activePage = '') {
   const isPreplans = activePage === 'preplans';
   const isSimulations = activePage === 'simulations';
   const isCurrentEvents = activePage === 'current-events';
-  const isSignIn = activePage === 'signin';
-  const isSignUp = activePage === 'signup';
+  const isGeojson = activePage === 'geojson-mapper';
+  const isVisitorApp = activePage === 'visitor-app';
+  const isVisitorDash = activePage === 'dashboard-visitor';
+  const isInfraDash = activePage === 'dashboard-infra';
+  const isServiceDash = activePage === 'dashboard-service';
+
+  // Build role-specific center nav links
+  let navLinksHtml = `
+    <a href="index.html" class="px-3 py-1.5 rounded-xl transition ${isHome ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+      Home
+    </a>
+  `;
+
+  if (!user || userRole === 'event_manager') {
+    navLinksHtml += `
+      <a href="preplans.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isPreplans ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span>Pre-Plans</span>
+      </a>
+      <a href="simulations.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isSimulations ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="sliders" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span>Simulations</span>
+      </a>
+      <a href="current-events.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isCurrentEvents ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Current Events</span>
+      </a>
+      <a href="geojson-mapper.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isGeojson ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="map" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <span>GeoJSON Mapper</span>
+      </a>
+    `;
+  }
+
+  if (userRole === 'infra_provider') {
+    navLinksHtml += `
+      <a href="dashboard-infra.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isInfraDash ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="building-2" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span>Infra Dashboard</span>
+      </a>
+      <a href="geojson-mapper.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isGeojson ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="map" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <span>GeoJSON Mapper</span>
+      </a>
+    `;
+  }
+
+  if (userRole === 'service_provider') {
+    navLinksHtml += `
+      <a href="dashboard-service.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isServiceDash ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="truck" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Service Dashboard</span>
+      </a>
+    `;
+  }
+
+  if (userRole === 'visitor') {
+    navLinksHtml += `
+      <a href="visitor-app.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isVisitorApp ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-emerald-400 hover:text-white hover:bg-emerald-500/10'}">
+        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Visitor App</span>
+      </a>
+      <a href="dashboard-visitor.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isVisitorDash ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
+        <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Visitor Pass & Transit</span>
+      </a>
+    `;
+  }
+
+  if (!user) {
+    navLinksHtml += `
+      <a href="visitor-app.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isVisitorApp ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-emerald-400 hover:text-white hover:bg-emerald-500/10'}">
+        <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Visitor Mobile App</span>
+      </a>
+    `;
+  }
 
   container.innerHTML = `
     <header class="sticky top-0 z-50 backdrop-blur-md bg-[#080c14]/85 border-b border-sky-950/60 px-4 sm:px-8 py-3.5 transition-colors">
@@ -45,25 +120,7 @@ function renderNavbar(activePage = '') {
 
         <!-- Center Nav Links -->
         <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-xs font-semibold">
-          <a href="index.html" class="px-3 py-1.5 rounded-xl transition ${isHome ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
-            Home
-          </a>
-          <a href="preplans.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isPreplans ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
-            <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-sky-400"></i>
-            <span>Pre-Plans</span>
-          </a>
-          <a href="simulations.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isSimulations ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
-            <i data-lucide="sliders" class="w-3.5 h-3.5 text-sky-400"></i>
-            <span>Simulations</span>
-          </a>
-          <a href="current-events.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${isCurrentEvents ? 'bg-sky-500/15 text-white border border-sky-400/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'}">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Current Events</span>
-          </a>
-          <a href="visitor-app.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${activePage === 'visitor-app' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-emerald-400 hover:text-white hover:bg-emerald-500/10'}">
-            <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
-            <span>Visitor App</span>
-          </a>
+          ${navLinksHtml}
         </nav>
 
         <!-- Right Side: Cloud Status & Auth -->
@@ -71,14 +128,14 @@ function renderNavbar(activePage = '') {
           <!-- Supabase Connected Chip -->
           <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900/90 border border-sky-900/30 text-[10px] font-mono text-slate-400" title="Supabase Project ID: rojjfjoquejjxuziriei">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span>Cloud: rojjfjo...</span>
+            <span>Cloud Sync Active</span>
           </div>
 
           ${user ? `
             <div class="flex items-center space-x-2">
               <div class="hidden lg:block text-right">
                 <div class="text-xs font-bold text-white leading-tight">${user.fullName || 'User'}</div>
-                <a href="${userRole === 'infra_provider' ? 'dashboard-infra.html' : userRole === 'service_provider' ? 'dashboard-service.html' : userRole === 'visitor' ? 'dashboard-visitor.html' : 'preplans.html'}" class="text-[10px] ${roleInfo.class} inline-block font-semibold mt-0.5 hover:underline" title="Go to My Dashboard">
+                <a href="${roleInfo.homeDashboard}" class="text-[10px] ${roleInfo.class} inline-block font-semibold mt-0.5 hover:underline" title="Go to My Role Command">
                   ${roleInfo.label} &rarr;
                 </a>
               </div>

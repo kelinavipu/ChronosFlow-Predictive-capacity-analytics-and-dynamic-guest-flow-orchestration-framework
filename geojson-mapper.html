@@ -19,6 +19,11 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
+  <!-- Supabase & Navbar -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="navbar.js"></script>
+
   <style>
     :root {
       --bg-deep:  #04070e;
@@ -37,7 +42,7 @@
     ::-webkit-scrollbar-track { background: #04070e; }
     ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
 
-    #app { display: flex; height: 100vh; width: 100vw; }
+    #app { display: flex; height: calc(100vh - 65px); width: 100vw; }
 
     /* ── Sidebar ── */
     #sidebar {
@@ -163,6 +168,7 @@
 </head>
 <body>
 
+<div id="global-navbar"></div>
 <div id="app">
 
   <!-- ================================================================= -->
@@ -697,8 +703,11 @@ function showToast(msg) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Init icons
+// Init icons & navbar
 // ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderNavbar) renderNavbar('geojson-mapper');
+});
 lucide.createIcons();
 </script>
 
