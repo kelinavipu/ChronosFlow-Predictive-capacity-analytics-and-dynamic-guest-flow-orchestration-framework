@@ -11,6 +11,10 @@
   <script src="supabase-client.js"></script>
   <script src="navbar.js"></script>
 
+  <!-- Leaflet Satellite Mapping Engine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-[#080c14] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-400 selection:text-slate-950">
@@ -75,6 +79,19 @@
 
           <button 
             type="button" 
+            onclick="switchVisSection('vis-sec-events')" 
+            id="nav-vis-events" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
+              <span>Browse Events & Enroll</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 font-bold" id="badge-events-count">Available</span>
+          </button>
+
+          <button 
+            type="button" 
             onclick="switchVisSection('vis-sec-ticket')" 
             id="nav-vis-ticket" 
             class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
@@ -88,15 +105,28 @@
 
           <button 
             type="button" 
+            onclick="switchVisSection('vis-sec-timeline')" 
+            id="nav-vis-timeline" 
+            class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
+          >
+            <div class="flex items-center space-x-3">
+              <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+              <span>Day-of-Event Timeline</span>
+            </div>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">8 Steps</span>
+          </button>
+
+          <button 
+            type="button" 
             onclick="switchVisSection('vis-sec-preplans')" 
             id="nav-vis-preplans" 
             class="vis-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
           >
             <div class="flex items-center space-x-3">
-              <i data-lucide="route" class="w-4 h-4 text-sky-400"></i>
-              <span>Pre-Planned Itinerary</span>
+              <i data-lucide="satellite" class="w-4 h-4 text-sky-400"></i>
+              <span>Satellite Navigation</span>
             </div>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">4 Guides</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300">ESRI Map</span>
           </button>
 
           <button 
@@ -147,6 +177,10 @@
         </div>
 
         <div class="flex items-center space-x-3">
+          <a href="visitor-app.html" class="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 text-xs font-mono font-bold text-emerald-300 flex items-center space-x-2 hover:bg-emerald-500/30 transition shadow-lg shadow-emerald-950/40">
+            <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+            <span>📱 Open Mobile Handset App &rarr;</span>
+          </a>
           <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-sky-900/40 text-xs font-mono text-slate-300 flex items-center space-x-2">
             <span class="w-2 h-2 rounded-full bg-emerald-400 safety-pulse"></span>
             <span>Match Day: <strong class="text-emerald-400">PASS ACTIVE</strong></span>
@@ -279,7 +313,59 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- SECTION 2: MY BOOKED EVENT & ENTRY PASS                               -->
+      <!-- SECTION 2: BROWSE EVENTS & ENROLL                                      -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-events" class="vis-section space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sky-950/60 pb-4">
+          <div>
+            <h2 class="text-xl font-black text-white flex items-center space-x-2.5">
+              <i data-lucide="calendar" class="w-6 h-6 text-sky-400"></i>
+              <span>Available Events Directory & Guest Enrollment</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Browse pre-cleared venues, analyze venue capacity & transit corridors, and generate instant verified digital admission passes.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="events-total-badge">Active Directory</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-sky-900/30 backdrop-blur-md flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div class="relative w-full md:w-96">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              type="text" 
+              id="vis-event-search" 
+              oninput="filterVisitorEvents()" 
+              placeholder="Search event title, venue, or city..." 
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-400 transition"
+            >
+          </div>
+
+          <div class="flex items-center space-x-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+            <button onclick="setEventFilter('ALL')" id="filter-btn-ALL" class="event-filter-pill active px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition bg-sky-500/20 text-sky-300 border-sky-400/40">
+              All Venues
+            </button>
+            <button onclick="setEventFilter('SPORTS')" id="filter-btn-SPORTS" class="event-filter-pill px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition bg-slate-950 text-slate-400 border-sky-900/30 hover:text-white">
+              Stadiums & Sports
+            </button>
+            <button onclick="setEventFilter('FESTIVAL')" id="filter-btn-FESTIVAL" class="event-filter-pill px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition bg-slate-950 text-slate-400 border-sky-900/30 hover:text-white">
+              Arenas & Festivals
+            </button>
+          </div>
+        </div>
+
+        <!-- Events Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="visitor-events-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 3: MY BOOKED EVENT & ENTRY PASS                               -->
       <!-- ===================================================================== -->
       <section id="vis-sec-ticket" class="vis-section space-y-4 hidden">
         <div class="flex items-center justify-between">
@@ -288,49 +374,253 @@
               <i data-lucide="ticket" class="w-5 h-5 text-sky-400"></i>
               <span>My Booked Event & Entry Pass</span>
             </h2>
-            <p class="text-xs text-slate-400">Verified admission pass and seating credentials</p>
+            <p class="text-xs text-slate-400">Verified official admission credential with dynamic entry portal sync</p>
           </div>
-          <span class="text-xs font-mono text-emerald-400 font-bold">CONFIRMED ADMISSION</span>
+          <div class="flex items-center space-x-2">
+            <button onclick="switchVisSection('vis-sec-events')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-900/40 text-xs font-mono font-bold transition flex items-center space-x-1.5">
+              <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+              <span>Switch Event</span>
+            </button>
+            <span class="text-xs font-mono text-emerald-400 font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">CONFIRMED ADMISSION</span>
+          </div>
         </div>
 
-        <!-- Ticket Card -->
-        <div class="dark-panel rounded-3xl p-6 sm:p-8 border border-sky-900/40 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800/80 relative overflow-hidden space-y-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-950/60 pb-6">
-            <div>
-              <div class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold">Match Day Admission</div>
-              <h3 class="text-xl sm:text-2xl font-black text-white mt-1" id="ticket-event-title">
+        <!-- Ticket Card with Boarding-Pass Styling -->
+        <div class="dark-panel rounded-3xl border border-sky-400/40 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 shadow-2xl relative overflow-hidden">
+          
+          <!-- Top Pass Banner -->
+          <div class="p-6 sm:p-8 border-b border-sky-950/80 bg-sky-950/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-300 font-bold border border-sky-400/30" id="ticket-tier-badge">GRANDSTAND PAVILION PASS</span>
+                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold flex items-center space-x-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>BIOMETRIC PRE-CLEARED</span>
+                </span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-white" id="ticket-event-title">
                 Championship Trophy: 4-Day Mega Cricket Fixture
               </h3>
-              <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
+              <div class="flex items-center space-x-2 text-xs text-slate-300">
                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
                 <span id="ticket-venue-name">Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul, Navi Mumbai</span>
               </div>
             </div>
 
-            <div class="text-left md:text-right font-mono">
-              <div class="text-[10px] text-slate-400 uppercase">Pass Code</div>
+            <div class="text-left md:text-right font-mono bg-slate-950/80 p-3 rounded-2xl border border-sky-900/30">
+              <div class="text-[10px] text-slate-400 uppercase">OFFICIAL PASS CODE</div>
               <div class="text-base font-bold text-sky-300" id="ticket-id">TKT-DYP-2026-94812</div>
+              <div class="text-[10px] text-slate-500" id="ticket-holder-name">Holder: George Miller</div>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400 uppercase">Entry Portal</div>
-              <div class="text-sm font-bold text-emerald-400 mt-0.5" id="ticket-gate">Gate 4 (West Wing)</div>
+          <!-- Main Pass Parameters Grid -->
+          <div class="p-6 sm:p-8 space-y-6">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+              <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400 uppercase font-bold">Entry Portal</div>
+                <div class="text-sm font-bold text-emerald-400 mt-1 flex items-center space-x-1.5">
+                  <i data-lucide="door-open" class="w-4 h-4 text-emerald-400"></i>
+                  <span id="ticket-gate">Gate 4 (West Wing)</span>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400 uppercase font-bold">Seat Allocation</div>
+                <div class="text-sm font-bold text-white mt-1 flex items-center space-x-1.5">
+                  <i data-lucide="armchair" class="w-4 h-4 text-sky-400"></i>
+                  <span id="ticket-seat">Stand C &bull; Row 14 &bull; Seat 48</span>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400 uppercase font-bold">Gates Open</div>
+                <div class="text-sm font-bold text-sky-300 mt-1 flex items-center space-x-1.5">
+                  <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+                  <span id="ticket-gate-time">11:30 AM</span>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-sky-900/30">
+                <div class="text-[10px] text-slate-400 uppercase font-bold">Event Commences</div>
+                <div class="text-sm font-bold text-white mt-1 flex items-center space-x-1.5">
+                  <i data-lucide="play" class="w-4 h-4 text-amber-400"></i>
+                  <span id="ticket-start-time">01:30 PM</span>
+                </div>
+              </div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400 uppercase">Seat Allocation</div>
-              <div class="text-sm font-bold text-white mt-0.5" id="ticket-seat">Stand C &bull; Row 14 &bull; Seat 48</div>
+
+            <!-- Optical QR & Barcode Section -->
+            <div class="p-4 sm:p-6 rounded-2xl bg-slate-950 border border-sky-900/40 flex flex-col md:flex-row items-center justify-between gap-6">
+              
+              <!-- QR Code Block -->
+              <div class="flex items-center space-x-4">
+                <div class="w-24 h-24 rounded-xl bg-white p-2 flex items-center justify-center shrink-0 shadow-lg shadow-black/50">
+                  <!-- Simulated 2D Matrix / QR Code SVG -->
+                  <svg viewBox="0 0 100 100" class="w-full h-full text-slate-950 fill-current">
+                    <rect x="0" y="0" width="30" height="30" rx="3" />
+                    <rect x="5" y="5" width="20" height="20" fill="white" />
+                    <rect x="9" y="9" width="12" height="12" />
+                    <rect x="70" y="0" width="30" height="30" rx="3" />
+                    <rect x="75" y="5" width="20" height="20" fill="white" />
+                    <rect x="79" y="9" width="12" height="12" />
+                    <rect x="0" y="70" width="30" height="30" rx="3" />
+                    <rect x="5" y="75" width="20" height="20" fill="white" />
+                    <rect x="9" y="79" width="12" height="12" />
+                    <rect x="36" y="8" width="8" height="8" />
+                    <rect x="50" y="8" width="8" height="8" />
+                    <rect x="36" y="24" width="14" height="6" />
+                    <rect x="8" y="44" width="12" height="8" />
+                    <rect x="28" y="42" width="14" height="14" />
+                    <rect x="48" y="38" width="14" height="8" />
+                    <rect x="68" y="42" width="16" height="10" />
+                    <rect x="88" y="44" width="8" height="18" />
+                    <rect x="36" y="64" width="10" height="10" />
+                    <rect x="52" y="60" width="14" height="14" />
+                    <rect x="72" y="66" width="18" height="8" />
+                    <rect x="42" y="84" width="16" height="10" />
+                    <rect x="64" y="82" width="14" height="12" />
+                  </svg>
+                </div>
+                <div class="space-y-1">
+                  <div class="text-[10px] font-mono text-sky-400 font-bold uppercase">OPTICAL TURNSTILE QR</div>
+                  <div class="text-xs text-white font-bold" id="ticket-qr-hash">CHRONOS-PASS-DYPATIL-94812</div>
+                  <div class="text-[11px] text-slate-400">Scan at Gate 4 optical scanner for instant turnstile release</div>
+                  <div class="text-[10px] text-emerald-400 font-mono flex items-center space-x-1">
+                    <i data-lucide="check" class="w-3 h-3"></i>
+                    <span>Offline Cached &amp; Verified</span>
+                  </div>
+                  <button 
+                    onclick="openCurrentTicketQRModal()" 
+                    class="mt-2.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center space-x-1.5 transition"
+                  >
+                    <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Scan &amp; Send to Phone QR</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Barcode Stripes Simulation -->
+              <div class="flex flex-col items-center md:items-end space-y-2">
+                <div class="h-12 flex items-center space-x-1 px-4 py-2 bg-slate-900 rounded-lg border border-sky-950">
+                  <div class="w-1 h-full bg-white"></div>
+                  <div class="w-2 h-full bg-white"></div>
+                  <div class="w-0.5 h-full bg-white"></div>
+                  <div class="w-1.5 h-full bg-white"></div>
+                  <div class="w-1 h-full bg-white"></div>
+                  <div class="w-3 h-full bg-white"></div>
+                  <div class="w-0.5 h-full bg-white"></div>
+                  <div class="w-1 h-full bg-white"></div>
+                  <div class="w-2.5 h-full bg-white"></div>
+                  <div class="w-1 h-full bg-white"></div>
+                  <div class="w-0.5 h-full bg-white"></div>
+                  <div class="w-2 h-full bg-white"></div>
+                  <div class="w-1 h-full bg-white"></div>
+                  <div class="w-3 h-full bg-white"></div>
+                  <div class="w-0.5 h-full bg-white"></div>
+                  <div class="w-1.5 h-full bg-white"></div>
+                  <div class="w-2 h-full bg-white"></div>
+                  <div class="w-1 h-full bg-white"></div>
+                </div>
+                <div class="text-[10px] font-mono text-slate-500 tracking-widest" id="ticket-barcode-num">2026 9481 2043 5114</div>
+              </div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400 uppercase">Gates Open</div>
-              <div class="text-sm font-bold text-sky-300 mt-0.5">11:30 AM</div>
+
+            <!-- Pass Quick Navigation Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-sky-950/80">
+              <div class="flex flex-wrap gap-2 text-xs">
+                <button 
+                  onclick="openCurrentTicketQRModal()" 
+                  class="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold transition flex items-center space-x-1.5 shadow-md shadow-emerald-500/10"
+                >
+                  <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+                  <span>📱 Scan Pass on Phone (QR)</span>
+                </button>
+
+                <button 
+                  onclick="switchVisSection('vis-sec-timeline')" 
+                  class="px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-400/40 font-bold transition flex items-center space-x-1.5"
+                >
+                  <i data-lucide="clock" class="w-4 h-4"></i>
+                  <span>View Timeline</span>
+                </button>
+
+                <button 
+                  onclick="pinpointTimelineOnMap(19.0435, 73.0253, 'Gate 4 Ingress Turnstiles')" 
+                  class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white border border-sky-900/40 font-bold transition flex items-center space-x-1.5"
+                >
+                  <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+                  <span>Pinpoint Gate 4</span>
+                </button>
+              </div>
+
+              <div class="flex items-center space-x-2 text-xs">
+                <button 
+                  onclick="window.print()" 
+                  class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-sky-900/30 transition flex items-center space-x-1.5"
+                >
+                  <i data-lucide="printer" class="w-4 h-4"></i>
+                  <span>Print Pass</span>
+                </button>
+                <button 
+                  onclick="openEnrollmentModal(currentActiveTicket?.eventId || 'dypatil_nerul')" 
+                  class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-sky-900/30 transition flex items-center space-x-1.5"
+                >
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                  <span>Modify Pass Tier</span>
+                </button>
+              </div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-900/30">
-              <div class="text-[10px] text-slate-400 uppercase">Match Start</div>
-              <div class="text-sm font-bold text-white mt-0.5">01:30 PM</div>
-            </div>
+
           </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SECTION 4: DAY-OF-EVENT TIMELINE & END-TO-END ITINERARY               -->
+      <!-- ===================================================================== -->
+      <section id="vis-sec-timeline" class="vis-section space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sky-950/60 pb-4">
+          <div>
+            <h2 class="text-xl font-black text-white flex items-center space-x-2.5">
+              <i data-lucide="clock" class="w-6 h-6 text-sky-400"></i>
+              <span>Day-of-Event Timeline & End-to-End Itinerary</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Complete chronological master plan orchestrated by ChronosFlow: from guest origin, suburban rail transit, shaded first/last mile, perimeter gate optical turnstiles, in-bowl seating, to staged egress dispersal.
+            </p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-3 py-1.5 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/30 flex items-center space-x-1.5">
+              <i data-lucide="satellite" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>8 Geolocated Stages</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Master Timeline Progress Bar -->
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-sky-900/30 space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400 font-bold">MATCH DAY JOURNEY PROGRESS</span>
+            <span class="text-sky-300 font-bold">Stage 4 of 8 &bull; Ingress Approaching</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-950 overflow-hidden flex">
+            <div class="h-full bg-emerald-400" style="width: 25%"></div>
+            <div class="h-full bg-sky-400" style="width: 25%"></div>
+            <div class="h-full bg-sky-500/30" style="width: 50%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] font-mono text-slate-500">
+            <span>09:30 Origin Prep</span>
+            <span>11:32 Nerul Arrival</span>
+            <span>12:00 Gate 4 Ingress</span>
+            <span>13:30 Fixture Start</span>
+            <span>21:45 Staged Egress</span>
+          </div>
+        </div>
+
+        <!-- Chronological Milestone Cards List -->
+        <div class="space-y-4" id="visitor-timeline-steps">
+          <!-- Populated by JavaScript renderTimelineSteps() -->
         </div>
       </section>
 
@@ -347,6 +637,59 @@
             <p class="text-xs text-slate-400">Official journey recommendations computed by the event management baseline</p>
           </div>
           <span class="text-xs font-mono text-sky-400 font-bold">Pre-Event Brief</span>
+        </div>
+
+        <!-- Authentic High-Resolution Satellite Transit Itinerary Map -->
+        <div class="dark-panel rounded-3xl p-5 border border-sky-400/30 space-y-4 shadow-2xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/80 pb-3">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="satellite" class="w-5 h-5 text-sky-400"></i>
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono">High-Resolution Satellite Journey & First/Last Mile Route</h3>
+                <p class="text-[11px] text-slate-400">Nerul Railway Station arrival &rarr; Shaded Pedestrian Corridor &rarr; Stadium Gate 4 Ingress</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 font-bold border border-sky-400/20">
+                ESRI EARTH OBSERVATION
+              </span>
+              <button onclick="recenterVisitorSatMap()" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-900/40 text-xs font-mono font-semibold transition flex items-center space-x-1">
+                <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>
+                <span>Recenter Route</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="visitor-satellite-map" class="w-full h-80 rounded-2xl overflow-hidden border border-sky-400/30 shadow-xl relative bg-[#080c14]">
+            <!-- Leaflet Satellite Map -->
+          </div>
+
+          <!-- Route Milestones Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-950 flex items-center space-x-2.5">
+              <div class="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-400/40 flex items-center justify-center text-sky-300 shrink-0 font-bold">1</div>
+              <div>
+                <div class="text-[10px] text-slate-400">ARRIVAL POINT</div>
+                <div class="font-bold text-white">Nerul Railway Station (East)</div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-950 flex items-center space-x-2.5">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shrink-0 font-bold">2</div>
+              <div>
+                <div class="text-[10px] text-slate-400">SHADED CORRIDOR</div>
+                <div class="font-bold text-emerald-300">1.8 km Walk / Free Shuttle</div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-sky-950 flex items-center space-x-2.5">
+              <div class="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-400/40 flex items-center justify-center text-sky-300 shrink-0 font-bold">3</div>
+              <div>
+                <div class="text-[10px] text-slate-400">ENTRY TURNSTILE</div>
+                <div class="font-bold text-sky-400">Stadium Gate 4 (Bay 114)</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="visitor-preplans-grid">
@@ -452,11 +795,348 @@
         </div>
       </section>
 
+      <!-- ===================================================================== -->
+      <!-- MODAL: GUEST EVENT ENROLLMENT & PASS GENERATOR                        -->
+      <!-- ===================================================================== -->
+      <div id="enrollment-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="w-full max-w-xl rounded-3xl bg-slate-900 border border-sky-400/40 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[92vh] overflow-y-auto">
+          
+          <!-- Header -->
+          <div class="flex items-start justify-between border-b border-sky-950/80 pb-4">
+            <div class="space-y-1">
+              <div class="text-[10px] font-mono uppercase text-sky-400 font-bold tracking-wider flex items-center space-x-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>EVENT ENROLLMENT &amp; PASS GENERATOR</span>
+              </div>
+              <h3 class="text-xl font-black text-white" id="enroll-modal-title">Enroll in Event</h3>
+              <p class="text-xs text-slate-400 flex items-center space-x-1.5" id="enroll-modal-venue">
+                <i data-lucide="map-pin" class="w-3 h-3 text-sky-400"></i>
+                <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
+              </p>
+            </div>
+            <button type="button" onclick="closeEnrollmentModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition border border-sky-900/30">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Enrollment Form -->
+          <form onsubmit="handleConfirmEnrollment(event)" class="space-y-4 text-xs">
+            <input type="hidden" id="enroll-modal-event-id" value="">
+
+            <!-- Guest Name & Contact -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Passholder Full Name</label>
+                <input type="text" id="enroll-modal-name" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Contact Email</label>
+                <input type="email" id="enroll-modal-email" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+              </div>
+            </div>
+
+            <!-- Admission Pass Tier -->
+            <div class="space-y-2">
+              <label class="block font-bold text-slate-300">Select Admission Tier &amp; Ingress Portal</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="enroll-tier-options">
+                <label class="p-3 rounded-xl border border-sky-400/40 bg-sky-500/10 flex items-start space-x-2.5 cursor-pointer hover:border-sky-400 transition">
+                  <input type="radio" name="enroll-tier" value="Grandstand Pavilion Pass" checked class="mt-1 accent-sky-400">
+                  <div>
+                    <div class="font-bold text-white">Grandstand Pavilion Pass</div>
+                    <div class="text-[10px] text-slate-400">Gate 4 West &bull; Stands C/D &bull; Shaded</div>
+                  </div>
+                </label>
+                <label class="p-3 rounded-xl border border-sky-900/40 bg-slate-950 flex items-start space-x-2.5 cursor-pointer hover:border-sky-400 transition">
+                  <input type="radio" name="enroll-tier" value="Executive Club Box (VIP)" class="mt-1 accent-sky-400">
+                  <div>
+                    <div class="font-bold text-sky-300">Executive Club Box (VIP)</div>
+                    <div class="text-[10px] text-slate-400">Gate 2 VIP &bull; Fast-Track Concierge</div>
+                  </div>
+                </label>
+                <label class="p-3 rounded-xl border border-sky-900/40 bg-slate-950 flex items-start space-x-2.5 cursor-pointer hover:border-sky-400 transition">
+                  <input type="radio" name="enroll-tier" value="North Stand Lower Tier" class="mt-1 accent-sky-400">
+                  <div>
+                    <div class="font-bold text-white">North Stand Lower Tier</div>
+                    <div class="text-[10px] text-slate-400">Gate 3 &bull; Stands A/B &bull; Field View</div>
+                  </div>
+                </label>
+                <label class="p-3 rounded-xl border border-sky-900/40 bg-slate-950 flex items-start space-x-2.5 cursor-pointer hover:border-sky-400 transition">
+                  <input type="radio" name="enroll-tier" value="General Admission Terrace" class="mt-1 accent-sky-400">
+                  <div>
+                    <div class="font-bold text-white">General Admission Terrace</div>
+                    <div class="text-[10px] text-slate-400">Gate 7 East &bull; Elevated Panorama</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Seating Allocation & Transit Preference -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Seating Bay Preference</label>
+                <select id="enroll-modal-seat" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                  <option value="Stand C &bull; Row 14 &bull; Seat 48">Stand C &bull; Row 14 &bull; Seat 48 (West Concourse)</option>
+                  <option value="Stand C &bull; Row 12 &bull; Seat 22">Stand C &bull; Row 12 &bull; Seat 22 (Aisle View)</option>
+                  <option value="Stand D &bull; Row 08 &bull; Seat 15">Stand D &bull; Row 08 &bull; Seat 15 (Midfield)</option>
+                  <option value="Club Lounge &bull; Bay VIP-04">Club Lounge &bull; Bay VIP-04 (Air-conditioned)</option>
+                  <option value="Stand A &bull; Row 05 &bull; Seat 30">Stand A &bull; Row 05 &bull; Seat 30 (Lower Ring)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Transit Arrival Method</label>
+                <select id="enroll-modal-transit" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none focus:border-sky-400">
+                  <option value="Suburban Rail (Harbour Line to Nerul)">Suburban Rail (Harbour Line to Nerul)</option>
+                  <option value="NMMT Feeder AC Shuttle Loop">NMMT Feeder AC Shuttle Loop</option>
+                  <option value="Remote Park &amp; Ride (Wonders Park Plaza)">Remote Park &amp; Ride (Wonders Park Plaza)</option>
+                  <option value="Pedestrian Shaded Walkway (Local)">Pedestrian Shaded Walkway (Local)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Security & Geolocation Info -->
+            <div class="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-400/20 text-[11px] text-sky-300 flex items-start space-x-2.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-sky-400 shrink-0 mt-0.5"></i>
+              <span>Generating your pass syncs your unique barcode with the outer optical turnstiles and reserves your walking corridor &amp; shuttle transit window.</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end space-x-3 pt-3 border-t border-sky-950/80">
+              <button type="button" onclick="closeEnrollmentModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition">
+                Cancel
+              </button>
+              <button type="submit" class="px-5 py-2.5 rounded-xl btn-glacier font-black flex items-center space-x-2 shadow-lg shadow-sky-500/20">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Generate Official Digital Pass</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- MODAL: BOOKING CONFIRMATION & SMARTPHONE QR ACCESS                    -->
+      <!-- ===================================================================== -->
+      <div id="booking-qr-confirmation-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="w-full max-w-lg rounded-3xl bg-slate-900 border border-emerald-500/40 shadow-2xl p-6 sm:p-7 space-y-5 max-h-[92vh] overflow-y-auto relative">
+          
+          <!-- Top Close Icon -->
+          <button onclick="closeBookingQRModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Header -->
+          <div class="flex items-start space-x-3.5 border-b border-sky-950/80 pb-4 pr-8">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/10">
+              <i data-lucide="smartphone" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                  BOOKING CONFIRMED &bull; PASS ISSUED
+                </span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              </div>
+              <h3 class="text-lg font-black text-white mt-1 leading-snug" id="book-qr-title">IPL Semi-Final &amp; Live Music Fest</h3>
+              <p class="text-xs text-slate-400 font-mono mt-0.5" id="book-qr-subtitle">Gate 4 • Stand C • Holder: George Miller</p>
+            </div>
+          </div>
+
+          <!-- Central QR Code Visual Display -->
+          <div class="p-5 rounded-2xl bg-slate-950 border border-sky-950 flex flex-col items-center space-y-3.5">
+            <span class="text-[11px] font-mono text-cyan-300 font-bold tracking-wide">
+              SCAN WITH YOUR SMARTPHONE CAMERA
+            </span>
+
+            <!-- High-Contrast Clean QR Code Container -->
+            <div class="p-3 bg-white rounded-2xl shadow-xl shadow-black/60 flex items-center justify-center relative">
+              <img id="book-qr-img" src="" alt="Digital Pass QR Code" class="w-48 h-48 rounded-xl block" />
+            </div>
+
+            <!-- Pass ID & Instructions -->
+            <div class="text-center font-mono space-y-1">
+              <div class="text-sm font-black text-white tracking-widest" id="book-qr-code-text">TKT-DYP-2026-94812</div>
+              <div class="text-[11px] text-slate-400">Instantly loads your verified pass &amp; satellite GPS journey</div>
+            </div>
+
+            <!-- Link copy bar -->
+            <div class="w-full flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-sky-900/40 text-xs font-mono">
+              <span class="text-emerald-400 font-mono truncate text-[11px] select-all max-w-[240px]" id="book-qr-url-text">http://192.168.108.130:8000/visitor-app.html...</span>
+              <button onclick="copyBookingQRUrl()" id="book-qr-copy-btn" class="px-2.5 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 text-[10px] font-bold transition flex items-center space-x-1 shrink-0">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feature Guidance Bullets -->
+          <div class="grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-300">
+            <div class="p-2 rounded-xl bg-slate-950/70 border border-sky-950 flex items-center space-x-2">
+              <i data-lucide="navigation" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+              <span>Live GPS &amp; Satellite Route</span>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-950/70 border border-sky-950 flex items-center space-x-2">
+              <i data-lucide="scan-line" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+              <span>Optical Gate Scanner Ready</span>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-950/70 border border-sky-950 flex items-center space-x-2">
+              <i data-lucide="bus" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+              <span>Feeder Shuttle Scheduling</span>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-950/70 border border-sky-950 flex items-center space-x-2">
+              <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
+              <span>1-Tap Incident SOS Relay</span>
+            </div>
+          </div>
+
+          <!-- Modal Action Controls -->
+          <div class="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-sky-950/80">
+            <a id="book-qr-open-btn" href="visitor-app.html" target="_blank" class="w-full sm:flex-1 py-3 rounded-2xl btn-glacier text-xs font-black text-center flex items-center justify-center space-x-2 shadow-lg shadow-sky-500/20">
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+              <span>Open in Visitor Mobile App</span>
+            </a>
+            <button onclick="closeBookingQRModal()" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition">
+              Done / Close
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </main>
 
   </div>
 
   <script>
+    let allVisitorEvents = [];
+    let currentActiveTicket = null;
+    let currentEventFilter = 'ALL';
+    let visitorSatMap = null;
+
+    // Master 8-Stage Chronological Day-of-Event Timeline
+    const defaultTimelineMilestones = [
+      {
+        step: 1,
+        time: "09:30 AM",
+        title: "Pre-Departure & Security Preparation",
+        location: "Guest Origin Geolocation (Dadar East)",
+        badge: "ORIGIN PREP",
+        badgeColor: "border-sky-400/30 bg-sky-500/10 text-sky-300",
+        icon: "shield-alert",
+        status: "COMPLETED",
+        lat: 19.0178,
+        lng: 72.8478,
+        desc: "Verify digital ticket pass barcode on mobile device. Ensure bags comply strictly with the transparent bag policy. Carry valid government photo ID for outer perimeter turnstile verification.",
+        actionText: "Verify Bag & Pass Policy",
+        actionFn: "switchVisSection('vis-sec-ticket')"
+      },
+      {
+        step: 2,
+        time: "10:48 AM",
+        title: "Suburban Rail Boarding (Harbour Line Local)",
+        location: "Dadar / CSMT to Nerul Local (12-Car Fast)",
+        badge: "TRANSIT BOARDING",
+        badgeColor: "border-sky-400/30 bg-sky-500/10 text-sky-300",
+        icon: "train",
+        status: "RECOMMENDED",
+        lat: 19.0330,
+        lng: 73.0185,
+        desc: "Board the 12-car Harbour Line fast local. ChronosFlow predictive headway model projects 42% lower crush density on this designated slot compared to later departures.",
+        actionText: "Pinpoint Nerul Station",
+        actionFn: "pinpointTimelineOnMap(19.0330, 73.0185, 'Nerul Railway Station (Harbour Line Arrival)')"
+      },
+      {
+        step: 3,
+        time: "11:32 AM",
+        title: "Arrival at Nerul Railway Station (East Forecourt)",
+        location: "Platform 2 East Dispersal Bypass",
+        badge: "TRANSIT HUB",
+        badgeColor: "border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
+        icon: "map-pin",
+        status: "ON SCHEDULE",
+        lat: 19.0330,
+        lng: 73.0185,
+        desc: "Alight and take the East skywalk exit towards Nerul Depot Bay 2. ChronosFlow marshals in sky-blue vests provide QR wayfinding maps and water bottles.",
+        actionText: "Satellite View of Station",
+        actionFn: "pinpointTimelineOnMap(19.0330, 73.0185, 'Nerul Railway Station East Exit')"
+      },
+      {
+        step: 4,
+        time: "11:35 - 11:55 AM",
+        title: "Shaded Pedestrian Corridor / Free AC Shuttle Loop",
+        location: "LP Junction to Stadium West Perimeter",
+        badge: "FIRST/LAST MILE",
+        badgeColor: "border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
+        icon: "footprints",
+        status: "CANOPY ACTIVE",
+        lat: 19.0400,
+        lng: 73.0220,
+        desc: "1.8 km continuous canopy walk featuring misting hydration fans every 200m. Alternatively, free 3-minute NMMT electric shuttles depart continuously from Bay 2 directly to Gate 4.",
+        actionText: "Trace Shaded Corridor",
+        actionFn: "pinpointTimelineOnMap(19.0400, 73.0220, 'LP Junction Shaded Pedestrian Corridor')"
+      },
+      {
+        step: 5,
+        time: "12:00 PM",
+        title: "Perimeter Security & Optical Turnstile Clearance",
+        location: "Dr. D.Y. Patil Stadium Gate 4 (West Wing)",
+        badge: "INGRESS ACCESS",
+        badgeColor: "border-sky-400/30 bg-sky-500/10 text-sky-300",
+        icon: "scan-line",
+        status: "FLOW OPTIMAL",
+        lat: 19.0435,
+        lng: 73.0253,
+        desc: "Present your scannable digital barcode at the high-speed optical turnstile. 4-second clearance throughput per visitor. Bag X-ray scanners pre-cleared for smooth flow.",
+        actionText: "Pinpoint Gate 4 Ingress",
+        actionFn: "pinpointTimelineOnMap(19.0435, 73.0253, 'Stadium Gate 4 Ingress Turnstiles')"
+      },
+      {
+        step: 6,
+        time: "12:15 PM",
+        title: "In-Bowl Concourse & Seating Allocation",
+        location: "Stand C • Row 14 • Seat 48 (Bay 114)",
+        badge: "SEATING CONCOURSE",
+        badgeColor: "border-sky-400/30 bg-sky-500/10 text-sky-300",
+        icon: "armchair",
+        status: "SEATS OPEN",
+        lat: 19.0435,
+        lng: 73.0253,
+        desc: "Take Concourse Escalator 3 to Level 2. Complimentary chilled electrolyte water pods located 25m from Bay 114 entrance. Pre-order snacks via the app.",
+        actionText: "View My Digital Pass",
+        actionFn: "switchVisSection('vis-sec-ticket')"
+      },
+      {
+        step: 7,
+        time: "01:30 PM - 09:30 PM",
+        title: "Event Fixture Live & Infield Experience",
+        location: "DY Patil Stadium Main Arena",
+        badge: "MAIN EVENT",
+        badgeColor: "border-amber-400/30 bg-amber-500/10 text-amber-300",
+        icon: "trophy",
+        status: "CHAMPIONSHIP",
+        lat: 19.0435,
+        lng: 73.0253,
+        desc: "Live match action and stadium entertainment. Concourse food stalls with mobile QR order-to-seat delivery. Medical trauma center adjacent to Stand B concourse.",
+        actionText: "Check Live Feed",
+        actionFn: "switchVisSection('vis-sec-live')"
+      },
+      {
+        step: 8,
+        time: "09:45 PM",
+        title: "Staged Dispersal & Feeder Egress Loop",
+        location: "Gate 4 West Plaza to Seawoods Egress Loop",
+        badge: "EGRESS CONTROL",
+        badgeColor: "border-rose-400/30 bg-rose-500/10 text-rose-300",
+        icon: "log-out",
+        status: "SCHEDULED",
+        lat: 19.0190,
+        lng: 73.0160,
+        desc: "To bypass Nerul Station peak congestion, board the direct Seawoods feeder shuttle loop from Gate 4 exit for seamless 5-minute transit to Seawoods-Darave station.",
+        actionText: "Pinpoint Seawoods Loop",
+        actionFn: "pinpointTimelineOnMap(19.0190, 73.0160, 'Seawoods Egress Shuttle Loop')"
+      }
+    ];
+
     function switchVisSection(sectionId) {
       document.querySelectorAll('.vis-section').forEach(sec => sec.classList.add('hidden'));
 
@@ -478,16 +1158,619 @@
       if (sectionId === 'vis-sec-profile') {
         breadcrumb.innerText = "PROFILE & GEOLOCATION";
         title.innerText = "Visitor Registration & Origin Geolocation";
+      } else if (sectionId === 'vis-sec-events') {
+        breadcrumb.innerText = "EVENT DIRECTORY";
+        title.innerText = "Browse Available Events & Enroll";
+        renderVisitorEventsList();
       } else if (sectionId === 'vis-sec-ticket') {
-        breadcrumb.innerText = "EVENT PASS";
+        breadcrumb.innerText = "DIGITAL ADMISSION PASS";
         title.innerText = "My Booked Event & Entry Pass";
+        renderVisitorActiveTicketCard();
+      } else if (sectionId === 'vis-sec-timeline') {
+        breadcrumb.innerText = "DAY-OF-EVENT TIMELINE";
+        title.innerText = "Complete End-to-End Itinerary & Geolocation Timeline";
+        renderTimelineSteps();
       } else if (sectionId === 'vis-sec-preplans') {
-        breadcrumb.innerText = "PRE-PLANNED ITINERARY";
+        breadcrumb.innerText = "SATELLITE NAVIGATION";
         title.innerText = "The Pre-Plans Decided for You";
+        setTimeout(initVisitorSatMap, 120);
       } else if (sectionId === 'vis-sec-live') {
         breadcrumb.innerText = "LIVE DAY-OF-EVENT";
         title.innerText = "Current Plans & Live Queue Advisories";
       }
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // VISITOR GENUINE ESRI SATELLITE ITINERARY ROUTE MAP
+    // =========================================================================
+    function initVisitorSatMap() {
+      const container = document.getElementById('visitor-satellite-map');
+      if (!container || typeof L === 'undefined') return;
+
+      if (visitorSatMap) {
+        visitorSatMap.remove();
+        visitorSatMap = null;
+      }
+
+      // Center between Nerul Station and Stadium
+      visitorSatMap = L.map('visitor-satellite-map', {
+        center: [19.0382, 73.0219],
+        zoom: 15,
+        minZoom: 12,
+        maxZoom: 19,
+        zoomControl: true,
+        attributionControl: false
+      });
+
+      // 1. ESRI World Imagery Base (True Earth Orthophoto)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Earthstar Geographics'
+      }).addTo(visitorSatMap);
+
+      // 2. Reference Overlay (Roads & Labels)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        opacity: 0.82
+      }).addTo(visitorSatMap);
+
+      // 3. Shaded Walking Corridor Polyline (Nerul Station -> LP Junction -> Gate 4)
+      const routeCoords = [
+        [19.0330, 73.0185], // Nerul Station
+        [19.0360, 73.0205], // East Corridor
+        [19.0400, 73.0220], // LP Junction Overhead Walkway
+        [19.0430, 73.0245], // Campus Perimeter
+        [19.0435, 73.0253]  // Gate 4 Turnstile
+      ];
+
+      const routePolyline = L.polyline(routeCoords, {
+        color: '#38bdf8',
+        weight: 4,
+        opacity: 0.9,
+        dashArray: '8, 8'
+      }).addTo(visitorSatMap);
+
+      routePolyline.bindTooltip("1.8 km Official Shaded Walking Corridor & NMMT Shuttle Route", {
+        permanent: false,
+        direction: 'center'
+      });
+
+      // 4. Tactical Milestone Pins
+      const milestones = [
+        {
+          lat: 19.0330, lng: 73.0185,
+          title: "Nerul Railway Station",
+          sub: "Arrival Point (Harbour Line Local)",
+          icon: "🚆", color: "#38bdf8"
+        },
+        {
+          lat: 19.0400, lng: 73.0220,
+          title: "LP Junction Overhead Corridor",
+          sub: "Shaded Green Walkway & Misting Pods",
+          icon: "🚶", color: "#34d399"
+        },
+        {
+          lat: 19.0435, lng: 73.0253,
+          title: "Dr. D.Y. Patil Stadium (Gate 4)",
+          sub: "Designated Ingress Turnstiles & Bay 114",
+          icon: "🏟️", color: "#38bdf8"
+        },
+        {
+          lat: 19.0380, lng: 73.0240,
+          title: "Sector 21 Hospitality Cluster",
+          sub: "Guest Lodging Zone (1.4 km from venue)",
+          icon: "🏨", color: "#7dd3fc"
+        },
+        {
+          lat: 19.0270, lng: 73.0225,
+          title: "Wonders Park Remote Parking",
+          sub: "Park & Ride Buffer (1,500 spaces)",
+          icon: "🅿️", color: "#f59e0b"
+        },
+        {
+          lat: 19.0190, lng: 73.0160,
+          title: "Seawoods Egress Shuttle Loop",
+          sub: "Staged Egress Feeder to Seawoods Station",
+          icon: "🚌", color: "#f43f5e"
+        }
+      ];
+
+      milestones.forEach(m => {
+        const pinIcon = L.divIcon({
+          className: 'vis-sat-pin',
+          html: `
+            <div style="display:flex; flex-direction:column; align-items:center; transform: translate(-50%, -50%); cursor:pointer;">
+              <div style="width:28px; height:28px; border-radius:8px; background:rgba(15,23,42,0.95); border:2px solid ${m.color}; color:${m.color}; display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 3px 12px rgba(0,0,0,0.85);">
+                ${m.icon}
+              </div>
+              <div style="margin-top:2px; font-size:9px; font-family:monospace; font-weight:bold; color:#fff; background:rgba(8,12,20,0.95); padding:1px 6px; border-radius:4px; border:1px solid ${m.color}88; white-space:nowrap;">
+                ${m.title}
+              </div>
+            </div>
+          `,
+          iconSize: [110, 45],
+          iconAnchor: [55, 22]
+        });
+
+        const marker = L.marker([m.lat, m.lng], { icon: pinIcon }).addTo(visitorSatMap);
+        marker.bindPopup(`
+          <div style="padding:6px; font-family:sans-serif; min-width:180px;">
+            <div style="font-weight:bold; font-size:12px; color:${m.color};">${m.title}</div>
+            <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">${m.sub}</div>
+            <div style="font-size:10px; color:#38bdf8; font-family:monospace; margin-top:4px;">GPS: ${m.lat.toFixed(4)}° N, ${m.lng.toFixed(4)}° E</div>
+          </div>
+        `);
+      });
+
+      // Fit bounds
+      visitorSatMap.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+
+      setTimeout(() => {
+        if (visitorSatMap) visitorSatMap.invalidateSize();
+      }, 200);
+    }
+
+    function recenterVisitorSatMap() {
+      if (visitorSatMap) {
+        visitorSatMap.flyTo([19.0382, 73.0219], 15, { duration: 1.0 });
+      }
+    }
+
+    function pinpointTimelineOnMap(lat, lng, title) {
+      switchVisSection('vis-sec-preplans');
+      setTimeout(() => {
+        if (visitorSatMap) {
+          visitorSatMap.invalidateSize();
+          visitorSatMap.flyTo([lat, lng], 17, { duration: 1.2 });
+          L.popup({ offset: [0, -15] })
+            .setLatLng([lat, lng])
+            .setContent(`
+              <div style="padding:6px; font-family:sans-serif; text-align:left;">
+                <div style="font-size:10px; font-weight:bold; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px;">Milestone Geolocation</div>
+                <div style="font-size:12px; font-weight:bold; color:#ffffff; margin-top:2px;">${title}</div>
+                <div style="font-size:10px; color:#94a3b8; font-family:monospace; margin-top:4px;">GPS: ${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E</div>
+              </div>
+            `)
+            .openOn(visitorSatMap);
+        }
+      }, 250);
+    }
+
+    // =========================================================================
+    // VISITOR EVENTS DIRECTORY & ENROLLMENT LOGIC
+    // =========================================================================
+    async function renderVisitorEventsList() {
+      const container = document.getElementById('visitor-events-grid');
+      if (!container) return;
+
+      if (window.ChronosSupabase && window.ChronosSupabase.getPreplans) {
+        allVisitorEvents = await window.ChronosSupabase.getPreplans();
+      } else {
+        allVisitorEvents = [];
+      }
+
+      currentActiveTicket = await window.ChronosSupabase.getVisitorActiveTicket();
+
+      // Update badge counts
+      const badgeCount = document.getElementById('badge-events-count');
+      if (badgeCount) badgeCount.innerText = `${allVisitorEvents.length} Available`;
+      const totalBadge = document.getElementById('events-total-badge');
+      if (totalBadge) totalBadge.innerText = `${allVisitorEvents.length} Fixtures Active`;
+
+      filterVisitorEvents();
+    }
+
+    function setEventFilter(filter) {
+      currentEventFilter = filter;
+      document.querySelectorAll('.event-filter-pill').forEach(btn => {
+        btn.className = "event-filter-pill px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition bg-slate-950 text-slate-400 border-sky-900/30 hover:text-white";
+      });
+      const activeBtn = document.getElementById('filter-btn-' + filter);
+      if (activeBtn) {
+        activeBtn.className = "event-filter-pill active px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition bg-sky-500/20 text-sky-300 border-sky-400/40";
+      }
+      filterVisitorEvents();
+    }
+
+    function filterVisitorEvents() {
+      const container = document.getElementById('visitor-events-grid');
+      if (!container) return;
+
+      const q = (document.getElementById('vis-event-search')?.value || '').toLowerCase();
+      
+      const filtered = allVisitorEvents.filter(evt => {
+        const matchesQuery = !q || 
+          (evt.title && evt.title.toLowerCase().includes(q)) ||
+          (evt.venueName && evt.venueName.toLowerCase().includes(q)) ||
+          (evt.city && evt.city.toLowerCase().includes(q));
+
+        if (!matchesQuery) return false;
+
+        if (currentEventFilter === 'SPORTS') {
+          return evt.eventType === 'CRICKET' || evt.eventType === 'SPORTS' || (evt.title && evt.title.toLowerCase().includes('cricket'));
+        } else if (currentEventFilter === 'FESTIVAL') {
+          return evt.eventType === 'CONCERT' || evt.eventType === 'FESTIVAL' || (evt.title && evt.title.toLowerCase().includes('fest'));
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full p-8 text-center rounded-2xl bg-slate-900/50 border border-sky-900/30 text-slate-400 text-xs">
+            <i data-lucide="calendar-x" class="w-8 h-8 text-slate-500 mx-auto mb-2"></i>
+            <div>No matching events found. Try adjusting your search query.</div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(evt => {
+        const isEnrolled = currentActiveTicket && currentActiveTicket.eventId === evt.id;
+        const capacityNum = parseInt(evt.venueCapacity) || 55000;
+        const visitorsNum = parseInt(evt.expectedVisitors) || 50000;
+        const pct = Math.min(100, Math.round((visitorsNum / capacityNum) * 100));
+
+        return `
+          <div class="dark-panel rounded-3xl p-5 border border-sky-900/40 hover:border-sky-400/40 transition-all flex flex-col justify-between space-y-4 group bg-slate-900/90 shadow-xl ${isEnrolled ? 'ring-1 ring-emerald-500/50' : ''}">
+            
+            <div class="space-y-3">
+              <!-- Header Badges -->
+              <div class="flex items-center justify-between text-[10px] font-mono">
+                <span class="px-2.5 py-0.5 rounded-full font-bold bg-sky-500/10 text-sky-300 border border-sky-400/20">
+                  ${evt.city || 'Navi Mumbai'} &bull; ${evt.venueArea || 'Sector 7'}
+                </span>
+                ${isEnrolled ? `
+                  <span class="px-2 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>PASS ACTIVE</span>
+                  </span>
+                ` : `
+                  <span class="text-slate-400">${evt.duration || '4-Day Fixture'}</span>
+                `}
+              </div>
+
+              <!-- Event Title -->
+              <div>
+                <h3 class="text-base font-black text-white group-hover:text-sky-300 transition-colors line-clamp-2">
+                  ${evt.title || evt.venueName}
+                </h3>
+                <div class="flex items-center space-x-1.5 text-xs text-slate-400 mt-1">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400 shrink-0"></i>
+                  <span class="truncate">${evt.venueName}</span>
+                </div>
+              </div>
+
+              <!-- Capacity & Attendance -->
+              <div class="space-y-1.5 text-xs font-mono pt-2 border-t border-sky-950/60">
+                <div class="flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">Crowd Capacity:</span>
+                  <span class="font-bold text-white">${visitorsNum.toLocaleString()} / ${capacityNum.toLocaleString()} (${pct}%)</span>
+                </div>
+                <div class="w-full h-1.5 rounded-full bg-slate-950 overflow-hidden">
+                  <div class="h-full ${pct > 90 ? 'bg-amber-400' : 'bg-sky-400'}" style="width: ${pct}%"></div>
+                </div>
+              </div>
+
+              <!-- Feature Chips -->
+              <div class="flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-300">
+                <span class="px-2 py-0.5 rounded bg-slate-950 border border-sky-900/30 flex items-center space-x-1">
+                  <i data-lucide="train" class="w-3 h-3 text-sky-400"></i>
+                  <span>Rail Corridor</span>
+                </span>
+                <span class="px-2 py-0.5 rounded bg-slate-950 border border-sky-900/30 flex items-center space-x-1">
+                  <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
+                  <span>Biometric Optical</span>
+                </span>
+                <span class="px-2 py-0.5 rounded bg-slate-950 border border-sky-900/30 flex items-center space-x-1">
+                  <i data-lucide="umbrella" class="w-3 h-3 text-sky-400"></i>
+                  <span>Shaded Pathway</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-3 border-t border-sky-950/80 space-y-2">
+              ${isEnrolled ? `
+                <div class="flex items-center space-x-2">
+                  <button 
+                    onclick="switchVisSection('vis-sec-ticket')" 
+                    class="flex-1 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition flex items-center justify-center space-x-1.5"
+                  >
+                    <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
+                    <span>View Pass</span>
+                  </button>
+                  <button 
+                    onclick="showEventQuickQR('${evt.id}')" 
+                    title="Open Handset QR Pass"
+                    class="py-2 px-3 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 text-xs font-bold transition flex items-center space-x-1"
+                  >
+                    <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Phone QR</span>
+                  </button>
+                  <button 
+                    onclick="openEnrollmentModal('${evt.id}')" 
+                    title="Change Seating or Pass Tier"
+                    class="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 border border-sky-900/30 text-xs transition"
+                  >
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              ` : `
+                <div class="flex items-center space-x-2">
+                  <button 
+                    onclick="openEnrollmentModal('${evt.id}')" 
+                    class="flex-1 py-2 rounded-xl btn-glacier text-xs font-black transition flex items-center justify-center space-x-1.5 shadow-md shadow-sky-500/10"
+                  >
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>Enroll &amp; Pass</span>
+                  </button>
+                  <button 
+                    onclick="showEventQuickQR('${evt.id}')" 
+                    title="Mobile QR Pass Preview"
+                    class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-sky-900/30 text-xs transition"
+                  >
+                    <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button 
+                    onclick="pinpointTimelineOnMap(${evt.lat || 19.0435}, ${evt.lng || 73.0253}, '${evt.venueName || evt.title}')" 
+                    title="Pinpoint Venue on Satellite Map"
+                    class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-sky-900/30 text-xs transition"
+                  >
+                    <i data-lucide="satellite" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              `}
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openEnrollmentModal(eventId) {
+      const modal = document.getElementById('enrollment-modal');
+      if (!modal) return;
+
+      const event = allVisitorEvents.find(e => e.id === eventId) || allVisitorEvents[0];
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+
+      document.getElementById('enroll-modal-event-id').value = event ? event.id : '';
+      document.getElementById('enroll-modal-title').innerText = event ? (event.title || event.venueName) : "Event Enrollment";
+      document.getElementById('enroll-modal-venue').innerHTML = `
+        <i data-lucide="map-pin" class="w-3 h-3 text-sky-400"></i>
+        <span>${event ? event.venueName : 'Venue'} &bull; ${event ? (event.venueArea || event.city) : ''}</span>
+      `;
+
+      if (currentUser) {
+        if (currentUser.fullName) document.getElementById('enroll-modal-name').value = currentUser.fullName;
+        if (currentUser.email) document.getElementById('enroll-modal-email').value = currentUser.email;
+      }
+
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeEnrollmentModal() {
+      const modal = document.getElementById('enrollment-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleConfirmEnrollment(e) {
+      e.preventDefault();
+      const eventId = document.getElementById('enroll-modal-event-id').value;
+      const fullName = document.getElementById('enroll-modal-name').value;
+      const email = document.getElementById('enroll-modal-email').value;
+      const tierEl = document.querySelector('input[name="enroll-tier"]:checked');
+      const tier = tierEl ? tierEl.value : 'Grandstand Pavilion Pass';
+      const seat = document.getElementById('enroll-modal-seat').value;
+      const transit = document.getElementById('enroll-modal-transit').value;
+
+      // Determine Gate Entrance based on tier
+      let gate = 'Gate 4 (West Wing)';
+      if (tier.includes('VIP')) gate = 'Gate 2 (VIP Portal)';
+      else if (tier.includes('North Stand')) gate = 'Gate 3 (North Wing)';
+      else if (tier.includes('Terrace')) gate = 'Gate 7 (East Wing)';
+
+      const enrollmentPayload = {
+        eventId,
+        tier,
+        gate,
+        seat,
+        transitPreference: transit
+      };
+
+      const result = await window.ChronosSupabase.enrollVisitorInEvent(enrollmentPayload);
+
+      closeEnrollmentModal();
+
+      const ticketId = result?.ticketId || ('TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase());
+      
+      // Open Booking QR Confirmation Modal with Direct Mobile Link!
+      openBookingQRConfirmationModal(eventId, fullName, tier, gate, seat, ticketId);
+
+      await loadVisitorDashboard();
+    }
+
+    function openBookingQRConfirmationModal(eventId, fullName, tier, gate, seat, ticketId) {
+      const event = allVisitorEvents.find(e => e.id === eventId) || allVisitorEvents[0];
+      const titleEl = document.getElementById('book-qr-title');
+      const subtitleEl = document.getElementById('book-qr-subtitle');
+      const qrImg = document.getElementById('book-qr-img');
+      const codeText = document.getElementById('book-qr-code-text');
+      const openBtn = document.getElementById('book-qr-open-btn');
+      const urlText = document.getElementById('book-qr-url-text');
+
+      const host = (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') ? window.location.host : '192.168.108.130:8000';
+      const mobileUrl = `http://${host}/visitor-app.html?event=${encodeURIComponent(eventId || 'dypatil_nerul')}&user=${encodeURIComponent(fullName || 'George Miller')}&ticket=${encodeURIComponent(ticketId)}&gate=${encodeURIComponent(gate || 'Gate 4')}&seat=${encodeURIComponent(seat || 'Stand C')}&tier=${encodeURIComponent(tier || 'Pass')}`;
+
+      if (titleEl) titleEl.innerText = event ? (event.title || event.venueName) : "Event Enrollment";
+      if (subtitleEl) subtitleEl.innerText = `${gate || 'Gate 4'} • ${seat || 'Stand C'} • Holder: ${fullName || 'George Miller'}`;
+      if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(mobileUrl)}`;
+      if (codeText) codeText.innerText = ticketId;
+      if (openBtn) openBtn.href = mobileUrl;
+      if (urlText) urlText.innerText = mobileUrl;
+
+      document.getElementById('booking-qr-confirmation-modal')?.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    window.copyBookingQRUrl = function() {
+      const openBtn = document.getElementById('book-qr-open-btn');
+      if (openBtn && openBtn.href) {
+        navigator.clipboard.writeText(openBtn.href).then(() => {
+          const copyBtn = document.getElementById('book-qr-copy-btn');
+          if (copyBtn) copyBtn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">Link Copied!</span>';
+          lucide.createIcons();
+          setTimeout(() => {
+            if (copyBtn) copyBtn.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copy Link</span>';
+            lucide.createIcons();
+          }, 2500);
+        });
+      }
+    };
+
+    window.openCurrentTicketQRModal = function() {
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+      const fullName = currentUser?.fullName || "George Miller";
+      const eventId = currentActiveTicket?.eventId || "dypatil_nerul";
+      const tier = currentActiveTicket?.tier || "Grandstand Pavilion Pass";
+      const gate = currentActiveTicket?.gate || "Gate 4 (West Wing)";
+      const seat = currentActiveTicket?.seat || "Stand C • Row 14 • Seat 48";
+      const ticketId = currentActiveTicket?.ticketId || (currentUser?.ticketId || "TKT-DYP-2026-94812");
+
+      openBookingQRConfirmationModal(eventId, fullName, tier, gate, seat, ticketId);
+    };
+
+    window.showEventQuickQR = function(eventId) {
+      const event = allVisitorEvents.find(e => e.id === eventId) || allVisitorEvents[0];
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+      const fullName = currentUser?.fullName || "George Miller";
+      
+      let ticketId = currentActiveTicket?.ticketId;
+      let gate = currentActiveTicket?.gate || "Gate 4 (West Wing)";
+      let seat = currentActiveTicket?.seat || "Stand C • Row 14 • Seat 48";
+      let tier = currentActiveTicket?.tier || "Confirmed Entry Pass";
+
+      if (!ticketId || currentActiveTicket?.eventId !== eventId) {
+        ticketId = 'TKT-' + (event?.id ? event.id.substring(0, 3).toUpperCase() : 'EVT') + '-2026-' + Math.floor(10000 + Math.random() * 90000);
+        if (eventId.includes('wankhede')) {
+          gate = "Gate 2 (Vinoo Mankad)";
+          seat = "Sunil Gavaskar Pavilion • Row 08 • #24";
+          tier = "Member Grandstand";
+        } else if (eventId.includes('modi') || eventId.includes('ahmedabad')) {
+          gate = "Gate 1 (Grand North Plaza)";
+          seat = "Club Concourse • Row 05 • #112";
+          tier = "Super Sunday Final Pass";
+        }
+      }
+
+      openBookingQRConfirmationModal(eventId, fullName, tier, gate, seat, ticketId);
+    };
+
+    function closeBookingQRModal() {
+      document.getElementById('booking-qr-confirmation-modal')?.classList.add('hidden');
+      switchVisSection('vis-sec-ticket');
+    }
+
+    async function renderVisitorActiveTicketCard() {
+      currentActiveTicket = await window.ChronosSupabase.getVisitorActiveTicket();
+      if (!currentActiveTicket) return;
+
+      const currentUser = window.ChronosSupabase ? window.ChronosSupabase.getCurrentUser() : null;
+
+      const titleEl = document.getElementById('ticket-event-title');
+      if (titleEl) titleEl.innerText = currentActiveTicket.eventTitle || "Championship Trophy: 4-Day Cricket Fixture";
+
+      const venueEl = document.getElementById('ticket-venue-name');
+      if (venueEl) venueEl.innerText = `${currentActiveTicket.venueName}, ${currentActiveTicket.venueArea || ''} ${currentActiveTicket.city || ''}`.trim();
+
+      const idEl = document.getElementById('ticket-id');
+      if (idEl) idEl.innerText = currentActiveTicket.ticketId;
+
+      const tierEl = document.getElementById('ticket-tier-badge');
+      if (tierEl) tierEl.innerText = (currentActiveTicket.tier || "GRANDSTAND PAVILION PASS").toUpperCase();
+
+      const holderEl = document.getElementById('ticket-holder-name');
+      if (holderEl) holderEl.innerText = "Holder: " + (currentUser?.fullName || "George Miller");
+
+      const gateEl = document.getElementById('ticket-gate');
+      if (gateEl) gateEl.innerText = currentActiveTicket.gate || "Gate 4 (West Wing)";
+
+      const seatEl = document.getElementById('ticket-seat');
+      if (seatEl) seatEl.innerText = currentActiveTicket.seat || "Stand C • Row 14 • Seat 48";
+
+      const gateTimeEl = document.getElementById('ticket-gate-time');
+      if (gateTimeEl) gateTimeEl.innerText = currentActiveTicket.gateOpeningTime || "11:30 AM";
+
+      const startTimeEl = document.getElementById('ticket-start-time');
+      if (startTimeEl) startTimeEl.innerText = currentActiveTicket.matchStartTime || "01:30 PM";
+
+      const qrHashEl = document.getElementById('ticket-qr-hash');
+      if (qrHashEl) qrHashEl.innerText = currentActiveTicket.qrData || `CHRONOS-PASS-${currentActiveTicket.ticketId}`;
+
+      const barcodeNumEl = document.getElementById('ticket-barcode-num');
+      if (barcodeNumEl) barcodeNumEl.innerText = `2026 ${currentActiveTicket.ticketId.replace(/[^0-9]/g, '') || '9481'} 0435 114`;
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // DAY-OF-EVENT TIMELINE RENDERING
+    // =========================================================================
+    function renderTimelineSteps() {
+      const container = document.getElementById('visitor-timeline-steps');
+      if (!container) return;
+
+      container.innerHTML = defaultTimelineMilestones.map((m, idx) => {
+        return `
+          <div class="dark-panel rounded-2xl p-5 border border-sky-900/30 hover:border-sky-400/40 transition space-y-3 bg-slate-900/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-sky-950/60 pb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/30 text-sky-300 font-mono font-black flex items-center justify-center text-xs shrink-0">
+                  ${m.step}
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-mono font-bold text-sky-400">${m.time}</span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full border ${m.badgeColor} font-bold">${m.badge}</span>
+                  </div>
+                  <h4 class="text-sm font-bold text-white mt-0.5">${m.title}</h4>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-mono text-slate-400 flex items-center space-x-1">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-sky-400"></i>
+                  <span>${m.location}</span>
+                </span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              ${m.desc}
+            </p>
+
+            <div class="flex items-center justify-between pt-2 border-t border-sky-950/40 text-xs">
+              <div class="text-[10px] font-mono text-slate-500">
+                GPS Anchor: <span class="text-sky-400">${m.lat.toFixed(4)}° N, ${m.lng.toFixed(4)}° E</span>
+              </div>
+
+              <button 
+                onclick="${m.actionFn}" 
+                class="px-3 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-400/30 text-xs font-mono font-bold flex items-center space-x-1.5 transition"
+              >
+                <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>
+                <span>${m.actionText}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
 
       lucide.createIcons();
     }
@@ -557,16 +1840,14 @@
         if (currentUser.ticketId) {
           document.getElementById('vis-reg-ticket').value = currentUser.ticketId;
           document.getElementById('vis-sidebar-pass').innerText = "Pass: " + currentUser.ticketId;
-          document.getElementById('ticket-id').innerText = currentUser.ticketId;
+          const ticketIdEl = document.getElementById('ticket-id');
+          if (ticketIdEl) ticketIdEl.innerText = currentUser.ticketId;
         }
       }
 
-      const data = await window.ChronosSupabase.getVisitorData();
-      
-      document.getElementById('ticket-event-title').innerText = data.event.title;
-      document.getElementById('ticket-venue-name').innerText = `${data.event.venue}, ${data.event.location}`;
-      document.getElementById('ticket-gate').innerText = currentUser?.gate || data.event.gate;
-      document.getElementById('ticket-seat').innerHTML = currentUser?.seat || data.event.seat;
+      await renderVisitorEventsList();
+      await renderVisitorActiveTicketCard();
+      renderTimelineSteps();
       
       lucide.createIcons();
     }

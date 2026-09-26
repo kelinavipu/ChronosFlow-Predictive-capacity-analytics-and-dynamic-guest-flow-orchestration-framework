@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ChronosFlow Guest — Visitor Mobile Companion</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet Satellite Map Engine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Supabase & Shared Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <!-- Calm Glacier Design System -->
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Native Mobile App Experience */
+    body {
+      background-color: #04070e;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Smartphone Mockup Wrapper for Desktop */
+    @media (min-width: 640px) {
+      .mobile-device-shell {
+        max-width: 412px;
+        height: 860px;
+        max-height: 92vh;
+        border: 10px solid #1e293b;
+        border-radius: 48px;
+        box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.9), 0 0 40px rgba(56, 189, 248, 0.15);
+      }
+    }
+
+    @media (max-width: 639px) {
+      .mobile-device-shell {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+      }
+    }
+
+    /* Holographic Ticket Shimmer */
+    .ticket-holo {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(16, 185, 129, 0.15), rgba(168, 85, 247, 0.15));
+      position: relative;
+      overflow: hidden;
+    }
+    .ticket-holo::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
+      animation: holoShimmer 4s infinite linear;
+      pointer-events: none;
+    }
+    @keyframes holoShimmer {
+      0% { transform: translateY(-50%) rotate(25deg); }
+      100% { transform: translateY(50%) rotate(25deg); }
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 text-slate-100 font-sans">
+
+  <!-- ========================================================================= -->
+  <!-- MOBILE SMARTPHONE HANDSET CONTAINER                                       -->
+  <!-- ========================================================================= -->
+  <div class="mobile-device-shell w-full flex flex-col relative bg-[#080c14] overflow-hidden">
+    
+    <!-- 1. Native Mobile Status Bar (Notch / Dynamic Island) -->
+    <div class="w-full h-11 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between text-xs font-mono text-slate-300 shrink-0 z-40 select-none border-b border-sky-950/40">
+      <span id="mobile-clock" class="font-bold text-white">12:30</span>
+      
+      <!-- Dynamic Island / Speaker Pill -->
+      <div class="w-24 h-4 bg-black rounded-full flex items-center justify-center space-x-1.5 border border-sky-950/40">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-[8px] text-emerald-400 font-bold tracking-tighter">GPS LIVE</span>
+      </div>
+
+      <div class="flex items-center space-x-2 text-[10px]">
+        <span>5G</span>
+        <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+        <i data-lucide="battery-charging" class="w-3.5 h-3.5 text-emerald-400"></i>
+      </div>
+    </div>
+
+    <!-- 2. Mobile App Header -->
+    <div class="px-5 py-3 bg-slate-950/80 backdrop-blur-xl border-b border-sky-950/60 flex items-center justify-between shrink-0 z-30">
+      <div class="flex items-center space-x-2.5">
+        <div id="vis-user-avatar" class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 text-slate-950 font-black flex items-center justify-center text-xs shadow-md">
+          <span>GM</span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span id="vis-user-name" class="text-xs font-bold text-white leading-tight">George Miller</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          </div>
+          <span id="vis-user-sub" class="text-[10px] font-mono text-cyan-400 block leading-none">Dadar East &bull; Spectator</span>
+        </div>
+      </div>
+
+      <!-- Quick Geolocation Status Badge -->
+      <button onclick="requestLiveGeolocation()" class="px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-400/30 text-[10px] font-mono text-sky-300 flex items-center space-x-1 hover:bg-sky-500/20 transition">
+        <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400 animate-spin"></i>
+        <span id="badge-gps-status">GPS Active</span>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 3. SCROLLABLE CONTENT VIEWPORT (TABS)                                      -->
+    <!-- ========================================================================= -->
+    <div id="mobile-viewport" class="flex-1 overflow-y-auto no-scrollbar relative p-4 space-y-4">
+      
+      <!-- TAB 1: SMART TICKET / DIGITAL PASS -->
+      <section id="tab-sec-pass" class="tab-content space-y-4">
+        
+        <!-- Live Holographic Event Pass Card -->
+        <div class="ticket-holo rounded-3xl p-5 border border-sky-400/40 shadow-2xl space-y-4 relative bg-slate-900/90">
+          <div class="flex justify-between items-start">
+            <div>
+              <span id="pass-tier-badge" class="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400 px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/30">
+                OFFICIAL DIGITAL SMART PASS
+              </span>
+              <h2 id="pass-event-title" class="text-base font-black text-white mt-1.5 leading-snug">
+                IPL Semi-Final &amp; Live Music Fest
+              </h2>
+              <p id="pass-venue-name" class="text-xs text-slate-400">Dr. D.Y. Patil Stadium &bull; Nerul</p>
+            </div>
+            
+            <span class="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></span>
+          </div>
+
+          <!-- Ticket Access Details Grid -->
+          <div class="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-slate-950/80 border border-sky-950 text-center font-mono">
+            <div>
+              <div class="text-[9px] text-slate-400 uppercase">Entry Gate</div>
+              <div id="pass-gate-text" class="text-sm font-bold text-cyan-300">GATE 4</div>
+              <div class="text-[8px] text-emerald-400">Queue: 4.1s</div>
+            </div>
+            <div>
+              <div class="text-[9px] text-slate-400 uppercase">Stand</div>
+              <div id="pass-stand-text" class="text-sm font-bold text-white">EAST STAND C</div>
+              <div id="pass-level-text" class="text-[8px] text-slate-400">Level 2</div>
+            </div>
+            <div>
+              <div class="text-[9px] text-slate-400 uppercase">Seat</div>
+              <div id="pass-seat-text" class="text-sm font-bold text-amber-300">ROW 14, #82</div>
+              <div class="text-[8px] text-slate-400">Shaded</div>
+            </div>
+          </div>
+
+          <!-- Live Scanning Barcode & RFID Identifier -->
+          <div onclick="openPassQrModal()" class="p-3.5 rounded-2xl bg-white text-slate-950 space-y-2 flex flex-col items-center shadow-inner cursor-pointer hover:opacity-95 transition">
+            <!-- Simulated / Live High-Density QR Code -->
+            <div class="w-32 h-32 bg-slate-950 rounded-xl p-2 flex items-center justify-center">
+              <img id="pass-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TKT-DYP-2026-94812" alt="Entry Pass QR" class="w-full h-full rounded-lg bg-white block" />
+            </div>
+
+            <div class="text-center font-mono">
+              <div id="pass-code-text" class="text-xs font-black tracking-widest text-slate-900">TKT-DYP-2026-94812</div>
+              <div class="text-[9px] text-slate-500">Tap to enlarge for optical turnstile scanners</div>
+            </div>
+          </div>
+
+          <!-- Present QR Modal Trigger Button -->
+          <button onclick="openPassQrModal()" class="w-full py-2.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 text-xs font-bold transition flex items-center justify-center space-x-2">
+            <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>Present QR to Turnstile Scanner</span>
+          </button>
+
+          <!-- Live Gate Status Indicator -->
+          <div class="p-2.5 rounded-xl bg-slate-950/80 border border-sky-950 flex items-center justify-between text-[11px] font-mono">
+            <span class="text-slate-400" id="pass-gate-scanner-label">Gate 4 Optical Scanner:</span>
+            <span class="text-emerald-400 font-bold flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>OPEN &bull; FLUID</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Live Distance Alert Card -->
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-sky-900/40 flex items-center justify-between font-mono text-xs">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center">
+              <i data-lucide="navigation" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400 uppercase">Live GPS Distance</span>
+              <div class="font-bold text-white"><span id="live-distance-km">28.4</span> km from Stadium</div>
+            </div>
+          </div>
+          <button onclick="switchMobileTab('nav')" class="px-3 py-1.5 rounded-xl btn-glacier text-[11px] font-bold">
+            Start Nav &rarr;
+          </button>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: LIVE GPS NAVIGATION & SHUTTLE MAP -->
+      <section id="tab-sec-nav" class="tab-content space-y-4 hidden">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-black text-white">Live GPS Journey Navigation</h2>
+            <span id="nav-eta-badge" class="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">ETA: 38 Mins</span>
+          </div>
+          <p id="nav-route-sub" class="text-xs text-slate-400">Real-time GPS tracking from your location to Nerul Gate 4</p>
+        </div>
+
+        <!-- Handset Satellite Map Viewport -->
+        <div class="w-full h-64 rounded-2xl overflow-hidden border border-sky-900/50 relative shadow-2xl">
+          <div id="mobile-gps-map" class="w-full h-full"></div>
+
+          <!-- Floating Map HUD Badge -->
+          <div class="absolute bottom-2 left-2 z-[400] px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md text-[9px] font-mono text-cyan-300 border border-sky-900/40 pointer-events-none">
+            GPS: <span id="map-live-coords">19.0178° N, 72.8478° E</span>
+          </div>
+        </div>
+
+        <!-- Quick Origin Selector Chips & Live Journey Simulator -->
+        <div class="space-y-1.5 font-mono text-[10px]">
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Starting Origin:</span>
+            <button onclick="toggleJourneySimulation()" id="btn-journey-sim" class="text-emerald-400 hover:underline flex items-center space-x-1 font-bold">
+              <i data-lucide="play" class="w-3 h-3"></i>
+              <span>Simulate Journey</span>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="origin-chips-container">
+            <button onclick="confirmLiveGPS()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1 font-bold">
+              <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
+              <span>Live Device GPS</span>
+            </button>
+            <button onclick="detectLocationViaIP()" class="px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 transition">
+              🌐 Auto IP
+            </button>
+          </div>
+        </div>
+
+        <!-- Turn-by-Turn Transit Guidance Card -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-sky-900/40 space-y-2.5 text-xs font-mono">
+          <div class="flex justify-between items-center text-cyan-300 font-bold border-b border-sky-950 pb-1.5">
+            <span>Recommended Multi-Modal Transit</span>
+            <span class="text-emerald-400">Optimal Headway</span>
+          </div>
+
+          <div class="space-y-2 text-slate-300" id="transit-steps-container">
+            <div class="flex items-start space-x-2">
+              <span class="w-5 h-5 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold shrink-0 text-[10px]">1</span>
+              <div>
+                <strong class="text-white">Board Suburban Rail Corridor</strong>
+                <p class="text-[11px] text-slate-400">Transit hub direct to Stadium Terminal</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Shuttle Pacing Telemetry -->
+        <div class="p-3 rounded-2xl bg-slate-950 border border-sky-950 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="bus" class="w-4 h-4 text-emerald-400"></i>
+            <div>
+              <span class="text-[10px] text-slate-400" id="shuttle-status-label">Feeder Shuttle #14:</span>
+              <div class="font-bold text-white">Departing in 2 mins</div>
+            </div>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">Free Transit Pass</span>
+        </div>
+      </section>
+
+      <!-- TAB 3: DAY-OF-EVENT ITINERARY -->
+      <section id="tab-sec-itinerary" class="tab-content space-y-4 hidden">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-black text-white" id="itinerary-header-title">Day-of-Event Timeline</h2>
+            <span id="itinerary-origin-badge" class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 uppercase flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="itinerary-origin-name">LIVE GPS SYNCED</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-400" id="itinerary-header-desc">
+            Personalized schedule computed from your current location
+          </p>
+        </div>
+
+        <!-- Master Timeline Progress Bar -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-sky-900/30 space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400 font-bold">MATCH DAY JOURNEY PROGRESS</span>
+            <span class="text-cyan-300 font-bold" id="timeline-progress-label">Origin Ingress Ready</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-slate-950 overflow-hidden flex">
+            <div class="h-full bg-emerald-400" style="width: 25%"></div>
+            <div class="h-full bg-sky-400" style="width: 35%"></div>
+            <div class="h-full bg-sky-500/30" style="width: 40%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] font-mono text-slate-500" id="timeline-progress-times">
+            <span>Departure</span>
+            <span>Transit</span>
+            <span>Gate</span>
+            <span>Match</span>
+            <span>Return</span>
+          </div>
+        </div>
+
+        <div class="space-y-2.5 font-mono text-xs" id="mobile-timeline-container">
+          <!-- Populated dynamically by visitor-app.js based on present location -->
+        </div>
+      </section>
+
+      <!-- TAB 4: BROWSE EVENTS & ENROLL -->
+      <section id="tab-sec-events" class="tab-content space-y-4 hidden">
+        <div class="space-y-1">
+          <h2 class="text-base font-black text-white">Available Mega Events</h2>
+          <p class="text-xs text-slate-400">Enroll or switch your handset pass to any scheduled event</p>
+        </div>
+
+        <div class="space-y-3 font-mono text-xs" id="mobile-events-container">
+          <!-- Populated dynamically by visitor-app.js -->
+        </div>
+      </section>
+
+      <!-- TAB 5: FIELD SOS & REPORT ISSUE -->
+      <section id="tab-sec-sos" class="tab-content space-y-4 hidden">
+        <div class="space-y-1">
+          <h2 class="text-base font-black text-white">Guest SOS &amp; Incident Dispatch</h2>
+          <p class="text-xs text-slate-400">Instantly relays your exact GPS coordinates to Stadium Security</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+          <button onclick="sendMobileSOS('Medical / First Aid Request')" class="p-4 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-300 flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+            <i data-lucide="heart-pulse" class="w-6 h-6 animate-pulse text-rose-400"></i>
+            <span class="font-bold text-center">Medical Distress</span>
+          </button>
+
+          <button onclick="sendMobileSOS('Crowd Choke / Gate Blockage')" class="p-4 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-400"></i>
+            <span class="font-bold text-center">Gate Choke Alert</span>
+          </button>
+
+          <button onclick="sendMobileSOS('Hydration Pod Empty')" class="p-4 rounded-2xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 text-cyan-300 flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+            <i data-lucide="droplet" class="w-6 h-6 text-cyan-400"></i>
+            <span class="font-bold text-center">Need Water Refill</span>
+          </button>
+
+          <button onclick="sendMobileSOS('Lost Item / Assistance')" class="p-4 rounded-2xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/50 text-sky-300 flex flex-col items-center justify-center space-y-2 transition active:scale-95">
+            <i data-lucide="help-circle" class="w-6 h-6 text-sky-400"></i>
+            <span class="font-bold text-center">Lost &amp; Found</span>
+          </button>
+        </div>
+
+        <!-- Custom Incident Reporter Form -->
+        <div class="p-4 rounded-2xl bg-slate-900/90 border border-sky-900/40 space-y-3 text-xs font-mono">
+          <label class="block text-slate-300 font-bold">Describe Field Situation</label>
+          <textarea id="sos-message" rows="2" placeholder="e.g. Broken turnstile at Stand C barrier..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-sky-900/40 text-white outline-none text-xs"></textarea>
+          <button onclick="submitCustomSOS()" class="w-full py-2.5 rounded-xl btn-glacier font-bold flex items-center justify-center space-x-1.5">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Send SOS to Control Room</span>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 4. NATIVE MOBILE BOTTOM TAB BAR                                           -->
+    <!-- ========================================================================= -->
+    <nav class="h-16 bg-slate-950/95 backdrop-blur-2xl border-t border-sky-950/70 px-2 flex items-center justify-around shrink-0 z-40 select-none">
+      
+      <button onclick="switchMobileTab('pass')" id="btn-tab-pass" class="flex flex-col items-center space-y-1 text-sky-400 font-mono text-[9px] transition">
+        <i data-lucide="ticket" class="w-5 h-5"></i>
+        <span>My Pass</span>
+      </button>
+
+      <button onclick="switchMobileTab('nav')" id="btn-tab-nav" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-white font-mono text-[9px] transition">
+        <i data-lucide="map" class="w-5 h-5"></i>
+        <span>GPS Nav</span>
+      </button>
+
+      <button onclick="switchMobileTab('itinerary')" id="btn-tab-itinerary" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-white font-mono text-[9px] transition">
+        <i data-lucide="calendar" class="w-5 h-5"></i>
+        <span>Timeline</span>
+      </button>
+
+      <button onclick="switchMobileTab('events')" id="btn-tab-events" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-white font-mono text-[9px] transition">
+        <i data-lucide="compass" class="w-5 h-5"></i>
+        <span>Events</span>
+      </button>
+
+      <button onclick="switchMobileTab('sos')" id="btn-tab-sos" class="flex flex-col items-center space-y-1 text-rose-400 hover:text-rose-300 font-mono text-[9px] transition">
+        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        <span>SOS</span>
+      </button>
+
+    </nav>
+
+    <!-- 5. Native iOS/Android Home Indicator Bar -->
+    <div class="w-full h-4 bg-slate-950 flex items-center justify-center shrink-0 z-40">
+      <div class="w-32 h-1 bg-slate-700 rounded-full"></div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- DESKTOP COMPANION SIDE CARD: INSTANT PHONE QR SCANNER                     -->
+  <!-- ========================================================================= -->
+  <div class="hidden lg:flex flex-col justify-center max-w-sm space-y-4">
+    <div class="glass-panel rounded-3xl p-6 border border-emerald-500/40 space-y-4 shadow-2xl relative">
+      <div class="flex items-center space-x-3 border-b border-sky-950 pb-3">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold border border-emerald-500/30 shadow-md">
+          <i data-lucide="smartphone" class="w-5 h-5 text-emerald-400"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-mono uppercase text-emerald-400 font-bold tracking-wider">LIVE ON YOUR HANDSET</span>
+          <h3 class="text-sm font-black text-white">Scan with Your Phone Camera</h3>
+        </div>
+      </div>
+
+      <!-- High-Resolution Live QR Code -->
+      <div class="p-3.5 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+        <img id="companion-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=http://192.168.108.130:8000/visitor-app.html" alt="Scan QR to open on Phone" class="w-48 h-48 rounded-xl block" />
+      </div>
+
+      <div class="space-y-2 text-center font-mono text-xs">
+        <div class="text-slate-400 text-[11px]">Direct Handset Address (Same Wi-Fi):</div>
+        <div id="companion-qr-url" class="p-2 rounded-xl bg-slate-950 border border-sky-950 text-emerald-300 font-bold break-all select-all">
+          http://192.168.108.130:8000/visitor-app.html
+        </div>
+        
+        <div class="p-2.5 rounded-xl bg-slate-950/70 border border-sky-950/80 text-[10px] text-slate-400 text-left space-y-1">
+          <div class="flex items-center space-x-1.5 text-white font-bold">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>3-Second Quick Connection:</span>
+          </div>
+          <div>1. Open your phone's default Camera app.</div>
+          <div>2. Point at the QR code above &amp; tap the yellow pop-up link.</div>
+          <div>3. Tap <strong class="text-emerald-400">"Allow Geolocation"</strong> to track your real GPS!</div>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-between items-center text-xs font-mono">
+        <a href="index.html" class="text-slate-400 hover:text-white flex items-center space-x-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Main Portal</span>
+        </a>
+        <a href="dashboard-visitor.html" class="text-cyan-400 hover:text-cyan-300 font-bold flex items-center space-x-1">
+          <span>Visitor Dashboard &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FULLSCREEN TURNSTILE SCANNER QR MODAL                                     -->
+  <!-- ========================================================================= -->
+  <div id="pass-qr-presentation-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 hidden">
+    <div class="glass-panel rounded-3xl p-6 max-w-sm w-full border border-cyan-400/50 text-center space-y-4 shadow-2xl relative bg-slate-900/95">
+      
+      <!-- Close Button -->
+      <button onclick="closePassQrModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="space-y-1 pt-1">
+        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 uppercase">
+          OPTICAL TURNSTILE VERIFICATION
+        </span>
+        <h3 id="modal-qr-event" class="text-base font-black text-white">IPL Semi-Final &amp; Live Music Fest</h3>
+        <p id="modal-qr-gate" class="text-xs font-mono text-cyan-300">GATE 4 &bull; STAND C &bull; ROW 14</p>
+      </div>
+
+      <!-- High-Contrast Bright QR Container -->
+      <div class="p-4 bg-white rounded-2xl flex flex-col items-center justify-center shadow-2xl shadow-sky-500/10">
+        <img id="modal-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=TKT-DYP-2026-94812" alt="Turnstile QR" class="w-56 h-56 rounded-xl block" />
+        <div class="mt-2 text-xs font-black text-slate-950 font-mono tracking-widest" id="modal-qr-code">TKT-DYP-2026-94812</div>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-slate-950 border border-sky-950 text-left text-[10px] font-mono space-y-1 text-slate-400">
+        <div class="flex items-center space-x-1.5 text-white font-bold">
+          <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Turnstile Presentation Tips:</span>
+        </div>
+        <div>&bull; Maximize phone screen brightness.</div>
+        <div>&bull; Hold 10-15cm directly in front of the optical reader at the turnstile gate.</div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <button onclick="sharePassLink()" id="btn-share-pass" class="w-full py-2.5 rounded-xl btn-glacier text-xs font-bold flex items-center justify-center space-x-2 shadow-lg shadow-sky-500/20">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+          <span id="btn-share-pass-text">Share Pass Link / QR</span>
+        </button>
+        <button onclick="closePassQrModal()" class="w-full py-2 rounded-xl bg-slate-800 text-xs font-mono text-slate-300 hover:text-white transition">
+          Done / Back to Pass
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- GEOLOCATION PERMISSION MODAL PROMPT                                       -->
+  <!-- ========================================================================= -->
+  <div id="geo-permission-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-6 max-w-sm w-full border border-sky-400/40 text-center space-y-4 shadow-2xl relative">
+      <div class="w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-300 border border-sky-400/40 flex items-center justify-center mx-auto shadow-lg">
+        <i data-lucide="map-pin" class="w-7 h-7 text-cyan-400 animate-bounce"></i>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-base font-black text-white">Enable Real-Time GPS Geolocation?</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          ChronosFlow uses George's handset GPS location to calculate live transit distance, feeder shuttle schedules, and optimal Gate 4 arrival windows.
+        </p>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-slate-950/80 border border-sky-950 text-left text-[11px] font-mono space-y-1 text-slate-400">
+        <div>📍 Handset: <strong class="text-white">George's Phone</strong></div>
+        <div>🏡 Stored Origin: <strong class="text-sky-300">Dadar East, Mumbai</strong></div>
+        <div>🏟️ Destination: <strong class="text-emerald-400">DY Patil Nerul (Gate 4)</strong></div>
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <button onclick="confirmLiveGPS()" class="w-full py-3 rounded-2xl btn-glacier text-xs font-bold flex items-center justify-center space-x-2 transition shadow-xl shadow-sky-500/20">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Allow Real-Time Geolocation</span>
+        </button>
+
+        <button onclick="dismissGPSModal()" class="w-full py-2.5 rounded-2xl text-xs font-mono text-slate-400 hover:text-white transition">
+          Use Simulated Dadar GPS Tracker
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Action Toast -->
+  <div id="mobile-toast" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 hidden transition-all duration-300 w-11/12 max-w-xs">
+    <div class="px-4 py-2.5 rounded-2xl bg-slate-950/95 border border-sky-400/50 backdrop-blur-xl text-white text-[11px] font-mono shadow-2xl flex items-center space-x-2 text-center justify-center">
+      <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+      <span id="mobile-toast-msg">GPS tracking active.</span>
+    </div>
+  </div>
+
+  <!-- Mobile Companion Logic Script -->
+  <script src="visitor-app.js"></script>
+
+</body>
+</html>

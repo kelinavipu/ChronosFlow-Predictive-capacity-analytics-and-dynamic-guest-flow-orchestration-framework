@@ -22,29 +22,29 @@
   <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
 
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#2a2c35] pb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-900/40 pb-6">
       <div>
         <div class="flex items-center space-x-2">
-          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#22242b] text-[#709775] border border-[#2a2c35]">PHASE 1</span>
-          <h1 class="text-2xl sm:text-3xl font-black text-[#ede8e1]">Crowd Dynamics & Stress Simulations</h1>
+          <span class="px-2.5 py-0.5 rounded font-mono text-[10px] font-bold bg-slate-900/90 text-emerald-400 border border-sky-900/40">PHASE 1</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-white">Crowd Dynamics & Stress Simulations</h1>
         </div>
-        <p class="text-xs text-[#9e9b93] mt-1">
+        <p class="text-xs text-slate-400 mt-1">
           Simulate multi-wave crowd surges, inject real-world disruption shocks, and stress-test physical bottleneck thresholds.
         </p>
       </div>
 
       <div class="flex items-center space-x-3">
         <!-- Event Switcher -->
-        <div class="flex items-center space-x-2 p-1.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-xs">
-          <span class="text-[#9e9b93] font-bold text-[11px] uppercase pl-1">Baseline:</span>
-          <select id="sim-event-select" onchange="changeSimEvent(this.value)" class="bg-[#22242b] text-[#d4a373] font-bold px-2.5 py-1 rounded-lg border border-[#2a2c35] outline-none cursor-pointer">
+        <div class="flex items-center space-x-2 p-1.5 rounded-xl bg-slate-950 border border-sky-900/40 text-xs">
+          <span class="text-slate-400 font-bold text-[11px] uppercase pl-1">Baseline:</span>
+          <select id="sim-event-select" onchange="changeSimEvent(this.value)" class="bg-slate-900/90 text-sky-300 font-bold px-2.5 py-1 rounded-lg border border-sky-900/40 outline-none cursor-pointer">
             <option value="dypatil_nerul">DY Patil Stadium (Nerul) - 50k</option>
             <option value="wankhede_mumbai">Wankhede Stadium (Churchgate) - 33k</option>
             <option value="narendra_modi">Narendra Modi Stadium (Motera) - 100k</option>
           </select>
         </div>
 
-        <button onclick="saveSimulationToCloud()" class="px-4 py-2 rounded-xl btn-sand font-bold text-xs flex items-center space-x-1.5">
+        <button onclick="saveSimulationToCloud()" class="px-4 py-2 rounded-xl btn-glacier font-bold text-xs flex items-center space-x-1.5">
           <i data-lucide="cloud-upload" class="w-4 h-4"></i>
           <span>Save Sim Run</span>
         </button>
@@ -52,29 +52,29 @@
     </div>
 
     <!-- Simulation Controls & Playback Bar -->
-    <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-6">
+    <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-6">
       
       <!-- Top Row: Clock & Playback -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2a2c35]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-900/40">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-[#22242b] border border-[#2a2c35] flex items-center justify-center text-[#709775]">
+          <div class="w-10 h-10 rounded-xl bg-slate-900/90 border border-sky-900/40 flex items-center justify-center text-emerald-400">
             <i data-lucide="play-circle" class="w-6 h-6"></i>
           </div>
           <div>
-            <div class="text-[10px] uppercase font-bold text-[#9e9b93]">Simulated Match Clock</div>
-            <div id="sim-clock-display" class="font-mono text-xl font-bold text-[#ede8e1]">12:30 PM (Ingress Surge)</div>
+            <div class="text-[10px] uppercase font-bold text-slate-400">Simulated Match Clock</div>
+            <div id="sim-clock-display" class="font-mono text-xl font-bold text-white">12:30 PM (Ingress Surge)</div>
           </div>
         </div>
 
         <div class="flex items-center space-x-2 text-xs font-bold">
-          <button onclick="toggleSimulationPlay()" id="btn-sim-play" class="px-4 py-2 rounded-xl btn-sand flex items-center space-x-1.5">
+          <button onclick="toggleSimulationPlay()" id="btn-sim-play" class="px-4 py-2 rounded-xl btn-glacier flex items-center space-x-1.5">
             <i data-lucide="play" class="w-4 h-4" id="play-icon"></i>
             <span id="play-text">Start Simulation</span>
           </button>
-          <button onclick="stepSimulation()" class="px-3 py-2 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#ede8e1] border border-[#2a2c35]">
+          <button onclick="stepSimulation()" class="px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-white border border-sky-900/40">
             Step +15m
           </button>
-          <button onclick="resetSimulation()" class="px-3 py-2 rounded-xl bg-[#22242b] hover:bg-[#2a2c35] text-[#9e9b93] hover:text-[#ede8e1] border border-[#2a2c35]">
+          <button onclick="resetSimulation()" class="px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-400 hover:text-white border border-sky-900/40">
             Reset
           </button>
         </div>
@@ -84,10 +84,10 @@
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <div class="md:col-span-4 space-y-1">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase text-[#9e9b93]">Attendance Shock Variance</span>
-            <span id="variance-val-badge" class="font-mono font-bold text-xs text-[#d4a373] px-2 py-0.5 rounded bg-[#22242b] border border-[#2a2c35]">+15%</span>
+            <span class="text-xs font-bold uppercase text-slate-400">Attendance Shock Variance</span>
+            <span id="variance-val-badge" class="font-mono font-bold text-xs text-sky-300 px-2 py-0.5 rounded bg-slate-900/90 border border-sky-900/40">+15%</span>
           </div>
-          <p class="text-[11px] text-[#9e9b93] leading-snug">
+          <p class="text-[11px] text-slate-400 leading-snug">
             Stress-test turnstiles and transit lines against unexpected attendance surges beyond ticketed allocation.
           </p>
         </div>
@@ -100,52 +100,52 @@
             max="50" 
             value="15" 
             oninput="handleVarianceChange(this.value)"
-            class="w-full accent-[#d4a373] cursor-pointer"
+            class="w-full accent-sky-400 cursor-pointer"
           >
-          <div class="flex justify-between text-[10px] font-mono text-[#9e9b93]">
+          <div class="flex justify-between text-[10px] font-mono text-slate-400">
             <span>-20% (Low Influx)</span>
             <span>0% (Baseline Target)</span>
             <span>+25% (High Pressure)</span>
-            <span class="text-[#c96a54] font-bold">+50% (Max Stress)</span>
+            <span class="text-rose-400 font-bold">+50% (Max Stress)</span>
           </div>
         </div>
       </div>
 
       <!-- What-If Disruption Scenario Injector -->
-      <div class="space-y-3 pt-4 border-t border-[#2a2c35]">
-        <div class="text-xs font-bold uppercase text-[#9e9b93]">Inject Disruption Scenarios</div>
+      <div class="space-y-3 pt-4 border-t border-sky-900/40">
+        <div class="text-xs font-bold uppercase text-slate-400">Inject Disruption Scenarios</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
           
-          <button onclick="injectDisruption('rain')" id="disrupt-rain" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#607d8b] transition">
-            <div class="flex items-center space-x-2 text-[#607d8b] font-bold mb-1">
+          <button onclick="injectDisruption('rain')" id="disrupt-rain" class="scenario-btn p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-left hover:border-sky-400 transition">
+            <div class="flex items-center space-x-2 text-sky-400 font-bold mb-1">
               <i data-lucide="cloud-rain" class="w-4 h-4"></i>
               <span>Monsoon Deluge</span>
             </div>
-            <p class="text-[11px] text-[#9e9b93]">Reduces walking pace 35%; crowds rush covered concourses.</p>
+            <p class="text-[11px] text-slate-400">Reduces walking pace 35%; crowds rush covered concourses.</p>
           </button>
 
-          <button onclick="injectDisruption('rail')" id="disrupt-rail" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#c96a54] transition">
-            <div class="flex items-center space-x-2 text-[#c96a54] font-bold mb-1">
+          <button onclick="injectDisruption('rail')" id="disrupt-rail" class="scenario-btn p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-left hover:border-rose-400 transition">
+            <div class="flex items-center space-x-2 text-rose-400 font-bold mb-1">
               <i data-lucide="alert-octagon" class="w-4 h-4"></i>
               <span>Transit Delay (Nerul)</span>
             </div>
-            <p class="text-[11px] text-[#9e9b93]">30-min rail signal failure; 14,000 passengers stranded.</p>
+            <p class="text-[11px] text-slate-400">30-min rail signal failure; 14,000 passengers stranded.</p>
           </button>
 
-          <button onclick="injectDisruption('gate')" id="disrupt-gate" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#cc7744] transition">
-            <div class="flex items-center space-x-2 text-[#cc7744] font-bold mb-1">
+          <button onclick="injectDisruption('gate')" id="disrupt-gate" class="scenario-btn p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-left hover:border-amber-400 transition">
+            <div class="flex items-center space-x-2 text-amber-400 font-bold mb-1">
               <i data-lucide="shield-alert" class="w-4 h-4"></i>
               <span>Gate B Scanner Jam</span>
             </div>
-            <p class="text-[11px] text-[#9e9b93]">Optical scanners offline; queues back up 400 meters.</p>
+            <p class="text-[11px] text-slate-400">Optical scanners offline; queues back up 400 meters.</p>
           </button>
 
-          <button onclick="injectDisruption('highway')" id="disrupt-highway" class="scenario-btn p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-left hover:border-[#d4a373] transition">
-            <div class="flex items-center space-x-2 text-[#d4a373] font-bold mb-1">
+          <button onclick="injectDisruption('highway')" id="disrupt-highway" class="scenario-btn p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-left hover:border-sky-400 transition">
+            <div class="flex items-center space-x-2 text-sky-300 font-bold mb-1">
               <i data-lucide="truck" class="w-4 h-4"></i>
               <span>LP Junction Choke</span>
             </div>
-            <p class="text-[11px] text-[#9e9b93]">Freight gridlock halts express shuttles and VIP buses.</p>
+            <p class="text-[11px] text-slate-400">Freight gridlock halts express shuttles and VIP buses.</p>
           </button>
 
         </div>
@@ -157,87 +157,87 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Left: Real-Time Bottleneck Radar Gauges (7 Cols) -->
-      <div class="lg:col-span-7 dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
-        <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
-          <h3 class="text-base font-bold text-[#ede8e1] flex items-center space-x-2">
-            <i data-lucide="activity" class="w-4 h-4 text-[#709775]"></i>
+      <div class="lg:col-span-7 dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
+        <div class="flex items-center justify-between border-b border-sky-900/40 pb-3">
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
             <span>Node Saturation Telemetry</span>
           </h3>
-          <span class="text-xs font-mono text-[#d4a373]">Live Dynamic Load</span>
+          <span class="text-xs font-mono text-sky-300">Live Dynamic Load</span>
         </div>
 
         <!-- 4 Key Saturation Gauges -->
         <div class="space-y-3 text-xs">
           
           <!-- Nerul Rail Station -->
-          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-2">
             <div class="flex justify-between font-bold">
-              <span class="text-[#ede8e1] flex items-center space-x-1.5">
-                <i data-lucide="train" class="w-4 h-4 text-[#607d8b]"></i>
+              <span class="text-white flex items-center space-x-1.5">
+                <i data-lucide="train" class="w-4 h-4 text-sky-400"></i>
                 <span>Nerul Station Platform Density</span>
               </span>
-              <span id="gauge-rail-pct" class="font-mono text-[#709775]">68% Capacity</span>
+              <span id="gauge-rail-pct" class="font-mono text-emerald-400">68% Capacity</span>
             </div>
-            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
-              <div id="bar-rail" class="bg-[#709775] h-full transition-all duration-300" style="width: 68%;"></div>
+            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+              <div id="bar-rail" class="bg-emerald-400 h-full transition-all duration-300" style="width: 68%;"></div>
             </div>
-            <div class="flex justify-between text-[11px] text-[#9e9b93]">
-              <span>Throughput: <strong id="gauge-rail-val" class="text-[#ede8e1]">16,320 / 24,000 pax/hr</strong></span>
-              <span id="gauge-rail-status" class="text-[#709775]">Fluid Flow</span>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>Throughput: <strong id="gauge-rail-val" class="text-white">16,320 / 24,000 pax/hr</strong></span>
+              <span id="gauge-rail-status" class="text-emerald-400">Fluid Flow</span>
             </div>
           </div>
 
           <!-- Outer Security Gate 4 -->
-          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-2">
             <div class="flex justify-between font-bold">
-              <span class="text-[#ede8e1] flex items-center space-x-1.5">
-                <i data-lucide="shield" class="w-4 h-4 text-[#d4a373]"></i>
+              <span class="text-white flex items-center space-x-1.5">
+                <i data-lucide="shield" class="w-4 h-4 text-sky-300"></i>
                 <span>Gate 4 Perimeter Screening Lanes</span>
               </span>
-              <span id="gauge-gate-pct" class="font-mono text-[#cc7744]">88% Capacity</span>
+              <span id="gauge-gate-pct" class="font-mono text-amber-400">88% Capacity</span>
             </div>
-            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
-              <div id="bar-gate" class="bg-[#cc7744] h-full transition-all duration-300" style="width: 88%;"></div>
+            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+              <div id="bar-gate" class="bg-amber-400 h-full transition-all duration-300" style="width: 88%;"></div>
             </div>
-            <div class="flex justify-between text-[11px] text-[#9e9b93]">
-              <span>Queue Length: <strong id="gauge-gate-queue" class="text-[#ede8e1]">22 mins (Choke Risk)</strong></span>
-              <span class="text-[#cc7744]">Approaching Saturation</span>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>Queue Length: <strong id="gauge-gate-queue" class="text-white">22 mins (Choke Risk)</strong></span>
+              <span class="text-amber-400">Approaching Saturation</span>
             </div>
           </div>
 
           <!-- LP Junction Arterial Highway -->
-          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-2">
             <div class="flex justify-between font-bold">
-              <span class="text-[#ede8e1] flex items-center space-x-1.5">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-[#c96a54]"></i>
+              <span class="text-white flex items-center space-x-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
                 <span>LP Junction (Sion-Panvel Expressway)</span>
               </span>
-              <span id="gauge-hwy-pct" class="font-mono text-[#c96a54]">94% Congested</span>
+              <span id="gauge-hwy-pct" class="font-mono text-rose-400">94% Congested</span>
             </div>
-            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
-              <div id="bar-hwy" class="bg-[#c96a54] h-full transition-all duration-300" style="width: 94%;"></div>
+            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+              <div id="bar-hwy" class="bg-rose-500 h-full transition-all duration-300" style="width: 94%;"></div>
             </div>
-            <div class="flex justify-between text-[11px] text-[#9e9b93]">
-              <span>Delay Index: <strong id="gauge-hwy-delay" class="text-[#ede8e1]">+18 mins delay</strong></span>
-              <span class="text-[#c96a54]">Severe Gridlock</span>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>Delay Index: <strong id="gauge-hwy-delay" class="text-white">+18 mins delay</strong></span>
+              <span class="text-rose-400">Severe Gridlock</span>
             </div>
           </div>
 
           <!-- Stadium Bowl Clearance -->
-          <div class="p-3.5 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-2">
+          <div class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-2">
             <div class="flex justify-between font-bold">
-              <span class="text-[#ede8e1] flex items-center space-x-1.5">
-                <i data-lucide="users" class="w-4 h-4 text-[#d4a373]"></i>
+              <span class="text-white flex items-center space-x-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-sky-300"></i>
                 <span>Stadium Bowl Spectator Occupancy</span>
               </span>
-              <span id="gauge-stadium-pct" class="font-mono text-[#ede8e1]">78% Filled</span>
+              <span id="gauge-stadium-pct" class="font-mono text-white">78% Filled</span>
             </div>
-            <div class="w-full bg-[#1a1b20] h-2 rounded-full overflow-hidden">
-              <div id="bar-stadium" class="bg-[#d4a373] h-full transition-all duration-300" style="width: 78%;"></div>
+            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+              <div id="bar-stadium" class="bg-sky-400 h-full transition-all duration-300" style="width: 78%;"></div>
             </div>
-            <div class="flex justify-between text-[11px] text-[#9e9b93]">
-              <span>In-Bowl Attendees: <strong id="gauge-stadium-count" class="text-[#ede8e1]">42,900 / 55,000</strong></span>
-              <span class="text-[#709775]">Orderly Seating</span>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>In-Bowl Attendees: <strong id="gauge-stadium-count" class="text-white">42,900 / 55,000</strong></span>
+              <span class="text-emerald-400">Orderly Seating</span>
             </div>
           </div>
 
@@ -248,46 +248,46 @@
       <div class="lg:col-span-5 space-y-4">
         
         <!-- Evacuation Clearance Meter -->
-        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
-          <div class="flex items-center justify-between border-b border-[#2a2c35] pb-3">
-            <h4 class="text-sm font-bold text-[#ede8e1] uppercase tracking-wider">Evacuation Clearance Forecast</h4>
-            <span class="text-[10px] font-mono text-[#d4a373]">Safety Standard: &lt; 45m</span>
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
+          <div class="flex items-center justify-between border-b border-sky-900/40 pb-3">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Evacuation Clearance Forecast</h4>
+            <span class="text-[10px] font-mono text-sky-300">Safety Standard: &lt; 45m</span>
           </div>
 
           <div class="text-center py-2 space-y-1">
-            <div id="evac-time-display" class="font-mono text-4xl font-extrabold text-[#c96a54]">52 Mins</div>
-            <p id="evac-status-text" class="text-xs text-[#c96a54]">
+            <div id="evac-time-display" class="font-mono text-4xl font-extrabold text-rose-400">52 Mins</div>
+            <p id="evac-status-text" class="text-xs text-rose-400">
               Warning: Exceeds safe benchmark by 7 minutes due to LP Junction gridlock.
             </p>
           </div>
 
-          <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] text-xs space-y-2">
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 text-xs space-y-2">
             <div class="flex justify-between">
-              <span class="text-[#9e9b93]">Planned Safe Clearance:</span>
-              <span class="font-mono font-bold text-[#709775]">38 Mins</span>
+              <span class="text-slate-400">Planned Safe Clearance:</span>
+              <span class="font-mono font-bold text-emerald-400">38 Mins</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-[#9e9b93]">Simulation Delay Factor:</span>
-              <span class="font-mono font-bold text-[#c96a54]">+14 Mins</span>
+              <span class="text-slate-400">Simulation Delay Factor:</span>
+              <span class="font-mono font-bold text-rose-400">+14 Mins</span>
             </div>
           </div>
         </div>
 
         <!-- Automated AI Simulation Mitigation Directives -->
-        <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-4">
-          <div class="flex items-center justify-between border-b border-[#2a2c35] pb-2">
-            <h4 class="text-sm font-bold text-[#ede8e1]">Dynamic AI Directives</h4>
-            <span class="text-[10px] font-mono text-[#709775]">Active Feedback</span>
+        <div class="dark-panel rounded-2xl p-6 border border-sky-900/40 space-y-4">
+          <div class="flex items-center justify-between border-b border-sky-900/40 pb-2">
+            <h4 class="text-sm font-bold text-white">Dynamic AI Directives</h4>
+            <span class="text-[10px] font-mono text-emerald-400">Active Feedback</span>
           </div>
 
           <div id="sim-directives-list" class="space-y-2 text-xs">
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-1">
-              <div class="font-bold text-[#d4a373]">Reroute Shuttles to Palm Beach Highway</div>
-              <p class="text-[11px] text-[#9e9b93]">Diverts 45 feeder buses away from LP Junction choke point, saving 12 minutes in turn-around time.</p>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-1">
+              <div class="font-bold text-sky-300">Reroute Shuttles to Palm Beach Highway</div>
+              <p class="text-[11px] text-slate-400">Diverts 45 feeder buses away from LP Junction choke point, saving 12 minutes in turn-around time.</p>
             </div>
-            <div class="p-3 rounded-xl bg-[#22242b] border border-[#2a2c35] space-y-1">
-              <div class="font-bold text-[#709775]">Activate Gate C Overflow Lanes</div>
-              <p class="text-[11px] text-[#9e9b93]">Splits Gate 4 crowd to Gate C, dropping wait times from 22 minutes to 8 minutes.</p>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-900/40 space-y-1">
+              <div class="font-bold text-emerald-400">Activate Gate C Overflow Lanes</div>
+              <p class="text-[11px] text-slate-400">Splits Gate 4 crowd to Gate C, dropping wait times from 22 minutes to 8 minutes.</p>
             </div>
           </div>
         </div>
@@ -313,11 +313,11 @@
       const text = document.getElementById('play-text');
 
       if (isPlaying) {
-        btn.className = "px-4 py-2 rounded-xl bg-[#c96a54] text-white font-bold flex items-center space-x-1.5";
+        btn.className = "px-4 py-2 rounded-xl bg-rose-500 text-white font-bold flex items-center space-x-1.5";
         text.innerText = "Pause";
         simTimer = setInterval(stepSimulation, 1200);
       } else {
-        btn.className = "px-4 py-2 rounded-xl btn-sand font-bold flex items-center space-x-1.5";
+        btn.className = "px-4 py-2 rounded-xl btn-glacier font-bold flex items-center space-x-1.5";
         text.innerText = "Resume";
         clearInterval(simTimer);
       }
@@ -335,10 +335,10 @@
       clearInterval(simTimer);
       simMinute = 150; // 12:30 PM default
       activeDisruptions.clear();
-      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('border-[#d4a373]'));
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('border-sky-400'));
       updateSimulationUI();
       const btn = document.getElementById('btn-sim-play');
-      btn.className = "px-4 py-2 rounded-xl btn-sand font-bold flex items-center space-x-1.5";
+      btn.className = "px-4 py-2 rounded-xl btn-glacier font-bold flex items-center space-x-1.5";
       document.getElementById('play-text').innerText = "Start Simulation";
       lucide.createIcons();
     }
@@ -353,10 +353,10 @@
       const btn = document.getElementById(`disrupt-${type}`);
       if (activeDisruptions.has(type)) {
         activeDisruptions.delete(type);
-        btn.classList.remove('border-[#d4a373]');
+        btn.classList.remove('border-sky-400');
       } else {
         activeDisruptions.add(type);
-        btn.classList.add('border-[#d4a373]');
+        btn.classList.add('border-sky-400');
       }
       updateSimulationUI();
     }

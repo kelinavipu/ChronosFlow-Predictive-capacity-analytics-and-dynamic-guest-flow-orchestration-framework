@@ -503,8 +503,11 @@ const ChronosSupabase = {
         acres: "4.25 Acres",
         gatesCount: 4,
         gatesDetail: "Gate 1 (Main Ingress), Gate 2 (VIP Pass), Gate 3 (Rapid Egress), Gate 4 (Emergency Fire/Ambulance)",
-        geo: "19.0330° N, 73.0297° E",
+        lat: 19.0330,
+        lng: 73.0185,
+        geo: "19.0330° N, 73.0185° E",
         placement: "Nerul East Railway Approach & Sion-Panvel Bypass",
+        polygon: [[19.0345, 73.0170], [19.0345, 73.0202], [19.0315, 73.0202], [19.0315, 73.0170]],
         nocDocNumber: "NOC-MH-CIDCO-2024-8841",
         nocVerified: true,
         nocIssuer: "CIDCO & Maharashtra State Fire Safety Directorate",
@@ -530,8 +533,11 @@ const ChronosSupabase = {
         acres: "7.35 Acres",
         gatesCount: 6,
         gatesDetail: "Gates A, B, C (Spectator Turnstiles), Gate D (VIP & Media), Gate E (Athletes / Stage Entry), Gate F (Emergency Evac)",
-        geo: "19.0335° N, 73.0305° E",
+        lat: 19.0435,
+        lng: 73.0253,
+        geo: "19.0435° N, 73.0253° E",
         placement: "Sector 7, Dr. D.Y. Patil University Campus, Nerul",
+        polygon: [[19.0452, 73.0236], [19.0452, 73.0270], [19.0418, 73.0270], [19.0418, 73.0236]],
         nocDocNumber: "NOC-MH-FIRE-2024-1109",
         nocVerified: true,
         nocIssuer: "Navi Mumbai Fire Brigade & Municipal Urban Planning",
@@ -557,8 +563,11 @@ const ChronosSupabase = {
         acres: "3.21 Acres",
         gatesCount: 3,
         gatesDetail: "North Gate (Shuttle Bay & Bus Entry), South Gate (Pedestrian Ingress), East Gate (Maintenance Service)",
+        lat: 19.0270,
+        lng: 73.0225,
         geo: "19.0270° N, 73.0225° E",
         placement: "Uran Road, Sector 19A, Nerul",
+        polygon: [[19.0285, 73.0210], [19.0285, 73.0240], [19.0255, 73.0240], [19.0255, 73.0210]],
         nocDocNumber: "NOC-CIDCO-EXP-2025-4412",
         nocVerified: true,
         nocIssuer: "CIDCO Parks & Urban Transit Wing",
@@ -577,6 +586,18 @@ const ChronosSupabase = {
 
   async addInfraPossession(possession) {
     const possessions = await this.getInfraPossessions();
+    
+    // Parse coordinates or fallback
+    let lat = 19.0330;
+    let lng = 73.0297;
+    if (possession.geo) {
+      const match = possession.geo.match(/([0-9.]+)[^0-9.]+([0-9.]+)/);
+      if (match) {
+        lat = parseFloat(match[1]);
+        lng = parseFloat(match[2]);
+      }
+    }
+
     const newPos = {
       id: "pos_" + Math.random().toString(36).substr(2, 8),
       name: possession.name || "Untitled Land Possession",
@@ -585,8 +606,16 @@ const ChronosSupabase = {
       acres: ((parseInt(possession.landAreaSqFt) || 100000) / 43560).toFixed(2) + " Acres",
       gatesCount: parseInt(possession.gatesCount) || 4,
       gatesDetail: possession.gatesDetail || "4 Perimeter Ingress & Egress Gates",
-      geo: possession.geo || "19.0330° N, 73.0297° E",
+      lat: lat,
+      lng: lng,
+      geo: possession.geo || `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`,
       placement: possession.placement || "Nerul Corridor, Navi Mumbai",
+      polygon: [
+        [lat + 0.0015, lng - 0.0015],
+        [lat + 0.0015, lng + 0.0015],
+        [lat - 0.0015, lng + 0.0015],
+        [lat - 0.0015, lng - 0.0015]
+      ],
       nocDocNumber: possession.nocDocNumber || ("NOC-MH-" + Math.floor(1000 + Math.random() * 9000)),
       nocVerified: true,
       nocIssuer: possession.nocIssuer || "CIDCO Urban Safety & Fire Department",
@@ -827,20 +856,114 @@ const ChronosSupabase = {
     return { success: true };
   },
 
-  // 7. VISITOR / SPECTATOR DETAILS & DECIDED PLANS
-  async getVisitorData(email) {
-    return {
-      visitorName: "Ananya Sharma",
-      ticketId: "TKT-DYP-2026-94812",
-      event: {
-        title: "Championship Trophy: 4-Day Mega Cricket Fixture",
-        venue: "Dr. D.Y. Patil Sports Stadium",
-        location: "Sector 7, Nerul, Navi Mumbai",
-        date: "September 2, 2026",
+  // 7. VISITOR / SPECTATOR DETAILS, ENROLLMENT & DECIDED PLANS
+  async getVisitorTickets() {
+    try {
+      const stored = localStorage.getItem('chronos_visitor_tickets');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+
+    // Default seeded pass for DY Patil Championship
+    const defaultTickets = [
+      {
+        ticketId: "TKT-DYP-2026-94812",
+        eventId: "dypatil_nerul",
+        eventTitle: "Championship Trophy: 4-Day Mega Cricket Fixture",
+        venueName: "Dr. D.Y. Patil Sports Stadium",
+        venueArea: "Sector 7, Nerul",
+        city: "Navi Mumbai (MMR)",
+        dates: "Sep 1 - Sep 4, 2026",
+        matchDay: "September 2, 2026 (Day 2)",
+        tier: "Grandstand Pavilion Pass",
         gate: "Gate 4 (West Wing)",
         seat: "North-West Stand &bull; Block C &bull; Row 14 &bull; Seat 48",
         gateOpeningTime: "11:30 AM",
-        matchStartTime: "01:30 PM"
+        matchStartTime: "01:30 PM",
+        lat: 19.0435,
+        lng: 73.0253,
+        status: "CONFIRMED",
+        qrData: "CHRONOS-PASS-DYPATIL-94812-GATE4-ROW14-S48",
+        issuedAt: "2026-08-20T10:15:00Z"
+      }
+    ];
+
+    try {
+      localStorage.setItem('chronos_visitor_tickets', JSON.stringify(defaultTickets));
+    } catch (e) {}
+    return defaultTickets;
+  },
+
+  async getVisitorActiveTicket() {
+    const tickets = await this.getVisitorTickets();
+    const currentUser = this.getCurrentUser();
+    if (currentUser && currentUser.ticketId) {
+      const matched = tickets.find(t => t.ticketId === currentUser.ticketId);
+      if (matched) return matched;
+    }
+    return tickets[0];
+  },
+
+  async enrollVisitorInEvent(enrollment) {
+    const allPlans = await this.getPreplans();
+    const event = allPlans.find(p => p.id === enrollment.eventId) || allPlans[0];
+    const tickets = await this.getVisitorTickets();
+
+    const prefix = (event.id || "EVT").replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
+    const ticketId = `TKT-${prefix}-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const gate = enrollment.gate || (enrollment.tier && enrollment.tier.includes('VIP') ? 'Gate 2 (VIP Pass)' : 'Gate 4 (West Wing)');
+    const seat = enrollment.seat || 'Stand C • Row 14 • Seat 48';
+
+    const newTicket = {
+      ticketId,
+      eventId: event.id,
+      eventTitle: event.title || event.venueName,
+      venueName: event.venueName,
+      venueArea: event.venueArea || event.city,
+      city: event.city || "Navi Mumbai",
+      dates: event.duration || "Sep 1 - Sep 4, 2026",
+      matchDay: "Day 1 Fixture",
+      tier: enrollment.tier || "Grandstand Pavilion Pass",
+      gate: gate,
+      seat: seat,
+      gateOpeningTime: "11:30 AM",
+      matchStartTime: "01:30 PM",
+      lat: event.lat || 19.0435,
+      lng: event.lng || 73.0253,
+      status: "CONFIRMED",
+      qrData: `CHRONOS-PASS-${ticketId}-${gate.replace(/\s+/g, '')}-${seat.replace(/\s+/g, '')}`,
+      issuedAt: new Date().toISOString()
+    };
+
+    tickets.unshift(newTicket);
+    try {
+      localStorage.setItem('chronos_visitor_tickets', JSON.stringify(tickets));
+    } catch (e) {}
+
+    // Update active user state
+    const currentUser = this.getCurrentUser() || {};
+    currentUser.ticketId = newTicket.ticketId;
+    currentUser.gate = newTicket.gate;
+    currentUser.seat = newTicket.seat;
+    this.setCurrentUser(currentUser);
+
+    return { success: true, ticket: newTicket };
+  },
+
+  async getVisitorData(email) {
+    const activeTicket = await this.getVisitorActiveTicket();
+    return {
+      visitorName: this.getCurrentUser()?.fullName || "George Miller",
+      ticketId: activeTicket?.ticketId || "TKT-DYP-2026-94812",
+      event: {
+        title: activeTicket?.eventTitle || "Championship Trophy: 4-Day Mega Cricket Fixture",
+        venue: activeTicket?.venueName || "Dr. D.Y. Patil Sports Stadium",
+        location: `${activeTicket?.venueArea || 'Sector 7, Nerul'}, ${activeTicket?.city || 'Navi Mumbai'}`,
+        date: activeTicket?.dates || "September 1 - September 4, 2026",
+        gate: activeTicket?.gate || "Gate 4 (West Wing)",
+        seat: activeTicket?.seat || "Stand C &bull; Row 14 &bull; Seat 48",
+        gateOpeningTime: activeTicket?.gateOpeningTime || "11:30 AM",
+        matchStartTime: activeTicket?.matchStartTime || "01:30 PM"
       },
       prePlansDecided: {
         recommendedTransit: "Harbour Line Suburban Train departing CSMT/Kurla at 10:48 AM &bull; Arrive Nerul Station at 11:32 AM",

@@ -60,6 +60,10 @@ function renderNavbar(activePage = '') {
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Current Events</span>
           </a>
+          <a href="visitor-app.html" class="px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5 ${activePage === 'visitor-app' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-emerald-400 hover:text-white hover:bg-emerald-500/10'}">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Visitor App</span>
+          </a>
         </nav>
 
         <!-- Right Side: Cloud Status & Auth -->
