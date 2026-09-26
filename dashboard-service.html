@@ -433,6 +433,8 @@
       loadServiceDashboard();
     }
 
+    let lastServiceReqCount = -1;
+
     async function loadServiceDashboard() {
       if (window.ChronosSupabase && !window.ChronosSupabase.requireRole(['service_provider'])) return;
       renderNavbar('service');
@@ -462,6 +464,20 @@
       }
 
       const data = await window.ChronosSupabase.getServiceData();
+
+      if (lastServiceReqCount !== -1 && data.requests && data.requests.length > lastServiceReqCount) {
+        const latest = data.requests[0];
+        if (latest) {
+          const toast = document.getElementById('sm-toast');
+          const toastMsg = document.getElementById('sm-toast-msg');
+          if (toast && toastMsg) {
+            toastMsg.innerText = `🔔 NEW SERVICE RFP: "${latest.eventTitle}" requested ${latest.requestTitle}!`;
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, 6000);
+          }
+        }
+      }
+      lastServiceReqCount = data.requests ? data.requests.length : 0;
 
       // Render Portfolio
       const portContainer = document.getElementById('service-portfolio-grid');

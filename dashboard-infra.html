@@ -82,18 +82,18 @@
 
         <!-- Navigation Panel Tabs -->
         <nav class="space-y-1 text-xs font-semibold" id="infra-sidebar-nav">
-          <!-- Tab 1: Profile & Living Residence -->
+          <!-- Tab 1: Incoming Host Requests & Time Conflicts (DEFAULT LANDING TAB) -->
           <button 
             type="button" 
-            onclick="switchInfraSection('sec-profile')" 
-            id="nav-sec-profile" 
+            onclick="switchInfraSection('sec-requests')" 
+            id="nav-sec-requests" 
             class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between transition group bg-sky-500/15 text-white border border-sky-400/30 shadow-sm font-bold"
           >
             <div class="flex items-center space-x-3">
-              <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i>
-              <span>Profile & Residence</span>
+              <i data-lucide="git-pull-request" class="w-4 h-4 text-sky-400"></i>
+              <span>Host Requests &amp; Conflicts</span>
             </div>
-            <span class="text-[10px] font-mono text-emerald-400 font-bold">RELIABILITY</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-req-count">3</span>
           </button>
 
           <!-- Tab 2: Possessions & Land Holdings (Concert Hall, Ground, Stadiums) -->
@@ -105,23 +105,23 @@
           >
             <div class="flex items-center space-x-3">
               <i data-lucide="landmark" class="w-4 h-4 text-sky-400"></i>
-              <span>Land Holdings & Venues</span>
+              <span>Land Holdings &amp; Venues</span>
             </div>
             <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 font-bold" id="badge-possessions-count">3 Assets</span>
           </button>
 
-          <!-- Tab 3: Incoming Host Requests & Time Conflicts -->
+          <!-- Tab 3: Profile & Living Residence -->
           <button 
             type="button" 
-            onclick="switchInfraSection('sec-requests')" 
-            id="nav-sec-requests" 
+            onclick="switchInfraSection('sec-profile')" 
+            id="nav-sec-profile" 
             class="infra-nav-btn w-full px-3.5 py-3 rounded-xl flex items-center justify-between text-slate-400 hover:text-white hover:bg-slate-900/60 transition group border border-transparent"
           >
             <div class="flex items-center space-x-3">
-              <i data-lucide="git-pull-request" class="w-4 h-4 text-sky-400"></i>
-              <span>Host Requests & Conflicts</span>
+              <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i>
+              <span>Profile &amp; Residence</span>
             </div>
-            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold" id="badge-req-count">3</span>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold">RELIABILITY</span>
           </button>
 
           <!-- Tab 4: Host Event Pipeline -->
@@ -203,7 +203,7 @@
       <!-- ===================================================================== -->
       <!-- SECTION 1: OFFICER PROFILE & LIVING RESIDENCE (RELIABILITY FACTOR)     -->
       <!-- ===================================================================== -->
-      <section id="sec-profile" class="infra-section space-y-6">
+      <section id="sec-profile" class="infra-section space-y-6 hidden">
         
         <!-- Explanation Alert Card -->
         <div class="p-4 sm:p-5 rounded-2xl bg-sky-950/40 border border-sky-400/20 text-xs text-sky-200/90 flex items-start space-x-3.5">
@@ -657,7 +657,7 @@
       <!-- ===================================================================== -->
       <!-- SECTION 3: INCOMING HOST REQUESTS & TIME CONFLICT ENGINE               -->
       <!-- ===================================================================== -->
-      <section id="sec-requests" class="infra-section space-y-6 hidden">
+      <section id="sec-requests" class="infra-section space-y-6">
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-sky-950/60">
           <div>
@@ -1097,6 +1097,7 @@
 
       // Render Requests & Time Conflicts
       await renderRequestsList();
+      switchInfraSection('sec-requests');
 
       // Render Decision Factor Telemetry
       if (typeof renderInfraDecisionFactor === 'function') {
@@ -1722,6 +1723,19 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function showInfraToast(msg) {
+      const toast = document.getElementById('infra-toast');
+      const toastMsg = document.getElementById('infra-toast-msg');
+      if (toast && toastMsg) {
+        toastMsg.innerText = msg;
+        toast.classList.remove('hidden');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => { toast.classList.add('hidden'); }, 6000);
+      }
+    }
+
+    let lastRenderedReqCount = -1;
+
     // Render Requests & Time Conflict Engine
     async function renderRequestsList() {
       const data = await window.ChronosSupabase.getInfraData();
@@ -1729,6 +1743,14 @@
       const container = document.getElementById('infra-requests-list-container');
       const countBadge = document.getElementById('badge-req-count');
       if (countBadge) countBadge.innerText = requests.length;
+
+      if (lastRenderedReqCount !== -1 && requests.length > lastRenderedReqCount) {
+        const latest = requests[0];
+        if (latest) {
+          showInfraToast(`🔔 NEW INFRASTRUCTURE ORDER: "${latest.eventTitle}" requested ${latest.possessionName || latest.requestedAsset}!`);
+        }
+      }
+      lastRenderedReqCount = requests.length;
 
       if (!container) return;
 
@@ -2015,10 +2037,7 @@
 
     // High-responsiveness sync interval (every 3 seconds)
     setInterval(() => {
-      const reqSec = document.getElementById('sec-requests');
-      if (reqSec && !reqSec.classList.contains('hidden')) {
-        renderRequestsList();
-      }
+      renderRequestsList();
       const analyticsSec = document.getElementById('sec-analytics');
       if (analyticsSec && !analyticsSec.classList.contains('hidden')) {
         renderInfraDecisionFactor();
