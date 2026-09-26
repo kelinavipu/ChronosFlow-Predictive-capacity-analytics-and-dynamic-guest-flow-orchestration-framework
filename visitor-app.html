@@ -139,8 +139,81 @@
         </div>
       </div>
 
-      <!-- 4. Precision Satellite Radar Map & Area Search -->
-      <div class="space-y-1.5 font-mono">
+      <!-- 4. Options to Enable Access Callout (Shown prominently when not calibrated) -->
+      <div id="gk-enable-options-card" class="p-3 rounded-2xl bg-sky-950/40 border border-sky-500/40 space-y-2.5 font-mono shadow-lg">
+        <div class="flex items-center justify-between text-xs">
+          <span class="flex items-center space-x-1.5 font-bold text-cyan-300">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>OPTIONS TO ENABLE ENTRANCE:</span>
+          </span>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Select Any Below</span>
+        </div>
+
+        <!-- 3 Prominent 1-Tap Action Tiles -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+          <!-- Option 1: 1-Tap Instant Enable -->
+          <button type="button" onclick="quickEnableLocation()" class="p-2.5 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/10 border border-emerald-500/50 hover:bg-emerald-500/30 flex items-center space-x-2.5 transition active:scale-95 group text-left shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-emerald-400/20 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0 group-hover:scale-110 transition">
+              ⚡
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-white leading-tight">1-Tap Instant Enable</div>
+              <div class="text-[9px] text-emerald-300">Use default stadium origin</div>
+            </div>
+          </button>
+
+          <!-- Option 2: Pinpoint on Satellite Map -->
+          <button type="button" onclick="focusRadarMap()" class="p-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 flex items-center space-x-2.5 transition active:scale-95 group text-left shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-sky-400/20 text-sky-400 flex items-center justify-center text-sm font-bold shrink-0 group-hover:scale-110 transition">
+              📍
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-white leading-tight">Tap Satellite Map</div>
+              <div class="text-[9px] text-sky-300">Drop pin on your location</div>
+            </div>
+          </button>
+
+          <!-- Option 3: Browser Permissions Help -->
+          <button type="button" onclick="toggleBrowserGpsGuide()" class="p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 flex items-center space-x-2.5 transition active:scale-95 group text-left shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-slate-800 text-cyan-400 flex items-center justify-center text-sm font-bold shrink-0 group-hover:scale-110 transition">
+              📱
+            </div>
+            <div>
+              <div class="text-[11px] font-bold text-white leading-tight">Device GPS Help</div>
+              <div class="text-[9px] text-slate-400">Chrome / iOS permissions</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Expandable Step-by-Step Mobile Browser Permission Guide -->
+        <div id="gk-browser-guide" class="hidden p-3 rounded-xl bg-slate-950/95 border border-sky-800/80 text-[10px] space-y-2 text-slate-300">
+          <div class="flex items-center justify-between text-cyan-300 font-bold border-b border-sky-950 pb-1">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-cyan-400"></i>
+              <span>Enabling Location on Mobile Handsets</span>
+            </span>
+            <button type="button" onclick="toggleBrowserGpsGuide()" class="text-slate-400 hover:text-white text-xs px-1">&times; Close</button>
+          </div>
+          <div class="space-y-1.5 text-[9px] leading-relaxed text-slate-300">
+            <div>
+              <strong class="text-white">Android Chrome:</strong>
+              <span class="text-slate-400"> Tap the tune/settings icon 🎛️ or ℹ️ on the left of address bar &rarr; Permissions &rarr; Location &rarr; </span>
+              <span class="text-emerald-400 font-bold">Allow</span>.
+            </div>
+            <div>
+              <strong class="text-white">iOS Safari:</strong>
+              <span class="text-slate-400"> Tap "aA" on address bar &rarr; Website Settings &rarr; Location &rarr; </span>
+              <span class="text-emerald-400 font-bold">Allow</span>.
+            </div>
+            <div class="p-2 rounded-lg bg-sky-950/60 border border-sky-800/50 text-cyan-200">
+              💡 If your browser restricts GPS over local IP, simply tap <strong class="text-emerald-400">"1-Tap Instant Enable"</strong> above or tap your location on the Satellite Map below to enter immediately!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Precision Satellite Radar Map & Area Search -->
+      <div id="gk-map-section" class="space-y-1.5 font-mono transition-all duration-300">
         <div class="flex items-center justify-between text-[10px] text-slate-300">
           <span class="font-bold text-cyan-400 flex items-center space-x-1">
             <i data-lucide="crosshair" class="w-3 h-3 text-cyan-400"></i>
@@ -165,7 +238,7 @@
         </div>
 
         <!-- Satellite Radar Map Viewport -->
-        <div class="w-full h-40 rounded-2xl overflow-hidden border border-sky-800/70 relative shadow-2xl">
+        <div id="gk-satellite-map-wrapper" class="w-full h-40 rounded-2xl overflow-hidden border border-sky-800/70 relative shadow-2xl transition duration-300">
           <div id="gk-satellite-map" class="w-full h-full"></div>
           
           <div class="absolute top-2 left-2 z-[400] px-2 py-0.5 rounded-lg bg-slate-950/90 text-[8px] font-mono text-cyan-300 border border-sky-800/60 shadow flex items-center space-x-1 pointer-events-none">
@@ -180,11 +253,11 @@
         </div>
       </div>
 
-      <!-- 5. Final Unlock & Confirm Button -->
+      <!-- 6. Final Unlock & Confirm Button (Active with 1-tap fallback!) -->
       <div class="pt-1">
-        <button id="btn-gk-unlock" disabled onclick="gatekeeperUnlockApp()" class="w-full py-3.5 rounded-2xl bg-slate-800/90 text-slate-500 font-black text-xs font-mono flex items-center justify-center space-x-2 transition cursor-not-allowed">
-          <i data-lucide="lock" class="w-4 h-4"></i>
-          <span>GEOLOCATION LOCK REQUIRED TO ENTER</span>
+        <button id="btn-gk-unlock" type="button" onclick="handleGatekeeperUnlockClick()" class="w-full py-3.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-black text-xs font-mono flex items-center justify-center space-x-2 transition active:scale-95 shadow-lg shadow-amber-500/10 cursor-pointer">
+          <i data-lucide="unlock" class="w-4 h-4 text-amber-400"></i>
+          <span>CLICK HERE FOR 1-TAP ENABLE &amp; ENTER &rarr;</span>
         </button>
       </div>
     </div>
@@ -781,7 +854,7 @@
   </div>
 
   <!-- Mobile Companion Logic Script (Cache-busted for instant handset refresh) -->
-  <script src="visitor-app.js?v=20260927_04"></script>
+  <script src="visitor-app.js?v=20260927_05"></script>
 
 </body>
 </html>

@@ -819,11 +819,13 @@ window.gatekeeperRequestGPS = function() {
     },
     error => {
       console.warn("Hardware GPS prompt unavailable/denied over HTTP:", error);
-      let reason = "⚠️ Mobile browser blocked GPS over HTTP. Pinpoint your location on satellite radar below:";
-      if (error.code === 1) reason = "⚠️ Permission denied in browser. Pinpoint your location on satellite radar below:";
-      if (gpsNotice) gpsNotice.innerText = reason;
+      let reason = "⚠️ Browser blocked GPS over HTTP. Pick an option below to enable:";
+      if (error.code === 1) reason = "⚠️ Browser permission denied. Pick an option below to enable:";
+      if (gpsNotice) {
+        gpsNotice.innerHTML = `<span class="text-amber-300 font-bold">${reason}</span>`;
+      }
       if (statusText && !gatekeeperLocation) {
-        statusText.innerText = "Awaiting Radar Pinpoint...";
+        statusText.innerText = "Select an Option Below to Enable";
       }
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -863,10 +865,9 @@ window.setGatekeeperCoordinates = async function(lat, lng, source, accuracy) {
   // Move marker on radar map
   updateGatekeeperMarker(lat, lng);
 
-  // Enable Unlock Button
+  // Enable / Activate Unlock Button
   const unlockBtn = document.getElementById('btn-gk-unlock');
   if (unlockBtn) {
-    unlockBtn.disabled = false;
     unlockBtn.className = "w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:opacity-95 text-slate-950 font-black text-xs font-mono flex items-center justify-center space-x-2 shadow-2xl shadow-emerald-500/30 cursor-pointer active:scale-95 transition";
     unlockBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-slate-950"></i><span>CONFIRM ACCURATE GEOLOCATION &amp; ENTER COMPANION &rarr;</span>`;
     lucide.createIcons();
@@ -903,9 +904,52 @@ function updateGatekeeperMarker(lat, lng) {
   gatekeeperMap.panTo([lat, lng]);
 }
 
+window.handleGatekeeperUnlockClick = function() {
+  if (gatekeeperLocation && gatekeeperLocation.lat && gatekeeperLocation.lng) {
+    gatekeeperUnlockApp();
+  } else {
+    quickEnableLocation();
+  }
+};
+
+window.quickEnableLocation = function() {
+  const def = activeEvent.defaultOrigin || { lat: 19.0310, lng: 73.0150, label: "Nerul Sector 19" };
+  setGatekeeperCoordinates(def.lat, def.lng, 'Quick Enable');
+  showMobileToast(`⚡ Enabled: ${def.label}! Calibrating Companion...`);
+  setTimeout(() => {
+    gatekeeperUnlockApp();
+  }, 350);
+};
+
+window.focusRadarMap = function() {
+  const mapSec = document.getElementById('gk-map-section');
+  const mapWrap = document.getElementById('gk-satellite-map-wrapper');
+  if (mapSec) {
+    mapSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  if (mapWrap) {
+    mapWrap.classList.add('ring-2', 'ring-cyan-400');
+    setTimeout(() => {
+      mapWrap.classList.remove('ring-2', 'ring-cyan-400');
+    }, 2200);
+  }
+  if (gatekeeperMap) {
+    setTimeout(() => gatekeeperMap.invalidateSize(), 200);
+  }
+  showMobileToast("🗺️ Tap anywhere on the Satellite Map to drop your pin!");
+};
+
+window.toggleBrowserGpsGuide = function() {
+  const guide = document.getElementById('gk-browser-guide');
+  if (guide) {
+    guide.classList.toggle('hidden');
+    lucide.createIcons();
+  }
+};
+
 window.gatekeeperUnlockApp = function() {
   if (!gatekeeperLocation) {
-    showMobileToast("⚠️ Please acquire GPS or pinpoint your position first.");
+    quickEnableLocation();
     return;
   }
 
