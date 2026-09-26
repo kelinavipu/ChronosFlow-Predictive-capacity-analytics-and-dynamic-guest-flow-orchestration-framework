@@ -299,6 +299,134 @@
         <!-- Rendered by preplans.js -->
       </div>
 
+      <!-- ========================================================================= -->
+      <!-- SECTION: ORDER & MANAGE INFRASTRUCTURE & SERVICES (Event Manager: Alicia) -->
+      <!-- ========================================================================= -->
+      <div class="dark-panel rounded-2xl p-6 border border-[#2a2c35] space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2a2c35] pb-4">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-[#d4a373] font-bold">CROSS-ROLE PROCUREMENT</span>
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold badge-sand">ALICIA'S COMMAND</span>
+            </div>
+            <h3 class="text-xl font-bold text-[#ede8e1] mt-0.5">Order & Coordinate Infrastructure and Services</h3>
+            <p class="text-xs text-[#9e9b93]">Analyze asset availability by allocation time window and issue contracts to Srinivasan & Harry</p>
+          </div>
+          <span class="text-xs font-mono text-[#709775]">Availability Engine Active</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Left: Order Infrastructure (from Srinivasan) -->
+          <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-slate">INFRASTRUCTURE MANAGER: SRINIVASAN</span>
+                <span class="text-[11px] font-mono text-[#709775] font-bold">100% AVAILABLE</span>
+              </div>
+
+              <div>
+                <h4 class="text-base font-bold text-[#ede8e1]">Nerul Transit Hub & Parking Complex</h4>
+                <div class="text-xs text-[#9e9b93] mt-0.5">Owner: <strong>Srinivasan R.</strong> &bull; Sector 19A, Nerul, Navi Mumbai</div>
+              </div>
+
+              <!-- Availability Analysis Engine by Time of Allocation -->
+              <div class="p-3 rounded-xl bg-[#1a1b20] border border-[#2a2c35] space-y-2 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-[#9e9b93]">Requested Time Window:</span>
+                  <span class="font-mono font-bold text-[#d4a373]">Sep 1 - Sep 4 (10:00 - 23:00)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[#9e9b93]">Availability Analysis:</span>
+                  <span class="font-mono text-[#709775] font-bold flex items-center space-x-1">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                    <span>Free / No Schedule Conflict</span>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-[#2a2c35] text-[11px]">
+                  <span class="text-[#9e9b93]">Registration Doc:</span>
+                  <span class="font-mono text-[#ede8e1]">LIC-MH-CIDCO-2024-8841</span>
+                </div>
+              </div>
+
+              <!-- Order Customization -->
+              <div class="space-y-2 text-xs">
+                <label class="block font-bold text-[#9e9b93]">Specify Infrastructure Allocation Request</label>
+                <input 
+                  type="text" 
+                  id="order-infra-demand" 
+                  value="Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for Sep 1-4"
+                  class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none"
+                >
+              </div>
+            </div>
+
+            <button onclick="submitOrderToSrinivasan()" id="btn-order-infra" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 transition">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Send Infrastructure Order to Srinivasan</span>
+            </button>
+          </div>
+
+          <!-- Right: Order Services & Fleet Transport (from Harry) -->
+          <div class="p-5 rounded-2xl bg-[#22242b] border border-[#2a2c35] space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded badge-amber">SERVICE MANAGER: HARRY</span>
+                <span class="text-[11px] font-mono text-[#d4a373] font-bold">COMMERCIAL RATES</span>
+              </div>
+
+              <div>
+                <h4 class="text-base font-bold text-[#ede8e1]">Apex Stadium Services & Fleet Co.</h4>
+                <div class="text-xs text-[#9e9b93] mt-0.5">Operator: <strong>Harry Vance</strong> &bull; Hospitality, Security & Logistics</div>
+              </div>
+
+              <!-- Commercial Rates List -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[10px] text-[#9e9b93] uppercase">Transport Shuttles</span>
+                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹1,800 / bus / hr</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[10px] text-[#9e9b93] uppercase">Security Stewards</span>
+                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹450 / guard / hr</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[10px] text-[#9e9b93] uppercase">CCTV Surveillance</span>
+                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹850 / camera / day</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35]">
+                  <span class="text-[10px] text-[#9e9b93] uppercase">Hotel / Lodging</span>
+                  <div class="font-mono font-bold text-[#ede8e1] mt-0.5">₹3,500 / room / night</div>
+                </div>
+              </div>
+
+              <!-- Service Order Builder -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <label class="block font-bold text-[#9e9b93] mb-1">Select Service</label>
+                  <select id="order-service-type" class="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+                    <option value="transport">Transport Shuttle Fleet</option>
+                    <option value="security">Security Screening Stewards</option>
+                    <option value="cctv">Camera / CCTV Feeds</option>
+                    <option value="hotel">Hotel Room Block</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-[#9e9b93] mb-1">Required Units</label>
+                  <input type="number" id="order-service-units" value="25" min="1" class="w-full px-2.5 py-1.5 rounded-lg bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+                </div>
+              </div>
+            </div>
+
+            <button onclick="submitOrderToHarry()" id="btn-order-service" class="w-full py-2.5 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 transition">
+              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+              <span>Submit Service Order Contract to Harry</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </section>
 
   </main>

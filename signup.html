@@ -20,7 +20,7 @@
 
   <!-- Sign Up Form Container -->
   <main class="flex-1 flex items-center justify-center p-4 sm:p-8">
-    <div class="dark-panel rounded-3xl p-6 sm:p-10 border border-[#2a2c35] max-w-lg w-full shadow-2xl space-y-6">
+    <div class="dark-panel rounded-3xl p-6 sm:p-10 border border-[#2a2c35] max-w-2xl w-full shadow-2xl space-y-6">
       
       <!-- Brand & Header -->
       <div class="text-center space-y-1.5">
@@ -28,103 +28,214 @@
           <i data-lucide="user-plus" class="w-6 h-6"></i>
         </div>
         <h1 class="text-2xl font-black text-[#ede8e1]">Register Operational Account</h1>
-        <p class="text-xs text-[#9e9b93]">Join the ChronosFlow network to coordinate mega-events</p>
+        <p class="text-xs text-[#9e9b93]">Tailored onboarding for Event Hosts, Infra Owners, Service Leads, and Spectators</p>
       </div>
 
       <!-- Role Selection Pills -->
       <div class="space-y-2">
         <label class="block text-xs font-bold text-[#9e9b93] uppercase tracking-wider">Select Role</label>
-        <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
-          <button type="button" onclick="selectSignupRole('event_manager')" class="signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center space-x-2 transition" data-role="event_manager">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs font-semibold">
+          <button type="button" onclick="selectSignupRole('event_manager')" class="signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center justify-center space-x-1.5 transition" data-role="event_manager">
             <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-            <span>Event Manager</span>
+            <span>Event M</span>
           </button>
           
-          <button type="button" onclick="selectSignupRole('visitor')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="visitor">
+          <button type="button" onclick="selectSignupRole('infra_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-center space-x-1.5 transition" data-role="infra_provider">
+            <i data-lucide="train" class="w-4 h-4"></i>
+            <span>Infra M</span>
+          </button>
+
+          <button type="button" onclick="selectSignupRole('service_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-center space-x-1.5 transition" data-role="service_provider">
+            <i data-lucide="utensils" class="w-4 h-4"></i>
+            <span>Service M</span>
+          </button>
+
+          <button type="button" onclick="selectSignupRole('visitor')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-center space-x-1.5 transition" data-role="visitor">
             <i data-lucide="users" class="w-4 h-4"></i>
             <span>Visitor</span>
-          </button>
-
-          <button type="button" onclick="selectSignupRole('service_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="service_provider">
-            <i data-lucide="utensils" class="w-4 h-4"></i>
-            <span>Service Provider</span>
-          </button>
-
-          <button type="button" onclick="selectSignupRole('infra_provider')" class="signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition" data-role="infra_provider">
-            <i data-lucide="train" class="w-4 h-4"></i>
-            <span>Infra Provider</span>
           </button>
         </div>
       </div>
 
-      <!-- Sign Up Form -->
-      <form id="signup-form" onsubmit="handleSignUp(event)" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Full Name</label>
-            <input 
-              type="text" 
-              id="signup-name" 
-              required 
-              placeholder="e.g. Vikram Sethi" 
-              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
-            >
+      <!-- Sign Up Dynamic Form -->
+      <form id="signup-form" onsubmit="handleSignUp(event)" class="space-y-5">
+        
+        <!-- SECTION 1: PERSONAL USER DETAILS (All Roles) -->
+        <div class="space-y-3 p-4 rounded-2xl bg-[#22242b] border border-[#2a2c35]">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#d4a373] flex items-center space-x-1.5">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span>1. User Personal Details</span>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Email Address</label>
-            <input 
-              type="email" 
-              id="signup-email" 
-              required 
-              placeholder="e.g. vikram@mumbai-cricket.org" 
-              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
-            >
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1">Full Name</label>
+              <input type="text" id="signup-name" required placeholder="e.g. Srinivasan R." class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none focus:border-[#d4a373]">
+            </div>
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1">Email Address</label>
+              <input type="email" id="signup-email" required placeholder="e.g. srinivasan@infram.com" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none focus:border-[#d4a373]">
+            </div>
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1">Phone Number</label>
+              <input type="tel" id="signup-phone" required placeholder="e.g. +91 98201 45678" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none focus:border-[#d4a373]">
+            </div>
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1" id="residence-org-label">Place of Residence / City</label>
+              <input type="text" id="signup-residence" required placeholder="e.g. Sector 19A, Nerul, Navi Mumbai" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none focus:border-[#d4a373]">
+            </div>
           </div>
         </div>
 
-        <!-- Dynamic Role Field -->
-        <div id="dynamic-role-field">
-          <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1" id="dynamic-field-label">Organization / Sports Board</label>
-          <input 
-            type="text" 
-            id="signup-org" 
-            required 
-            placeholder="e.g. Navi Mumbai Sports Council" 
-            class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
-          >
+        <!-- ========================================================================= -->
+        <!-- ROLE-SPECIFIC DYNAMIC FIELD CONTAINERS                                    -->
+        <!-- ========================================================================= -->
+
+        <!-- A. INFRA MANAGER: PROPERTY & ASSET DETAILS -->
+        <div id="infra-fields-container" class="space-y-3 p-4 rounded-2xl bg-[#22242b] border border-[#2a2c35] hidden">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#607d8b] flex items-center space-x-1.5">
+            <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+            <span>2. Property & Infrastructure Asset Details</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Property / Asset Name</label>
+                <input type="text" id="infra-prop-name" placeholder="e.g. Nerul Transit Hub & Parking Complex" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Registration Document / License Ref</label>
+                <input type="text" id="infra-prop-doc" placeholder="e.g. LIC-MH-CIDCO-2024-8841" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1">Placement / Address</label>
+              <input type="text" id="infra-prop-placement" placeholder="e.g. Nerul East Railway Approach & Sion-Panvel Bypass" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Geographical Details (GPS / Micro-Area)</label>
+                <input type="text" id="infra-prop-geo" placeholder="e.g. 19.0330° N, 73.0297° E (Zone B)" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Capacity / Throughput</label>
+                <input type="text" id="infra-prop-cap" placeholder="e.g. 24,000 pax/hr / 2,200 Parking Bays" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- B. SERVICE MANAGER: SERVICES PROVIDED & HOURLY RATES -->
+        <div id="service-fields-container" class="space-y-3 p-4 rounded-2xl bg-[#22242b] border border-[#2a2c35] hidden">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#cc7744] flex items-center space-x-1.5">
+            <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
+            <span>2. Services Provided & Commercial Rates</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1.5">Services You Can Provide (Select All that Apply)</label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="hotel" class="accent-[#d4a373]">
+                  <span>Hotel / Lodging</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="transport" checked class="accent-[#d4a373]">
+                  <span>Transport / Shuttles</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="security" checked class="accent-[#d4a373]">
+                  <span>Security & Stewards</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="cctv" checked class="accent-[#d4a373]">
+                  <span>Camera / CCTV Services</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="catering" class="accent-[#d4a373]">
+                  <span>Concessions / F&B</span>
+                </label>
+                <label class="flex items-center space-x-2 p-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] cursor-pointer">
+                  <input type="checkbox" name="services" value="medical" class="accent-[#d4a373]">
+                  <span>Medical & Trauma</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Standard Hourly Rate / Commercial Pricing</label>
+                <input type="text" id="service-hourly-rate" placeholder="e.g. ₹1,800 / hr per shuttle or ₹450/hr guard" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Max Deployable Capacity Units</label>
+                <input type="text" id="service-units" placeholder="e.g. 30 Buses / 50 Security Stewards" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- C. VISITOR: GEOLOCATION & TRANSIT PLAN -->
+        <div id="visitor-fields-container" class="space-y-3 p-4 rounded-2xl bg-[#22242b] border border-[#2a2c35] hidden">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-[#709775] flex items-center justify-between">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
+              <span>2. Visitor Origin Geolocation & Travel Preferences</span>
+            </span>
+            <button type="button" onclick="detectVisitorGPS()" class="text-[10px] text-[#709775] hover:underline flex items-center space-x-1">
+              <i data-lucide="crosshair" class="w-3 h-3"></i>
+              <span>Auto-Detect GPS</span>
+            </button>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Origin City / Area Address</label>
+                <input type="text" id="visitor-origin-address" placeholder="e.g. Dadar East, Mumbai" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-[#9e9b93] mb-1">Current Geolocation (Lat, Lng)</label>
+                <input type="text" id="visitor-gps" placeholder="e.g. 19.0178° N, 72.8478° E" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] font-mono outline-none">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-[#9e9b93] mb-1">Preferred Travel Mode to Stadium</label>
+              <select id="visitor-travel-mode" class="w-full px-3 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
+                <option value="train">Suburban Railway (Harbour / Central / Western)</option>
+                <option value="metro">Rapid Metro Transit</option>
+                <option value="shuttle">Event Express Shuttle Bus</option>
+                <option value="car">Private Car (Remote Park & Ride)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- D. PASSWORD & CONFIRMATION (All Roles) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div>
-            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Password</label>
-            <input 
-              type="password" 
-              id="signup-password" 
-              required 
-              placeholder="••••••••••••" 
-              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
-            >
+            <label class="block font-bold text-[#9e9b93] mb-1">Password</label>
+            <input type="password" id="signup-password" required placeholder="••••••••••••" value="demo1234" class="w-full px-4 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-[#9e9b93] uppercase mb-1">Confirm Password</label>
-            <input 
-              type="password" 
-              id="signup-confirm-password" 
-              required 
-              placeholder="••••••••••••" 
-              class="w-full px-4 py-2.5 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] focus:border-[#d4a373] outline-none text-xs"
-            >
+            <label class="block font-bold text-[#9e9b93] mb-1">Confirm Password</label>
+            <input type="password" id="signup-confirm-password" required placeholder="••••••••••••" value="demo1234" class="w-full px-4 py-2 rounded-xl bg-[#1a1b20] border border-[#2a2c35] text-[#ede8e1] outline-none">
           </div>
         </div>
 
         <div class="flex items-center space-x-2 text-xs text-[#9e9b93] pt-1">
-          <input type="checkbox" id="terms" required class="rounded bg-[#1a1b20] border-[#2a2c35] text-[#d4a373] focus:ring-0">
-          <label for="terms">I agree to the ChronosFlow operational data protocol</label>
+          <input type="checkbox" id="terms" required checked class="rounded bg-[#1a1b20] border-[#2a2c35] text-[#d4a373] focus:ring-0">
+          <label for="terms">I agree to the ChronosFlow multi-party event protocol</label>
         </div>
 
         <button type="submit" id="signup-submit-btn" class="w-full py-3 rounded-xl btn-sand font-bold text-xs flex items-center justify-center space-x-2 shadow-lg transition">
           <i data-lucide="check" class="w-4 h-4"></i>
-          <span>Create Account & Enter Grid</span>
+          <span>Register Operational Account</span>
         </button>
       </form>
 
@@ -140,55 +251,112 @@
   <script>
     let currentRole = 'event_manager';
 
-    const roleFieldConfig = {
-      event_manager: { label: "Organization / Sports Authority", placeholder: "e.g. Navi Mumbai Sports Council" },
-      visitor: { label: "Arrival Mode & Origin City", placeholder: "e.g. Suburban Rail from Thane / Dadar" },
-      service_provider: { label: "Service Domain (F&B / Medical / Security)", placeholder: "e.g. Infield Concessions & Rapid Triage" },
-      infra_provider: { label: "Agency (Railways / Highway / Police)", placeholder: "e.g. Central Railway / Navi Mumbai Traffic Police" }
-    };
-
     function selectSignupRole(role) {
       currentRole = role;
       document.querySelectorAll('.signup-role-pill').forEach(btn => {
         if (btn.getAttribute('data-role') === role) {
-          btn.className = "signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center space-x-2 transition";
+          btn.className = "signup-role-pill active-role p-2.5 rounded-xl border border-[#d4a373] bg-[#22242b] text-[#d4a373] flex items-center justify-center space-x-1.5 transition";
         } else {
-          btn.className = "signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center space-x-2 transition";
+          btn.className = "signup-role-pill p-2.5 rounded-xl border border-[#2a2c35] bg-[#1a1b20] text-[#9e9b93] hover:text-[#ede8e1] flex items-center justify-center space-x-1.5 transition";
         }
       });
 
-      const conf = roleFieldConfig[role];
-      if (conf) {
-        document.getElementById('dynamic-field-label').innerText = conf.label;
-        document.getElementById('signup-org').placeholder = conf.placeholder;
+      // Toggle dynamic role containers
+      const infraContainer = document.getElementById('infra-fields-container');
+      const serviceContainer = document.getElementById('service-fields-container');
+      const visitorContainer = document.getElementById('visitor-fields-container');
+      const residenceLabel = document.getElementById('residence-org-label');
+
+      infraContainer.classList.add('hidden');
+      serviceContainer.classList.add('hidden');
+      visitorContainer.classList.add('hidden');
+
+      if (role === 'infra_provider') {
+        infraContainer.classList.remove('hidden');
+        residenceLabel.innerText = "Place of Residence / City";
+        document.getElementById('signup-name').placeholder = "e.g. Srinivasan R.";
+        document.getElementById('signup-email').placeholder = "e.g. srinivasan@infram.com";
+      } else if (role === 'service_provider') {
+        serviceContainer.classList.remove('hidden');
+        residenceLabel.innerText = "Company / Agency Name";
+        document.getElementById('signup-name').placeholder = "e.g. Harry Vance";
+        document.getElementById('signup-email').placeholder = "e.g. harry@servicem.com";
+      } else if (role === 'visitor') {
+        visitorContainer.classList.remove('hidden');
+        residenceLabel.innerText = "City / Neighborhood";
+        document.getElementById('signup-name').placeholder = "e.g. George Miller";
+        document.getElementById('signup-email').placeholder = "e.g. george@visitor.com";
+      } else {
+        residenceLabel.innerText = "Organization / Sports Authority";
+        document.getElementById('signup-name').placeholder = "e.g. Alicia Stone";
+        document.getElementById('signup-email').placeholder = "e.g. alicia@eventm.com";
       }
+
       document.getElementById('link-signin').href = `signin.html?role=${role}`;
+      lucide.createIcons();
+    }
+
+    function detectVisitorGPS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude.toFixed(4);
+            const lng = pos.coords.longitude.toFixed(4);
+            document.getElementById('visitor-gps').value = `${lat}° N, ${lng}° E`;
+            document.getElementById('visitor-origin-address').value = "Detected Current Location";
+          },
+          (err) => {
+            document.getElementById('visitor-gps').value = "19.0178° N, 72.8478° E (Dadar East)";
+            document.getElementById('visitor-origin-address').value = "Dadar East, Mumbai";
+          }
+        );
+      } else {
+        document.getElementById('visitor-gps').value = "19.0178° N, 72.8478° E (Dadar East)";
+        document.getElementById('visitor-origin-address').value = "Dadar East, Mumbai";
+      }
     }
 
     async function handleSignUp(e) {
       e.preventDefault();
       const name = document.getElementById('signup-name').value;
       const email = document.getElementById('signup-email').value;
-      const org = document.getElementById('signup-org').value;
+      const phone = document.getElementById('signup-phone').value;
+      const residence = document.getElementById('signup-residence').value;
       const password = document.getElementById('signup-password').value;
-      const confirmPassword = document.getElementById('signup-confirm-password').value;
 
-      if (password !== confirmPassword) {
-        alert("Passwords do not match. Please re-enter.");
-        return;
+      const userPayload = {
+        fullName: name,
+        email,
+        phone,
+        residence,
+        password,
+        role: currentRole
+      };
+
+      if (currentRole === 'infra_provider') {
+        userPayload.property = {
+          name: document.getElementById('infra-prop-name')?.value || "Nerul Transit Hub",
+          placement: document.getElementById('infra-prop-placement')?.value || "Nerul East",
+          geo: document.getElementById('infra-prop-geo')?.value || "19.0330° N, 73.0297° E",
+          docNumber: document.getElementById('infra-prop-doc')?.value || "LIC-MH-2024-8841",
+          capacity: document.getElementById('infra-prop-cap')?.value || "24,000 pax/hr"
+        };
+      } else if (currentRole === 'service_provider') {
+        const checkedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(cb => cb.value);
+        userPayload.services = checkedServices;
+        userPayload.hourlyRate = document.getElementById('service-hourly-rate')?.value || "₹1,800/hr";
+        userPayload.units = document.getElementById('service-units')?.value || "30 Units";
+      } else if (currentRole === 'visitor') {
+        userPayload.originAddress = document.getElementById('visitor-origin-address')?.value || "Dadar East, Mumbai";
+        userPayload.gps = document.getElementById('visitor-gps')?.value || "19.0178° N, 72.8478° E";
+        userPayload.travelMode = document.getElementById('visitor-travel-mode')?.value || "train";
       }
 
       const btn = document.getElementById('signup-submit-btn');
       btn.disabled = true;
       btn.innerHTML = `<span class="animate-spin inline-block mr-2">&bull;</span> Registering...`;
 
-      await window.ChronosSupabase.signUp({
-        fullName: name,
-        email,
-        organization: org,
-        password,
-        role: currentRole
-      });
+      await window.ChronosSupabase.signUp(userPayload);
 
       alert(`Account successfully registered for ${name} (${currentRole.replace('_', ' ').toUpperCase()})! Redirecting to your dashboard...`);
       if (currentRole === 'event_manager') {
@@ -208,8 +376,10 @@
       renderNavbar('signup');
       const params = new URLSearchParams(window.location.search);
       const roleParam = params.get('role');
-      if (roleParam && roleFieldConfig[roleParam]) {
+      if (roleParam && ['event_manager', 'infra_provider', 'service_provider', 'visitor'].includes(roleParam)) {
         selectSignupRole(roleParam);
+      } else {
+        selectSignupRole('event_manager');
       }
       lucide.createIcons();
     });

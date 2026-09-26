@@ -169,7 +169,76 @@ const ChronosSupabase = {
       }
     }
 
-    // Resilient Local Session Fallback for Demo & Prototyping
+    // Default personas dictionary
+    const DEFAULT_PERSONAS = {
+      'alicia@eventm.com': {
+        id: "usr_alicia",
+        email: "alicia@eventm.com",
+        fullName: "Alicia Stone",
+        role: "event_manager",
+        roleTitle: "Event Master Orchestrator",
+        organization: "International Mega-Events Board",
+        phone: "+91 98199 12345"
+      },
+      'srinivasan@infram.com': {
+        id: "usr_srinivasan",
+        email: "srinivasan@infram.com",
+        fullName: "Srinivasan R.",
+        role: "infra_provider",
+        roleTitle: "Infrastructure & Transit Director",
+        organization: "Navi Mumbai Municipal Transport & Central Railway",
+        phone: "+91 98201 45678",
+        residence: "Sector 19A, Nerul, Navi Mumbai",
+        property: {
+          name: "Nerul Multi-Modal Transit Hub & Parking Complex",
+          placement: "Nerul East Railway Approach & Sion-Panvel Bypass",
+          geo: "19.0330° N, 73.0297° E (Zone B Catchment)",
+          docNumber: "LIC-MH-CIDCO-2024-8841",
+          capacity: "24,000 pax/hr Rail & 2,200 Parking Bays",
+          availability: "Available for Sep 1 - Sep 4 (No Conflicting Bookings)"
+        }
+      },
+      'harry@servicem.com': {
+        id: "usr_harry",
+        email: "harry@servicem.com",
+        fullName: "Harry Vance",
+        role: "service_provider",
+        roleTitle: "Hospitality, Security & Logistics Lead",
+        organization: "Apex Stadium Services & Fleet Co.",
+        phone: "+91 97110 33451",
+        services: ["Hotel / Accommodation", "Transit Shuttles", "Security & Stewards", "Camera / CCTV Surveillance", "Concessions & F&B"],
+        pricing: {
+          hotel: "₹3,500 / room / night",
+          transport: "₹1,800 / bus / hr",
+          security: "₹450 / guard / hr",
+          cctv: "₹850 / camera / day",
+          concessions: "₹120 / meal kit"
+        }
+      },
+      'george@visitor.com': {
+        id: "usr_george",
+        email: "george@visitor.com",
+        fullName: "George Miller",
+        role: "visitor",
+        roleTitle: "Grandstand Ticket Holder",
+        organization: "Spectator & Guest",
+        phone: "+91 91234 56789",
+        originLocation: "Dadar East, Mumbai (19.0178° N, 72.8478° E)",
+        distanceToVenue: "28.4 km via Harbour Rail Line",
+        transitPreference: "Suburban Rail (Harbour Line)",
+        ticketId: "TKT-DYP-2026-94812"
+      }
+    };
+
+    // If matches known persona, use their full profile
+    const lowerEmail = (email || '').toLowerCase().trim();
+    if (DEFAULT_PERSONAS[lowerEmail]) {
+      const userObj = DEFAULT_PERSONAS[lowerEmail];
+      this.setCurrentUser(userObj);
+      return { success: true, user: userObj, isLocal: true };
+    }
+
+    // Role labels fallback
     const roleLabels = {
       event_manager: "Event Master Orchestrator",
       visitor: "Grandstand Spectator",
@@ -179,9 +248,9 @@ const ChronosSupabase = {
 
     const userObj = {
       id: "usr_" + Math.random().toString(36).substr(2, 9),
-      email: email || "dispatch@team8.org",
+      email: email || "alicia@eventm.com",
       role: role || "event_manager",
-      fullName: email.split('@')[0].toUpperCase(),
+      fullName: email ? email.split('@')[0].toUpperCase() : "Alicia Stone",
       roleTitle: roleLabels[role] || "Operational User",
       organization: "ChronosFlow Operations Grid"
     };

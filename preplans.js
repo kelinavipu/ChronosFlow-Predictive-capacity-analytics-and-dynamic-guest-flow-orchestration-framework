@@ -816,6 +816,86 @@ window.submitNewAsset = function(e) {
   renderRadar();
 };
 
+// Cross-Role Procurement Handlers (Alicia orders from Srinivasan & Harry)
+window.submitOrderToSrinivasan = function() {
+  const demand = document.getElementById('order-infra-demand')?.value || "65 Feeder Buses + 2,200 Parking Bays";
+  const btn = document.getElementById('btn-order-infra');
+  
+  const newReq = {
+    id: "req_inf_" + Math.random().toString(36).substr(2, 7),
+    eventId: currentActiveEvent.id,
+    eventTitle: currentActiveEvent.title || currentActiveEvent.venueName,
+    eventHost: "Alicia Stone (Event Master Orchestrator)",
+    venue: currentActiveEvent.venueName,
+    date: currentActiveEvent.duration || "Sep 1 - Sep 4, 2026",
+    expectedVisitors: currentActiveEvent.expectedVisitors || 50000,
+    requestedAsset: "Nerul Multi-Modal Transit Hub (Srinivasan R.)",
+    requestText: demand,
+    allocatedCapacity: "Time Window Confirmed: Sep 1-4 (10:00-23:00)",
+    status: "APPROVED",
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const stored = localStorage.getItem('chronos_infra_requests');
+    let list = stored ? JSON.parse(stored) : [];
+    list.unshift(newReq);
+    localStorage.setItem('chronos_infra_requests', JSON.stringify(list));
+  } catch (e) {}
+
+  if (btn) {
+    btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2";
+    btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Allocated & Confirmed by Srinivasan</span>`;
+    btn.disabled = true;
+  }
+
+  alert("Infrastructure order successfully transmitted to Infrastructure Manager (Srinivasan R.)!\n\nAvailability Analysis: 100% Free for Sep 1 - Sep 4 (10:00 - 23:00).\nCapacity Reserved: 65 Feeder CNG Buses & 2,200 Bays.");
+  lucide.createIcons();
+};
+
+window.submitOrderToHarry = function() {
+  const serviceType = document.getElementById('order-service-type')?.value || "transport";
+  const units = document.getElementById('order-service-units')?.value || "25";
+  const btn = document.getElementById('btn-order-service');
+
+  const titles = {
+    transport: `${units} Dedicated Feeder Shuttle Buses`,
+    security: `${units} Perimeter Security Stewards`,
+    cctv: `${units} Optical CCTV Surveillance Nodes`,
+    hotel: `${units} Hotel Rooms at Sector 21 Cluster`
+  };
+
+  const newServiceReq = {
+    id: "req_srv_" + Math.random().toString(36).substr(2, 7),
+    eventId: currentActiveEvent.id,
+    eventTitle: currentActiveEvent.title || currentActiveEvent.venueName,
+    eventHost: "Alicia Stone (Event Master Orchestrator)",
+    venue: currentActiveEvent.venueName,
+    serviceDomain: serviceType.toUpperCase(),
+    requestTitle: titles[serviceType] || `${units} Units of Service`,
+    requirements: `Required for ${currentActiveEvent.duration} at Dr. D.Y. Patil Stadium. Hourly rate approved by Alicia.`,
+    unitsRequested: parseInt(units),
+    status: "ACCEPTED",
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    const stored = localStorage.getItem('chronos_service_requests');
+    let list = stored ? JSON.parse(stored) : [];
+    list.unshift(newServiceReq);
+    localStorage.setItem('chronos_service_requests', JSON.stringify(list));
+  } catch (e) {}
+
+  if (btn) {
+    btn.className = "w-full py-2.5 rounded-xl badge-sage font-bold text-xs flex items-center justify-center space-x-2";
+    btn.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i><span>Contract Confirmed & Staff Assigned by Harry</span>`;
+    btn.disabled = true;
+  }
+
+  alert(`Service contract successfully issued to Service Manager (Harry Vance)!\n\nService: ${titles[serviceType]}\nUnits Allocated: ${units}\nCommercial Rates: Hourly billing locked in baseline.`);
+  lucide.createIcons();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initPreplansPage();
 });
