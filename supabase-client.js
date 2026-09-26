@@ -123,27 +123,76 @@ const ChronosSupabase = {
   // 1. AUTHENTICATION & SESSION
   getCurrentUser() {
     try {
+      // Check tab-isolated session storage first
+      const sessStored = sessionStorage.getItem('chronos_user');
+      if (sessStored) return JSON.parse(sessStored);
+
+      // Check global local storage fallback
       const stored = localStorage.getItem('chronos_user');
       if (stored) return JSON.parse(stored);
     } catch (e) {
       console.error(e);
     }
-    // Default fallback demo user
+
+    // Infer default persona by active route so side-by-side tabs automatically pick correct role
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('dashboard-infra')) {
+        return {
+          id: "usr_srinivasan",
+          email: "srinivasan@infram.com",
+          fullName: "Srinivasan R.",
+          role: "infra_provider",
+          roleTitle: "Infrastructure & Transit Director",
+          organization: "Navi Mumbai Municipal Transport & Central Railway"
+        };
+      }
+      if (path.includes('dashboard-service')) {
+        return {
+          id: "usr_harry",
+          email: "harry@servicem.com",
+          fullName: "Harry Vance",
+          role: "service_provider",
+          roleTitle: "Hospitality, Security & Logistics Lead",
+          organization: "Apex Stadium Services & Fleet Co."
+        };
+      }
+      if (path.includes('dashboard-visitor') || path.includes('visitor-app')) {
+        return {
+          id: "usr_george",
+          email: "george@visitor.com",
+          fullName: "George Miller",
+          role: "visitor",
+          roleTitle: "Grandstand Ticket Holder",
+          organization: "Spectator & Guest"
+        };
+      }
+    }
+
+    // Default Event Manager persona
     return {
-      email: "planner@chronosflow.org",
-      fullName: "Vikram Sethi",
+      id: "usr_alicia",
+      email: "alicia@eventm.com",
+      fullName: "Alicia Stone",
       role: "event_manager",
-      organization: "National Sports & Mega Events Authority"
+      roleTitle: "Event Master Orchestrator",
+      organization: "International Mega-Events Board"
     };
   },
 
   setCurrentUser(user) {
-    localStorage.setItem('chronos_user', JSON.stringify(user));
+    try {
+      sessionStorage.setItem('chronos_user', JSON.stringify(user));
+      localStorage.setItem('chronos_user', JSON.stringify(user));
+    } catch (e) {}
     window.dispatchEvent(new Event('chronos_auth_changed'));
   },
 
   signOut() {
-    localStorage.removeItem('chronos_user');
+    try {
+      sessionStorage.removeItem('chronos_user');
+      localStorage.removeItem('chronos_user');
+    } catch (e) {}
     window.dispatchEvent(new Event('chronos_auth_changed'));
     window.location.href = "index.html";
   },
@@ -1127,4 +1176,66 @@ window.ChronosSupabase = ChronosSupabase;
       }
     }
   } catch (e) {}
+})();
+
+// =========================================================================
+// REAL-TIME INTER-WINDOW & INCOGNITO SYNC ENGINE (POLLS /api/sync)
+// =========================================================================
+(function initCrossWindowServerSync() {
+  const SYNC_KEYS = [
+    'chronos_infra_requests',
+    'chronos_service_requests',
+    'chronos_infra_possessions',
+    'chronos_decision_factor_state',
+    'chronos_visitor_tickets'
+  ];
+
+  // Helper to push key updates to Python server
+  window.syncKeyToServer = function(key, val) {
+    try {
+      fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value: typeof val === 'string' ? val : JSON.stringify(val) })
+      }).catch(() => {});
+    } catch (e) {}
+  };
+
+  // Intercept localStorage.setItem to push to server automatically
+  const originalSetItem = localStorage.setItem;
+  localStorage.setItem = function(key, val) {
+    originalSetItem.apply(this, arguments);
+    if (SYNC_KEYS.includes(key)) {
+      window.syncKeyToServer(key, val);
+    }
+  };
+
+  // Poll server every 2 seconds for changes from other windows/incognito sessions
+  setInterval(async () => {
+    try {
+      const res = await fetch('/api/sync');
+      if (!res.ok) return;
+      const serverData = await res.json();
+      
+      for (const [key, val] of Object.entries(serverData)) {
+        if (!SYNC_KEYS.includes(key) || !val) continue;
+        const currentLocal = localStorage.getItem(key);
+        if (currentLocal !== val) {
+          originalSetItem.call(localStorage, key, val);
+          
+          // Dispatch events to refresh open pages
+          window.dispatchEvent(new StorageEvent('storage', { key, newValue: val, storageArea: localStorage }));
+          if (key === 'chronos_infra_requests') {
+            window.dispatchEvent(new CustomEvent('chronos:infra_sync', { detail: { action: 'server_polled' } }));
+          }
+          if (key === 'chronos_service_requests') {
+            window.dispatchEvent(new CustomEvent('chronos:service_sync', { detail: { action: 'server_polled' } }));
+          }
+          if (key === 'chronos_decision_factor_state') {
+            window.dispatchEvent(new CustomEvent('chronos:decision_factor_sync', { detail: JSON.parse(val) }));
+          }
+        }
+      }
+    } catch (e) {}
+  }, 2000);
 })();
