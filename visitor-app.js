@@ -173,7 +173,7 @@ function getNearestLocality(lat, lng) {
   return closest;
 }
 
-// Free, fast reverse geocoder using BigDataCloud
+// Free, fast reverse geocoder using BigDataCloud & Nominatim fallback
 async function fetchReverseGeocode(lat, lng) {
   try {
     const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
@@ -190,9 +190,23 @@ async function fetchReverseGeocode(lat, lng) {
       }
     }
   } catch (e) {
-    console.warn("Reverse geocode fetch error:", e);
+    console.warn("BigDataCloud reverse geocode fetch error:", e);
   }
-  return null;
+
+  // Secondary fallback: OpenStreetMap Nominatim
+  try {
+    const res2 = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    if (res2.ok) {
+      const data2 = await res2.json();
+      if (data2 && data2.address) {
+        const addr = data2.address;
+        const place = addr.suburb || addr.neighbourhood || addr.residential || addr.city_district || addr.city || addr.town;
+        if (place) return place;
+      }
+    }
+  } catch (e) {}
+
+  return getNearestLocality(lat, lng) || null;
 }
 
 // =========================================================================
@@ -1197,37 +1211,46 @@ window.gatekeeperRequestGPS = function() {
   if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping";
 
   if (!navigator.geolocation) {
-    if (gpsNotice) gpsNotice.innerText = "⚠️ Browser Geolocation API not supported. Pinpoint location on satellite radar below:";
-    if (statusText) statusText.innerText = "Please Pinpoint on Radar Map";
+    detectLocationViaIP();
     return;
   }
 
+  // Tier 1: Try High Accuracy GPS
   navigator.geolocation.getCurrentPosition(
     async position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const acc = position.coords.accuracy;
-
-      setGatekeeperCoordinates(lat, lng, 'Hardware GNSS', acc);
-
-      if (gpsNotice) {
-        gpsNotice.innerHTML = `<span class="text-emerald-400 font-bold">✅ Hardware GNSS Sensor Locked (Accuracy: ±${Math.round(acc)}m)</span>`;
-      }
-      showMobileToast(`🛰️ Hardware GPS Locked: ±${Math.round(acc)}m`);
+      onGpsSuccess(position, 'Hardware GNSS');
     },
     error => {
-      console.warn("Hardware GPS prompt unavailable/denied over HTTP:", error);
-      let reason = "⚠️ Browser blocked GPS over HTTP. Pick an option below to enable:";
-      if (error.code === 1) reason = "⚠️ Browser permission denied. Pick an option below to enable:";
-      if (gpsNotice) {
-        gpsNotice.innerHTML = `<span class="text-amber-300 font-bold">${reason}</span>`;
-      }
-      if (statusText && !gatekeeperLocation) {
-        statusText.innerText = "Select an Option Below to Enable";
-      }
+      console.warn("High-accuracy GNSS failed/timed out, attempting standard accuracy:", error);
+      // Tier 2: Try Standard Accuracy
+      navigator.geolocation.getCurrentPosition(
+        async position => {
+          onGpsSuccess(position, 'Standard GNSS');
+        },
+        error2 => {
+          console.warn("Standard GNSS failed, attempting Network IP fallback:", error2);
+          // Tier 3: IP Geolocation Fallback
+          detectLocationViaIP();
+        },
+        { enableHighAccuracy: false, timeout: 6000, maximumAge: 10000 }
+      );
     },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
   );
+
+  function onGpsSuccess(position, source) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const acc = position.coords.accuracy;
+
+    setGatekeeperCoordinates(lat, lng, source, acc);
+
+    if (gpsNotice) {
+      gpsNotice.innerHTML = `<span class="text-emerald-400 font-bold">✅ Present Location Locked (Accuracy: ±${Math.round(acc)}m)</span>`;
+    }
+    showMobileToast(`🛰️ Present GPS Locked: ±${Math.round(acc)}m`);
+    startLiveGPSWatcher();
+  }
 };
 
 window.setGatekeeperCoordinates = async function(lat, lng, source, accuracy) {
@@ -1493,6 +1516,55 @@ window.confirmLiveGPS = function() {
 
   showMobileToast("📡 Requesting device GPS sensor...");
 
+window.startLiveGPSWatcher = function() {
+  if (!navigator.geolocation) return;
+  if (watchId !== null) {
+    try { navigator.geolocation.clearWatch(watchId); } catch(e) {}
+  }
+
+  watchId = navigator.geolocation.watchPosition(
+    async position => {
+      isLiveGpsActive = true;
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const acc = position.coords.accuracy;
+
+      georgeLocation.lat = lat;
+      georgeLocation.lng = lng;
+
+      const locality = getNearestLocality(lat, lng);
+      georgeLocation.label = locality ? `${locality} (Live GPS)` : `Present Location (±${Math.round(acc)}m)`;
+
+      updateLocationUI("Live GPS Active", `±${Math.round(acc)}m`);
+
+      if (userMarker && mobileMap) {
+        userMarker.setLatLng([lat, lng]);
+      }
+
+      const refined = await fetchReverseGeocode(lat, lng);
+      if (refined) {
+        georgeLocation.label = `${refined} (Live GPS)`;
+        updateLocationUI("Live GPS Active", `±${Math.round(acc)}m`);
+      }
+    },
+    err => {
+      console.warn("watchPosition background update:", err);
+    },
+    { enableHighAccuracy: false, maximumAge: 5000, timeout: 15000 }
+  );
+};
+
+window.confirmLiveGPS = function() {
+  closeLocationPickerModal();
+  document.getElementById('geo-permission-modal')?.classList.add('hidden');
+
+  if (!navigator.geolocation) {
+    detectLocationViaIP();
+    return;
+  }
+
+  showMobileToast("📡 Requesting present GPS location...");
+
   navigator.geolocation.getCurrentPosition(
     async position => {
       isLiveGpsActive = true;
@@ -1506,6 +1578,7 @@ window.confirmLiveGPS = function() {
       renderOriginChips();
       renderPickerChips();
       showMobileToast(`📍 Present GPS Locked: ${georgeLocation.label}`);
+      startLiveGPSWatcher();
 
       const refined = await fetchReverseGeocode(position.coords.latitude, position.coords.longitude);
       if (refined) {
@@ -1514,21 +1587,10 @@ window.confirmLiveGPS = function() {
       }
     },
     error => {
-      console.warn("Hardware GPS error:", error);
-      let errMsg = "⚠️ GPS sensor unavailable.";
-      if (error.code === 1) {
-        errMsg = "⚠️ Location permission denied by browser over HTTP. Choose your area below:";
-      } else if (error.code === 2) {
-        errMsg = "⚠️ Position unavailable. Select your area below:";
-      } else if (error.code === 3) {
-        errMsg = "⚠️ GPS sensor timed out. Select your area below:";
-      }
-      showMobileToast(errMsg);
-      setTimeout(() => {
-        openLocationPickerModal();
-      }, 700);
+      console.warn("Hardware GPS error, attempting IP fallback:", error);
+      detectLocationViaIP();
     },
-    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
   );
 };
 
@@ -1550,11 +1612,31 @@ async function detectLocationViaIP() {
         renderOriginChips();
         renderPickerChips();
         showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
+
+        const refined = await fetchReverseGeocode(data.latitude, data.longitude);
+        if (refined) {
+          georgeLocation.label = `${refined} (Network)`;
+          updateLocationUI(`Location: ${georgeLocation.label}`, "Synced");
+        }
         return;
       }
     }
   } catch (e) {
-    console.warn("ipwho.is error, trying fallback:", e);
+    console.warn("ipwho.is error, trying ipapi fallback:", e);
+    try {
+      const res2 = await fetch('https://ipapi.co/json/');
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2 && data2.latitude && data2.longitude) {
+          georgeLocation.lat = data2.latitude;
+          georgeLocation.lng = data2.longitude;
+          georgeLocation.label = data2.city ? `${data2.city} (Network)` : "Your Present Location";
+          updateLocationUI(`Location: ${georgeLocation.label}`, "Synced");
+          showMobileToast(`📍 Location Detected: ${georgeLocation.label}`);
+          return;
+        }
+      }
+    } catch (e2) {}
   }
 
   showMobileToast("⚠️ Network detection unavailable. Please select your area.");
