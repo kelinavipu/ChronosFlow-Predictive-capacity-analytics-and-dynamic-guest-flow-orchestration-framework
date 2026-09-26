@@ -234,6 +234,42 @@ let georgeLocation = {
 };
 
 // =========================================================================
+// 2.5 PWA SERVICE WORKER & APP INSTALL PROMPT
+// =========================================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('PWA ServiceWorker active:', reg.scope))
+      .catch(err => console.log('PWA ServiceWorker registration skipped:', err));
+  });
+}
+
+let deferredPwaPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  const pwaBtn = document.getElementById('btn-pwa-install');
+  if (pwaBtn) {
+    pwaBtn.classList.remove('hidden');
+    lucide.createIcons();
+  }
+});
+
+window.installPwaApp = function() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.then(choiceResult => {
+      if (choiceResult.outcome === 'accepted') {
+        showMobileToast('🎉 Chronos Guest App Installed on Phone!');
+      }
+      deferredPwaPrompt = null;
+    });
+  } else {
+    showMobileToast('📲 To install: Tap your browser menu (⋮ or share) and choose "Add to Home screen".');
+  }
+};
+
+// =========================================================================
 // 3. INITIALIZATION & URL PARAMETER PARSING
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
