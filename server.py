@@ -37,7 +37,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps(SYNC_CACHE).encode('utf-8'))
+
+            # Parse query params if any
+            key = None
+            if 'key=' in self.path:
+                key = self.path.split('key=')[1].split('&')[0]
+
+            val = SYNC_CACHE.get(key) if key else None
+            response_data = {
+                "key": key,
+                "value": val,
+                "cache": SYNC_CACHE
+            }
+            # Also include the key as a direct top-level property
+            if key and val is not None:
+                response_data[key] = val
+
+            self.wfile.write(json.dumps(response_data).encode('utf-8'))
             return
         super().do_GET()
 
@@ -50,11 +66,24 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 key = data.get('key')
                 value = data.get('value')
                 if key:
-                    SYNC_CACHE[key] = value
+                    # If this is a device location array, merge device-by-device
+                    if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict) and 'id' in value[0]:
+                        existing = SYNC_CACHE.get(key, [])
+                        if not isinstance(existing, list):
+                            existing = []
+                        # Merge new device items by ID
+                        device_map = {d['id']: d for d in existing if isinstance(d, dict) and 'id' in d}
+                        for new_d in value:
+                            if isinstance(new_d, dict) and 'id' in new_d:
+                                device_map[new_d['id']] = new_d
+                        SYNC_CACHE[key] = list(device_map.values())
+                    else:
+                        SYNC_CACHE[key] = value
+
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({"status": "ok", "syncedKey": key}).encode('utf-8'))
+                self.wfile.write(json.dumps({"status": "ok", "syncedKey": key, "value": SYNC_CACHE.get(key)}).encode('utf-8'))
             except Exception as e:
                 self.send_response(400)
                 self.end_headers()

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Live Social Map - Auto Device Tagging</title>
+  <title>Lab Real-Time Multi-Device Map Tracker</title>
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +23,7 @@
     }
     @keyframes pulse-ring {
       0% { transform: scale(0.7); opacity: 0.9; }
-      100% { transform: scale(2.5); opacity: 0; }
+      100% { transform: scale(2.6); opacity: 0; }
     }
     .gps-pulse-ring {
       animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
@@ -48,15 +48,15 @@
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[2px] shrink-0 shadow-lg shadow-rose-950/40">
           <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-rose-400 font-black text-sm">
-            <i data-lucide="map-pin" class="w-5 h-5 text-pink-400"></i>
+            <i data-lucide="wifi" class="w-5 h-5 text-pink-400"></i>
           </div>
         </div>
         <div>
           <h1 class="text-sm sm:text-base font-black text-white tracking-tight leading-none flex items-center space-x-1.5">
-            <span>Live Social Map</span>
-            <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-mono border border-rose-500/30">LIVE</span>
+            <span>Lab Wi-Fi Device Tracker</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono border border-emerald-500/30">SYNCED</span>
           </h1>
-          <p class="text-[11px] text-slate-400 mt-0.5" id="header-status-subtitle">Auto-detecting device location...</p>
+          <p class="text-[11px] text-slate-400 mt-0.5" id="header-status-subtitle">Tap map anywhere to set device position</p>
         </div>
       </div>
 
@@ -66,7 +66,7 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </span>
-          <span id="live-user-count">1 Person Live</span>
+          <span id="live-user-count">1 Device Online</span>
         </div>
       </div>
     </div>
@@ -74,46 +74,53 @@
 
   <!-- FULL-SCREEN MAP CANVAS -->
   <div class="flex-1 relative w-full h-full">
-    <div id="social-map" class="w-full h-full bg-slate-950 z-0"></div>
+    <div id="social-map" class="w-full h-full bg-slate-950 z-0 cursor-crosshair"></div>
 
-    <!-- ONE-TAP PROMPT OVERLAY (IF BROWSER REQUIRES USER GESTURE FOR GPS) -->
-    <div id="location-prompt-modal" class="absolute inset-0 z-40 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div class="max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-4 shadow-2xl">
-        <div class="w-16 h-16 rounded-full bg-rose-500/15 border border-rose-500/30 mx-auto flex items-center justify-center text-rose-400 shadow-lg shadow-rose-950/50">
-          <i data-lucide="navigation-off" class="w-8 h-8 animate-bounce"></i>
+    <!-- QUICK PRESET LOCATION BUTTONS & CONTROLS -->
+    <div class="absolute top-20 left-4 z-20 flex flex-col space-y-2 pointer-events-auto">
+      <div class="p-2.5 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-2xl space-y-2 max-w-xs">
+        <div class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Quick Lab Spot Set</div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
+          <button onclick="setSpot(19.0435, 73.0253, 'Lab Bench 1')" class="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] transition text-left">
+            📍 Lab Bench 1
+          </button>
+          <button onclick="setSpot(19.0442, 73.0261, 'Lab Bench 2')" class="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] transition text-left">
+            📍 Lab Bench 2
+          </button>
+          <button onclick="setSpot(19.0428, 73.0245, 'Lab Entrance')" class="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] transition text-left">
+            🚪 Lab Entrance
+          </button>
+          <button onclick="setSpot(19.0450, 73.0270, 'Main Gate')" class="px-2.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] transition text-left">
+            🏛️ Main Gate
+          </button>
         </div>
-        <div>
-          <h2 class="text-lg font-black text-white">Join Live Social Map</h2>
-          <p class="text-xs text-slate-400 mt-1">Tap below to tag your device on the live map along with everyone else!</p>
-        </div>
-        <button 
-          onclick="requestLocationPermissionNow()" 
-          class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-400 hover:to-purple-500 text-white font-black text-sm transition shadow-lg shadow-rose-950/50 flex items-center justify-center space-x-2 cursor-pointer"
-        >
-          <i data-lucide="crosshair" class="w-4 h-4"></i>
-          <span>Tag My Location Live</span>
-        </button>
       </div>
     </div>
 
-    <!-- FLOATING BOTTOM CONTROLS & USER LIST -->
+    <!-- FLOATING BOTTOM CONTROLS & USER ROSTER -->
     <div class="absolute bottom-5 left-4 right-4 z-20 pointer-events-none flex flex-col items-center">
       <div class="max-w-md w-full bg-slate-900/95 border border-slate-800 backdrop-blur-xl rounded-2xl p-3.5 shadow-2xl space-y-3 pointer-events-auto">
         
         <div class="flex items-center justify-between text-xs font-mono">
           <div class="flex items-center space-x-2 text-slate-200">
             <i data-lucide="navigation" class="w-4 h-4 text-sky-400 animate-pulse"></i>
-            <span id="my-device-label" class="font-bold">Your Device Tagged</span>
+            <span id="my-device-label" class="font-bold">Your Device Active</span>
           </div>
-          <button onclick="fitMapToAllPeople()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 text-[11px] transition">
-            Fit All People
+          <button onclick="fitMapToAllPeople()" class="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[11px] transition shadow">
+            Fit All Devices
           </button>
         </div>
 
         <div id="live-people-pills" class="flex space-x-2 overflow-x-auto pb-1 text-xs font-mono scrollbar-none">
-          <!-- Dynamically populated avatar pills of connected people -->
+          <!-- Dynamically populated avatar pills of connected devices -->
         </div>
       </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION BANNER -->
+    <div id="toast-banner" class="hidden absolute top-20 left-1/2 -translate-x-1/2 z-30 px-4 py-2.5 rounded-2xl bg-emerald-500 text-slate-950 font-mono text-xs font-black flex items-center space-x-2 shadow-2xl backdrop-blur-md">
+      <i data-lucide="check-circle" class="w-4 h-4"></i>
+      <span id="toast-message">Device location updated!</span>
     </div>
 
   </div>
@@ -122,153 +129,94 @@
     // 1. Device Identification
     let myDeviceId = localStorage.getItem('chronos_social_device_id');
     if (!myDeviceId) {
-      myDeviceId = 'user_' + Math.random().toString(36).substr(2, 6);
+      myDeviceId = 'dev_' + Math.random().toString(36).substr(2, 6);
       localStorage.setItem('chronos_social_device_id', myDeviceId);
     }
 
-    let userAvatars = ['😎', '🚀', '⚡', '🔥', '👑', '🎯', '🦄', '👾', '🌟', '🏆'];
+    let userAvatars = ['📱', '💻', '🚀', '⚡', '🔥', '👑', '🎯', '👾', '🌟', '🏆'];
     let myAvatar = localStorage.getItem('chronos_social_avatar');
     if (!myAvatar) {
       myAvatar = userAvatars[Math.floor(Math.random() * userAvatars.length)];
       localStorage.setItem('chronos_social_avatar', myAvatar);
     }
 
-    let myDeviceName = localStorage.getItem('chronos_social_name') || `Device #${myDeviceId.substr(-4)}`;
+    let myDeviceName = localStorage.getItem('chronos_social_name') || `Lab Device #${myDeviceId.substr(-4)}`;
 
     const USER_STYLES = [
-      { border: '#ec4899', bg: 'bg-pink-500', text: 'text-pink-400', shadow: 'rgba(236,72,153,0.5)' },
-      { border: '#38bdf8', bg: 'bg-sky-500', text: 'text-sky-400', shadow: 'rgba(56,189,248,0.5)' },
-      { border: '#10b981', bg: 'bg-emerald-500', text: 'text-emerald-400', shadow: 'rgba(16,185,129,0.5)' },
-      { border: '#f59e0b', bg: 'bg-amber-500', text: 'text-amber-400', shadow: 'rgba(245,158,11,0.5)' },
-      { border: '#a855f7', bg: 'bg-purple-500', text: 'text-purple-400', shadow: 'rgba(168,85,247,0.5)' },
-      { border: '#ef4444', bg: 'bg-red-500', text: 'text-red-400', shadow: 'rgba(239,68,68,0.5)' }
+      { border: '#10b981', bg: 'bg-emerald-500', text: 'text-emerald-400', shadow: 'rgba(16,185,129,0.6)' },
+      { border: '#38bdf8', bg: 'bg-sky-500', text: 'text-sky-400', shadow: 'rgba(56,189,248,0.6)' },
+      { border: '#f59e0b', bg: 'bg-amber-500', text: 'text-amber-400', shadow: 'rgba(245,158,11,0.6)' },
+      { border: '#ec4899', bg: 'bg-pink-500', text: 'text-pink-400', shadow: 'rgba(236,72,153,0.6)' },
+      { border: '#a855f7', bg: 'bg-purple-500', text: 'text-purple-400', shadow: 'rgba(168,85,247,0.6)' },
+      { border: '#ef4444', bg: 'bg-red-500', text: 'text-red-400', shadow: 'rgba(239,68,68,0.6)' }
     ];
 
     let map = null;
     let userMarkers = {};
     let userCircles = {};
-    let currentLat = null;
-    let currentLng = null;
-    let watchId = null;
+    let currentLat = 19.0435 + (Math.random() - 0.5) * 0.002;
+    let currentLng = 73.0253 + (Math.random() - 0.5) * 0.002;
 
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('my-device-label').innerText = `${myAvatar} ${myDeviceName} (YOU)`;
 
       initSocialMap();
-      attemptAutoLocation();
+      broadcastLocation(currentLat, currentLng, 10, 'Initial Join');
       startCrossDevicePolling();
+      attemptNativeGpsWatch();
       lucide.createIcons();
     });
 
     function initSocialMap() {
       map = L.map('social-map', {
-        center: [19.0435, 73.0253],
-        zoom: 14,
+        center: [currentLat, currentLng],
+        zoom: 15,
         zoomControl: false,
         attributionControl: false
       });
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // OpenStreetMap Tile Layer - 100% Free, NO API KEY Required Ever
+      // OpenStreetMap Tiles - Free, Zero API Keys
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
+
+      // TAP / CLICK ANYWHERE ON MAP TO PLACE LOCATION PIN
+      map.on('click', (e) => {
+        setSpot(e.latlng.lat, e.latlng.lng, 'Tapped Map Spot');
+      });
     }
 
-    // Auto-attempt native GPS or fallback to free IP geolocation
-    function attemptAutoLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            hidePromptModal();
-            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
-            startContinuousGpsWatch();
-          },
-          (err) => {
-            console.warn("Native GPS unavailable or HTTP IP context:", err.message);
-            // Fallback to IP Geolocation so device is tagged automatically!
-            fetchIpLocationFallback();
-          },
-          { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
-        );
-      } else {
-        fetchIpLocationFallback();
-      }
+    function setSpot(lat, lng, spotName) {
+      currentLat = lat;
+      currentLng = lng;
+      
+      const subtitle = document.getElementById('header-status-subtitle');
+      if (subtitle) subtitle.innerText = `Set to ${spotName}: ${lat.toFixed(5)}°, ${lng.toFixed(5)}°`;
+
+      showToast(`Set location to ${spotName}!`);
+      broadcastLocation(lat, lng, 8, spotName);
     }
 
-    function requestLocationPermissionNow() {
-      hidePromptModal();
+    function attemptNativeGpsWatch() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
+        navigator.geolocation.watchPosition(
           (pos) => {
-            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
-            startContinuousGpsWatch();
+            currentLat = pos.coords.latitude;
+            currentLng = pos.coords.longitude;
+            broadcastLocation(currentLat, currentLng, pos.coords.accuracy, 'Live GPS Hardware');
           },
           (err) => {
-            fetchIpLocationFallback();
+            console.warn("GPS Notice:", err.message);
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
-      } else {
-        fetchIpLocationFallback();
       }
     }
 
-    function startContinuousGpsWatch() {
-      if (navigator.geolocation && !watchId) {
-        watchId = navigator.geolocation.watchPosition(
-          (pos) => {
-            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
-          },
-          null,
-          { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-        );
-      }
-    }
-
-    async function fetchIpLocationFallback() {
-      const subtitle = document.getElementById('header-status-subtitle');
-      if (subtitle) subtitle.innerText = "IP Geolocation active (HTTP fallback)...";
-      
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.latitude && data.longitude) {
-            hidePromptModal();
-            onLocationAcquired(data.latitude, data.longitude, 250, 0);
-            return;
-          }
-        }
-      } catch (e) {}
-
-      // Secondary fallback near center area with slight offset
-      hidePromptModal();
-      const fallbackLat = 19.0435 + (Math.random() - 0.5) * 0.003;
-      const fallbackLng = 73.0253 + (Math.random() - 0.5) * 0.003;
-      onLocationAcquired(fallbackLat, fallbackLng, 20, 0);
-    }
-
-    function hidePromptModal() {
-      const modal = document.getElementById('location-prompt-modal');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    function onLocationAcquired(lat, lng, accuracy, speed) {
-      currentLat = lat;
-      currentLng = lng;
-
-      const subtitle = document.getElementById('header-status-subtitle');
-      if (subtitle) {
-        subtitle.innerText = `Tagged: ${lat.toFixed(5)}°, ${lng.toFixed(5)}° (±${(accuracy||10).toFixed(0)}m)`;
-      }
-
-      broadcastLocation(lat, lng, accuracy, speed);
-    }
-
-    async function broadcastLocation(lat, lng, accuracy, speed) {
+    async function broadcastLocation(lat, lng, accuracy, note) {
       const payload = {
         id: myDeviceId,
         name: myDeviceName,
@@ -276,10 +224,11 @@
         lat: lat,
         lng: lng,
         accuracy: accuracy || 10,
-        speed: speed || 0,
+        note: note || '',
         timestamp: new Date().toISOString()
       };
 
+      // Update local storage
       let list = getStoredUserList();
       list = list.filter(u => u.id !== myDeviceId);
       list.unshift(payload);
@@ -288,11 +237,12 @@
         localStorage.setItem('chronos_social_users', JSON.stringify(list));
       } catch (e) {}
 
+      // Broadcast payload array to server
       try {
         await fetch('/api/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: 'chronos_social_users', value: list })
+          body: JSON.stringify({ key: 'chronos_social_users', value: [payload] })
         });
       } catch (e) {}
 
@@ -315,8 +265,10 @@
           const res = await fetch('/api/sync?key=chronos_social_users');
           if (res.ok) {
             const json = await res.json();
-            if (json && json.value && Array.isArray(json.value)) {
-              list = json.value;
+            // Handle server's returned data format robustly
+            const serverList = json.value || json.chronos_social_users || (json.cache ? json.cache.chronos_social_users : null);
+            if (Array.isArray(serverList) && serverList.length > 0) {
+              list = serverList;
               localStorage.setItem('chronos_social_users', JSON.stringify(list));
             }
           }
@@ -328,11 +280,12 @@
           list = getStoredUserList();
         }
 
+        // Filter out devices inactive for over 10 minutes
         const now = Date.now();
-        list = list.filter(u => (now - new Date(u.timestamp).getTime()) < 300000);
+        list = list.filter(u => (now - new Date(u.timestamp).getTime()) < 600000);
 
         renderPeopleOnMap(list);
-      }, 2000);
+      }, 1500);
     }
 
     function renderPeopleOnMap(users) {
@@ -340,7 +293,7 @@
 
       const counter = document.getElementById('live-user-count');
       if (counter) {
-        counter.innerText = `${users.length} ${users.length === 1 ? 'Person' : 'People'} Live`;
+        counter.innerText = `${users.length} ${users.length === 1 ? 'Device' : 'Devices'} Online`;
       }
 
       const activeIds = new Set(users.map(u => u.id));
@@ -378,7 +331,7 @@
           <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%);">
             <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: ${style.shadow}; top: -5px;" class="gps-pulse-ring"></div>
             <div style="width: 36px; height: 36px; border-radius: 50%; background: #0f172a; border: 3px solid ${style.border}; box-shadow: 0 0 16px ${style.shadow}; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 2;">
-              ${user.avatar || '👤'}
+              ${user.avatar || '📱'}
             </div>
             <div style="margin-top: 4px; font-size: 10px; font-family: monospace; font-weight: 800; color: #ffffff; background: rgba(15,23,42,0.92); padding: 3px 8px; border-radius: 8px; border: 1px solid ${style.border}; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
               ${user.name} ${isMe ? '(YOU)' : ''}
@@ -387,7 +340,7 @@
         `;
 
         const customIcon = L.divIcon({
-          className: 'instagram-map-pin',
+          className: 'social-device-pin',
           html: pinHtml,
           iconSize: [120, 60],
           iconAnchor: [60, 30]
@@ -402,8 +355,8 @@
 
         userMarkers[user.id].bindPopup(`
           <div style="font-family: monospace; font-size: 11px; padding: 4px; min-width: 170px;">
-            <div style="display: flex; items-center: space-x-2; margin-bottom: 6px;">
-              <span style="font-size: 20px;">${user.avatar || '👤'}</span>
+            <div style="display: flex; align-items: center; space-x: 2px; margin-bottom: 6px;">
+              <span style="font-size: 20px; margin-right: 6px;">${user.avatar || '📱'}</span>
               <div>
                 <div style="font-weight: 900; color: ${style.border}; font-size: 13px;">${user.name} ${isMe ? '(YOU)' : ''}</div>
                 <div style="color: #10b981; font-size: 9px; font-weight: bold;">● ONLINE LIVE</div>
@@ -412,7 +365,7 @@
             <div style="border-top: 1px solid #1e293b; padding-top: 4px;">
               <div>Lat: <strong>${user.lat.toFixed(6)}°</strong></div>
               <div>Lng: <strong>${user.lng.toFixed(6)}°</strong></div>
-              <div style="color: #94a3b8;">Accuracy: &plusmn;${(user.accuracy || 10).toFixed(1)}m</div>
+              <div style="color: #94a3b8;">Spot: <strong>${user.note || 'Active'}</strong></div>
               <div style="color: #64748b; font-size: 9px; margin-top: 4px;">Updated: ${new Date(user.timestamp).toLocaleTimeString()}</div>
             </div>
           </div>
@@ -431,7 +384,7 @@
         const isMe = u.id === myDeviceId;
         return `
           <div onclick="focusOnPerson(${u.lat}, ${u.lng})" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer shrink-0 transition">
-            <span class="text-sm">${u.avatar || '👤'}</span>
+            <span class="text-sm">${u.avatar || '📱'}</span>
             <span class="font-bold text-white">${u.name}</span>
             ${isMe ? `<span class="text-[9px] text-emerald-400 font-bold">YOU</span>` : ''}
           </div>
@@ -451,6 +404,16 @@
 
       const bounds = L.latLngBounds(users.map(u => [u.lat, u.lng]));
       map.fitBounds(bounds, { padding: [60, 60] });
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toast-banner');
+      const msgEl = document.getElementById('toast-message');
+      if (banner && msgEl) {
+        msgEl.innerText = msg;
+        banner.classList.remove('hidden');
+        setTimeout(() => { banner.classList.add('hidden'); }, 3000);
+      }
     }
   </script>
 </body>
