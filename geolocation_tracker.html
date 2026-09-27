@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accurate Mobile Geolocation & GPS Tracker</title>
+  <title>Multi-Device Live Geolocation & Multi-Participant Tracker</title>
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -27,138 +27,123 @@
 
   <!-- TOP APP BAR -->
   <header class="bg-slate-900/90 border-b border-slate-800 px-4 py-3 sticky top-0 z-30 backdrop-blur-md">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
         <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg shadow-emerald-950/50">
           <i data-lucide="locate-fixed" class="w-5 h-5"></i>
         </div>
         <div>
-          <h1 class="text-sm sm:text-base font-black text-white tracking-tight leading-tight">Accurate Mobile GPS Tracker</h1>
-          <p class="text-[10px] text-slate-400 font-mono">HTML5 High-Accuracy Geolocation API</p>
+          <h1 class="text-sm sm:text-base font-black text-white tracking-tight leading-tight">Multi-Device Live Geolocation Tracker</h1>
+          <p class="text-[10px] text-slate-400 font-mono">Real-Time Shared Multi-Participant Fleet Map</p>
         </div>
       </div>
 
       <div class="flex items-center space-x-2 font-mono text-xs">
-        <span id="gps-status-badge" class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold flex items-center space-x-1.5 text-[11px]">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="gps-status-text">GPS IDLE</span>
+        <span id="active-devices-badge" class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-400/30 font-bold flex items-center space-x-1.5 text-[11px]">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="active-devices-count-text">1 Device Connected</span>
         </span>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-5">
+  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-5">
 
     <!-- ACTION CONTROL BUTTONS BAR -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <button 
         id="btn-get-gps"
         onclick="getSingleGpsLocation()" 
-        class="w-full py-3.5 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm flex items-center justify-center space-x-2.5 transition shadow-lg shadow-emerald-950/50 cursor-pointer"
+        class="w-full py-3.5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition shadow-lg shadow-emerald-950/50 cursor-pointer"
       >
-        <i data-lucide="crosshair" class="w-5 h-5"></i>
-        <span>Get Current GPS Location</span>
+        <i data-lucide="crosshair" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        <span>Broadcast My GPS Fix</span>
       </button>
 
       <button 
         id="btn-toggle-tracking"
         onclick="toggleLiveGpsTracking()" 
-        class="w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-100 border border-slate-700 font-black text-sm flex items-center justify-center space-x-2.5 transition cursor-pointer"
+        class="w-full py-3.5 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-100 border border-slate-700 font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition cursor-pointer"
       >
-        <i data-lucide="radar" class="w-5 h-5 text-emerald-400"></i>
+        <i data-lucide="radar" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400"></i>
         <span id="tracking-btn-label">Start Live GPS Tracking</span>
+      </button>
+
+      <button 
+        id="btn-simulate-5-devices"
+        onclick="simulate5Devices()" 
+        class="w-full py-3.5 px-4 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-400/30 font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition cursor-pointer"
+      >
+        <i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5 text-sky-400"></i>
+        <span>Simulate 5 Devices Fleet</span>
       </button>
     </div>
 
-    <!-- PRIMARY COORDINATES DISPLAY CARD -->
-    <div class="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-5 shadow-2xl relative overflow-hidden">
-      
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
-          <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">Retrieved Location Coordinates</span>
+    <!-- DEVICE IDENTIFIER & PROFILE SETTINGS -->
+    <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shrink-0">
+          <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
         </div>
-        <button onclick="copyCoordinatesToClipboard()" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1">
-          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          <span>Copy Lat/Lng</span>
+        <div>
+          <span class="text-slate-400">Your Device Identity:</span>
+          <div class="font-bold text-white text-sm" id="my-device-label">Device #----</div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 w-full sm:w-auto">
+        <input 
+          type="text" 
+          id="input-device-name" 
+          placeholder="Rename device (e.g. Mobile #1)" 
+          class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs outline-none focus:border-emerald-400 flex-1 sm:w-56"
+        >
+        <button onclick="updateDeviceName()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/30 font-bold transition">
+          Save Name
         </button>
-      </div>
-
-      <!-- Large Numerical Lat / Lng Display -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1">
-          <div class="text-[11px] font-mono uppercase text-slate-400 font-bold">Latitude</div>
-          <div class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono tracking-tight" id="display-latitude">
-            --.------
-          </div>
-          <div class="text-[10px] text-slate-500 font-mono">North/South Degrees</div>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1">
-          <div class="text-[11px] font-mono uppercase text-slate-400 font-bold">Longitude</div>
-          <div class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono tracking-tight" id="display-longitude">
-            --.------
-          </div>
-          <div class="text-[10px] text-slate-500 font-mono">East/West Degrees</div>
-        </div>
-      </div>
-
-      <!-- Reverse Geocoded Address Bar -->
-      <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1.5 font-mono">
-        <div class="flex items-center justify-between text-[11px] font-bold">
-          <span class="text-slate-400 uppercase flex items-center space-x-1.5">
-            <i data-lucide="building-2" class="w-3.5 h-3.5 text-emerald-400"></i>
-            <span>Reverse Geocoded Address</span>
-          </span>
-          <span class="text-slate-500 text-[10px]" id="address-source">OpenStreetMap Nominatim</span>
-        </div>
-        <div class="text-xs sm:text-sm font-bold text-white leading-relaxed" id="display-address">
-          Click "Get Current GPS Location" above to fetch precise street address...
-        </div>
-      </div>
-
-      <!-- Extended Telemetry Metrics Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/60 space-y-1">
-          <div class="text-[10px] text-slate-400 uppercase">GPS Accuracy</div>
-          <div class="font-bold text-emerald-400" id="display-accuracy">&plusmn; -- meters</div>
-        </div>
-
-        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/60 space-y-1">
-          <div class="text-[10px] text-slate-400 uppercase">Altitude</div>
-          <div class="font-bold text-slate-200" id="display-altitude">-- m</div>
-        </div>
-
-        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/60 space-y-1">
-          <div class="text-[10px] text-slate-400 uppercase">Speed / Movement</div>
-          <div class="font-bold text-slate-200" id="display-speed">-- km/h</div>
-        </div>
-
-        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/60 space-y-1">
-          <div class="text-[10px] text-slate-400 uppercase">Last Fix Time</div>
-          <div class="font-bold text-slate-200" id="display-timestamp">--:--:--</div>
-        </div>
       </div>
     </div>
 
-    <!-- LIVE LEAFLET MAP VIEW -->
+    <!-- LIVE LEAFLET MULTI-DEVICE MAP VIEW -->
     <div class="p-5 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-2xl">
-      <div class="flex items-center justify-between text-xs font-mono">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono border-b border-slate-800 pb-3">
         <div class="font-bold text-white flex items-center space-x-2">
           <i data-lucide="map" class="w-4 h-4 text-emerald-400"></i>
-          <span>Live Interactive Map Position</span>
+          <span>Live Multi-Device Interactive Map (All Connected Devices Shown)</span>
         </div>
-        <div class="flex items-center space-x-3">
-          <a id="link-google-maps" href="#" target="_blank" class="text-emerald-400 hover:text-emerald-300 font-bold hidden flex items-center space-x-1">
+        <div class="flex items-center space-x-3 text-[11px]">
+          <button onclick="fitMapToAllDevices()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1">
+            <i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+            <span>Fit Map to All 5 Devices</span>
+          </button>
+          <a id="link-google-maps" href="#" target="_blank" class="text-sky-400 hover:text-sky-300 font-bold hidden flex items-center space-x-1">
             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-            <span>Open in Google Maps</span>
+            <span>Google Maps</span>
           </a>
         </div>
       </div>
 
-      <div id="leaflet-map" class="w-full h-80 sm:h-96 rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 relative shadow-inner">
+      <div id="leaflet-map" class="w-full h-96 sm:h-[480px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 relative shadow-inner">
         <!-- Leaflet map mounts here -->
+      </div>
+    </div>
+
+    <!-- CONNECTED DEVICES FLEET ROSTER & TELEMETRY PANEL -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white">
+          <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i>
+          <span>Connected Devices Roster &amp; GPS Telemetry (Live Sync)</span>
+        </div>
+        <button onclick="clearAllSimulatedDevices()" class="text-[11px] font-mono text-rose-400 hover:text-rose-300 font-bold">
+          Reset Fleet Roster
+        </button>
+      </div>
+
+      <!-- Device List Grid -->
+      <div id="devices-roster-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+        <!-- Dynamically populated device cards -->
       </div>
     </div>
 
@@ -175,39 +160,71 @@
 
   </main>
 
-  <!-- JAVASCRIPT GEOLOCATION LOGIC -->
+  <!-- JAVASCRIPT GEOLOCATION & MULTI-DEVICE SYNC LOGIC -->
   <script>
-    // State Variables
+    // Device State
+    let myDeviceId = localStorage.getItem('chronos_my_device_id');
+    if (!myDeviceId) {
+      myDeviceId = 'dev_' + Math.random().toString(36).substr(2, 6);
+      localStorage.setItem('chronos_my_device_id', myDeviceId);
+    }
+
+    let myDeviceName = localStorage.getItem('chronos_my_device_name') || `Mobile Device #${myDeviceId.substr(-4)}`;
+    
+    // Map State
     let currentLat = null;
     let currentLng = null;
     let watchId = null;
     let map = null;
-    let userMarker = null;
-    let accuracyCircle = null;
+    let deviceMarkers = {};
+    let deviceCircles = {};
 
-    // High Accuracy GPS Options
+    // Device Color Palette for 5+ Devices
+    const DEVICE_COLORS = [
+      { stroke: '#10b981', fill: 'rgba(16, 185, 129, 0.4)', bg: 'bg-emerald-500', text: 'text-emerald-400', label: 'Emerald' },
+      { stroke: '#38bdf8', fill: 'rgba(56, 189, 248, 0.4)', bg: 'bg-sky-500', text: 'text-sky-400', label: 'Sky Blue' },
+      { stroke: '#f59e0b', fill: 'rgba(245, 158, 11, 0.4)', bg: 'bg-amber-500', text: 'text-amber-400', label: 'Amber' },
+      { stroke: '#c084fc', fill: 'rgba(192, 132, 252, 0.4)', bg: 'bg-purple-500', text: 'text-purple-400', label: 'Purple' },
+      { stroke: '#f43f5e', fill: 'rgba(244, 63, 94, 0.4)', bg: 'bg-rose-500', text: 'text-rose-400', label: 'Rose' },
+      { stroke: '#06b6d4', fill: 'rgba(6, 182, 212, 0.4)', bg: 'bg-cyan-500', text: 'text-cyan-400', label: 'Cyan' }
+    ];
+
     const gpsOptions = {
-      enableHighAccuracy: true,  // Requests hardware GPS chip on mobile devices
-      timeout: 12000,            // 12 seconds max wait
-      maximumAge: 0              // Force fresh location fix (no cached position)
+      enableHighAccuracy: true,
+      timeout: 12000,
+      maximumAge: 0
     };
 
-    // Initialize Page & Leaflet Map
+    // Initialize Page & Map
     window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('my-device-label').innerText = `${myDeviceName} (${myDeviceId})`;
+      document.getElementById('input-device-name').value = myDeviceName;
+
       initMap();
+      startCrossDevicePolling();
       lucide.createIcons();
     });
 
+    function updateDeviceName() {
+      const val = document.getElementById('input-device-name').value.trim();
+      if (!val) return;
+      myDeviceName = val;
+      localStorage.setItem('chronos_my_device_name', myDeviceName);
+      document.getElementById('my-device-label').innerText = `${myDeviceName} (${myDeviceId})`;
+      showToast(`Device name updated to "${myDeviceName}"`);
+      if (currentLat && currentLng) {
+        broadcastLocationPayload(currentLat, currentLng, 10, 0, 0);
+      }
+    }
+
     function initMap() {
-      // Default initial view: Mumbai (19.0760, 72.8777) until location retrieved
       map = L.map('leaflet-map', {
-        center: [19.0760, 72.8777],
-        zoom: 12,
+        center: [19.0435, 73.0253], // Default DY Patil Stadium / Navi Mumbai area
+        zoom: 14,
         zoomControl: true,
         attributionControl: false
       });
 
-      // Dark theme map tiles (OpenStreetMap CartoDB Dark Matter)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd',
@@ -215,34 +232,297 @@
       }).addTo(map);
     }
 
+    // Broadcast Device Location to Sync Store
+    async function broadcastLocationPayload(lat, lng, accuracy, altitude, speed) {
+      const payload = {
+        id: myDeviceId,
+        name: myDeviceName,
+        lat: lat,
+        lng: lng,
+        accuracy: accuracy || 10,
+        altitude: altitude || null,
+        speed: speed || 0,
+        timestamp: new Date().toISOString()
+      };
+
+      let list = getSharedDevicesList();
+      list = list.filter(d => d.id !== myDeviceId);
+      list.unshift(payload);
+
+      // Save to localStorage
+      try {
+        localStorage.setItem('chronos_device_locations', JSON.stringify(list));
+      } catch (e) {}
+
+      // Post to Python backend sync server if available
+      try {
+        await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'chronos_device_locations', value: list })
+        });
+      } catch (e) {}
+
+      renderAllDevicesOnMap(list);
+    }
+
+    // Retrieve Shared Devices List
+    function getSharedDevicesList() {
+      try {
+        const stored = localStorage.getItem('chronos_device_locations');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // Cross-Device Sync Polling (Every 2 seconds)
+    function startCrossDevicePolling() {
+      setInterval(async () => {
+        let list = [];
+        // Try fetching from python sync server first
+        try {
+          const res = await fetch('/api/sync?key=chronos_device_locations');
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.value && Array.isArray(json.value)) {
+              list = json.value;
+              localStorage.setItem('chronos_device_locations', JSON.stringify(list));
+            }
+          }
+        } catch (e) {
+          list = getSharedDevicesList();
+        }
+
+        if (list.length === 0) {
+          list = getSharedDevicesList();
+        }
+
+        // Filter out stale devices older than 3 minutes
+        const now = Date.now();
+        list = list.filter(d => (now - new Date(d.timestamp).getTime()) < 180000);
+
+        renderAllDevicesOnMap(list);
+      }, 2000);
+    }
+
+    // Render All Active Connected Devices Simultaneously
+    function renderAllDevicesOnMap(devices) {
+      if (!map) return;
+
+      const badgeCount = document.getElementById('active-devices-count-text');
+      if (badgeCount) {
+        badgeCount.innerText = `${devices.length} ${devices.length === 1 ? 'Device' : 'Devices'} Connected`;
+      }
+
+      // Track current marker keys to clean up removed devices
+      const activeIds = new Set(devices.map(d => d.id));
+
+      // Clear removed markers
+      Object.keys(deviceMarkers).forEach(id => {
+        if (!activeIds.has(id)) {
+          map.removeLayer(deviceMarkers[id]);
+          delete deviceMarkers[id];
+          if (deviceCircles[id]) {
+            map.removeLayer(deviceCircles[id]);
+            delete deviceCircles[id];
+          }
+        }
+      });
+
+      // Render or Update each device
+      devices.forEach((dev, idx) => {
+        const style = DEVICE_COLORS[idx % DEVICE_COLORS.length];
+        const isMe = dev.id === myDeviceId;
+
+        // 1. Update/Create Accuracy Circle
+        if (deviceCircles[dev.id]) {
+          deviceCircles[dev.id].setLatLng([dev.lat, dev.lng]);
+          deviceCircles[dev.id].setRadius(dev.accuracy || 10);
+        } else {
+          deviceCircles[dev.id] = L.circle([dev.lat, dev.lng], {
+            radius: dev.accuracy || 10,
+            color: style.stroke,
+            fillColor: style.stroke,
+            fillOpacity: 0.12,
+            weight: 1.5,
+            dashArray: '4, 4'
+          }).addTo(map);
+        }
+
+        // 2. Custom Marker Icon
+        const iconHtml = `
+          <div style="position: relative; width: 28px; height: 28px; cursor: pointer;" title="${dev.name}">
+            <div style="position: absolute; inset: -10px; border-radius: 50%; background: ${style.fill};" class="gps-pulse-ring"></div>
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: ${style.stroke}; border: 3px solid #ffffff; box-shadow: 0 0 16px ${style.stroke}; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 900; font-size: 11px; font-family: monospace;">
+              ${idx + 1}
+            </div>
+          </div>
+        `;
+
+        const gpsIcon = L.divIcon({
+          className: 'multi-gps-pin',
+          html: iconHtml,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        if (deviceMarkers[dev.id]) {
+          deviceMarkers[dev.id].setLatLng([dev.lat, dev.lng]);
+          deviceMarkers[dev.id].setIcon(gpsIcon);
+        } else {
+          deviceMarkers[dev.id] = L.marker([dev.lat, dev.lng], { icon: gpsIcon }).addTo(map);
+        }
+
+        deviceMarkers[dev.id].bindPopup(`
+          <div style="font-family: monospace; font-size: 11px; padding: 4px; min-width: 180px;">
+            <div style="font-weight: bold; color: ${style.stroke}; font-size: 13px; margin-bottom: 3px;">
+              ${dev.name} ${isMe ? '(YOU)' : ''}
+            </div>
+            <div>Device ID: <strong>${dev.id}</strong></div>
+            <div>Lat: <strong>${dev.lat.toFixed(6)}</strong></div>
+            <div>Lng: <strong>${dev.lng.toFixed(6)}</strong></div>
+            <div style="color: #94a3b8;">Accuracy: &plusmn;${(dev.accuracy || 10).toFixed(1)}m</div>
+            <div style="color: #64748b; font-size: 10px; margin-top: 3px;">Fix Time: ${new Date(dev.timestamp).toLocaleTimeString()}</div>
+          </div>
+        `);
+      });
+
+      renderRosterPanel(devices);
+    }
+
+    // Render Fleet Roster Cards Panel
+    function renderRosterPanel(devices) {
+      const grid = document.getElementById('devices-roster-grid');
+      if (!grid) return;
+
+      if (devices.length === 0) {
+        grid.innerHTML = `<div class="col-span-full p-4 rounded-2xl bg-slate-950 text-center text-slate-500">No active devices broadcasting location.</div>`;
+        return;
+      }
+
+      grid.innerHTML = devices.map((dev, idx) => {
+        const style = DEVICE_COLORS[idx % DEVICE_COLORS.length];
+        const isMe = dev.id === myDeviceId;
+        const timeAgo = Math.round((Date.now() - new Date(dev.timestamp).getTime()) / 1000);
+
+        return `
+          <div onclick="focusMapOnDevice(${dev.lat}, ${dev.lng})" class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition space-y-2 cursor-pointer group">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-6 h-6 rounded-full ${style.bg} text-slate-950 font-black flex items-center justify-center text-[11px]">
+                  ${idx + 1}
+                </span>
+                <span class="font-bold text-white group-hover:${style.text} transition">${dev.name}</span>
+                ${isMe ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">YOU</span>` : ''}
+              </div>
+              <span class="text-[10px] text-slate-500">${timeAgo}s ago</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+              <div>
+                <span class="text-slate-500">Latitude:</span>
+                <div class="font-bold text-slate-200">${dev.lat.toFixed(6)}°</div>
+              </div>
+              <div>
+                <span class="text-slate-500">Longitude:</span>
+                <div class="font-bold text-slate-200">${dev.lng.toFixed(6)}°</div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-900">
+              <span>Accuracy: <strong class="${style.text}">&plusmn;${(dev.accuracy || 10).toFixed(1)}m</strong></span>
+              <span>Speed: <strong>${dev.speed ? (dev.speed * 3.6).toFixed(1) + ' km/h' : '0 km/h'}</strong></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function focusMapOnDevice(lat, lng) {
+      if (map) {
+        map.setView([lat, lng], 17, { animate: true });
+      }
+    }
+
+    function fitMapToAllDevices() {
+      const devices = getSharedDevicesList();
+      if (!map || devices.length === 0) return;
+
+      const bounds = L.latLngBounds(devices.map(d => [d.lat, d.lng]));
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+
+    // Simulate 5 Devices Moving Simultaneously
+    function simulate5Devices() {
+      const centerLat = currentLat || 19.0435;
+      const centerLng = currentLng || 73.0253;
+
+      const simDevices = [
+        { id: myDeviceId, name: `${myDeviceName} (Your Device)`, lat: centerLat, lng: centerLng, accuracy: 8, speed: 0 },
+        { id: 'sim_dev_02', name: 'Field Medical Ambulance #2', lat: centerLat + 0.0042, lng: centerLng - 0.0035, accuracy: 12, speed: 4.2 },
+        { id: 'sim_dev_03', name: 'Shuttle Bus Loop #14', lat: centerLat - 0.0038, lng: centerLng + 0.0041, accuracy: 15, speed: 8.5 },
+        { id: 'sim_dev_04', name: 'Spectator Visitor App #819', lat: centerLat + 0.0028, lng: centerLng + 0.0032, accuracy: 9, speed: 1.1 },
+        { id: 'sim_dev_05', name: 'Perimeter Security Command', lat: centerLat - 0.0025, lng: centerLng - 0.0028, accuracy: 5, speed: 0 }
+      ];
+
+      simDevices.forEach(d => d.timestamp = new Date().toISOString());
+
+      try {
+        localStorage.setItem('chronos_device_locations', JSON.stringify(simDevices));
+      } catch (e) {}
+
+      try {
+        fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'chronos_device_locations', value: simDevices })
+        }).catch(() => {});
+      } catch (e) {}
+
+      renderAllDevicesOnMap(simDevices);
+      fitMapToAllDevices();
+      showToast("Simulated 5 active devices on map simultaneously!");
+    }
+
+    function clearAllSimulatedDevices() {
+      localStorage.removeItem('chronos_device_locations');
+      if (currentLat && currentLng) {
+        broadcastLocationPayload(currentLat, currentLng, 10, 0, 0);
+      } else {
+        renderAllDevicesOnMap([]);
+      }
+      showToast("Fleet roster reset.");
+    }
+
     // Single GPS Location Fetch
     function getSingleGpsLocation() {
       const btn = document.getElementById('btn-get-gps');
-      const statusText = document.getElementById('gps-status-text');
-      const statusBadge = document.getElementById('gps-status-badge');
-
       if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser or device.");
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Acquiring Mobile Satellite GPS...</span>`;
-      statusText.innerText = "SEARCHING SATELLITES";
-      statusBadge.className = "px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-400/20 font-bold flex items-center space-x-1.5 text-[11px]";
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Acquiring Mobile GPS...</span>`;
       lucide.createIcons();
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          handleGpsSuccess(position);
+          const coords = position.coords;
+          currentLat = coords.latitude;
+          currentLng = coords.longitude;
+          broadcastLocationPayload(currentLat, currentLng, coords.accuracy, coords.altitude, coords.speed);
+          
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="crosshair" class="w-5 h-5"></i><span>Get Current GPS Location</span>`;
+          btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i><span>Broadcast My GPS Fix</span>`;
+          showToast(`Broadcasted GPS Fix: ${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`);
           lucide.createIcons();
         },
         (error) => {
-          handleGpsError(error);
+          alert(`GPS Error: ${error.message}`);
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="crosshair" class="w-5 h-5"></i><span>Get Current GPS Location</span>`;
+          btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i><span>Broadcast My GPS Fix</span>`;
           lucide.createIcons();
         },
         gpsOptions
@@ -253,20 +533,14 @@
     function toggleLiveGpsTracking() {
       const label = document.getElementById('tracking-btn-label');
       const btn = document.getElementById('btn-toggle-tracking');
-      const statusText = document.getElementById('gps-status-text');
-      const statusBadge = document.getElementById('gps-status-badge');
 
       if (watchId !== null) {
-        // Stop Tracking
         navigator.geolocation.clearWatch(watchId);
         watchId = null;
         label.innerText = "Start Live GPS Tracking";
-        btn.className = "w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-100 border border-slate-700 font-black text-sm flex items-center justify-center space-x-2.5 transition cursor-pointer";
-        statusText.innerText = "GPS IDLE";
-        statusBadge.className = "px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold flex items-center space-x-1.5 text-[11px]";
+        btn.className = "w-full py-3.5 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-100 border border-slate-700 font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition cursor-pointer";
         showToast("Live GPS tracking stopped.");
       } else {
-        // Start Tracking
         if (!navigator.geolocation) {
           alert("Geolocation is not supported by your browser.");
           return;
@@ -274,163 +548,36 @@
 
         watchId = navigator.geolocation.watchPosition(
           (position) => {
-            handleGpsSuccess(position);
+            const coords = position.coords;
+            currentLat = coords.latitude;
+            currentLng = coords.longitude;
+            broadcastLocationPayload(currentLat, currentLng, coords.accuracy, coords.altitude, coords.speed);
           },
           (error) => {
-            handleGpsError(error);
+            console.warn("GPS tracking error:", error.message);
           },
           gpsOptions
         );
 
         label.innerText = "Stop Live GPS Tracking";
-        btn.className = "w-full py-3.5 px-5 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-black text-sm flex items-center justify-center space-x-2.5 transition cursor-pointer";
-        statusText.innerText = "LIVE TRACKING ACTIVE";
-        statusBadge.className = "px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-400/20 font-bold flex items-center space-x-1.5 text-[11px]";
-        showToast("Live high-accuracy GPS tracking initialized!");
+        btn.className = "w-full py-3.5 px-4 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-black text-xs sm:text-sm flex items-center justify-center space-x-2 transition cursor-pointer";
+        showToast("Live multi-device GPS tracking broadcasting active!");
       }
-    }
-
-    // Successful Position Handler
-    function handleGpsSuccess(position) {
-      const coords = position.coords;
-      currentLat = coords.latitude;
-      currentLng = coords.longitude;
-
-      // Update Numerical Displays
-      document.getElementById('display-latitude').innerText = currentLat.toFixed(6);
-      document.getElementById('display-longitude').innerText = currentLng.toFixed(6);
-      document.getElementById('display-accuracy').innerText = `\u00B1 ${coords.accuracy.toFixed(1)} meters`;
-
-      document.getElementById('display-altitude').innerText = coords.altitude !== null ? `${coords.altitude.toFixed(1)} m` : "N/A";
-      document.getElementById('display-speed').innerText = coords.speed !== null ? `${(coords.speed * 3.6).toFixed(1)} km/h` : "0 km/h (Stationary)";
-      
-      const timeString = new Date(position.timestamp).toLocaleTimeString();
-      document.getElementById('display-timestamp').innerText = timeString;
-
-      // Update Map View
-      updateMapPosition(currentLat, currentLng, coords.accuracy);
-
-      // Update Google Maps external link
-      const gmapsLink = document.getElementById('link-google-maps');
-      gmapsLink.href = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
-      gmapsLink.classList.remove('hidden');
-
-      // Reverse Geocode to street address
-      reverseGeocodeAddress(currentLat, currentLng);
-    }
-
-    // Leaflet Map Marker & Accuracy Circle Update
-    function updateMapPosition(lat, lng, accuracy) {
-      if (!map) return;
-
-      map.setView([lat, lng], 16);
-
-      // Remove existing marker and circle if present
-      if (userMarker) map.removeLayer(userMarker);
-      if (accuracyCircle) map.removeLayer(accuracyCircle);
-
-      // Accuracy circle
-      accuracyCircle = L.circle([lat, lng], {
-        radius: accuracy,
-        color: '#10b981',
-        fillColor: '#10b981',
-        fillOpacity: 0.15,
-        weight: 1.5,
-        dashArray: '4, 4'
-      }).addTo(map);
-
-      // Custom Pulsing GPS Marker Icon
-      const gpsIcon = L.divIcon({
-        className: 'custom-gps-pin',
-        html: `
-          <div style="position: relative; width: 24px; height: 24px;">
-            <div style="position: absolute; inset: -12px; border-radius: 50%; background: rgba(16, 185, 129, 0.4);" class="gps-pulse-ring"></div>
-            <div style="width: 24px; height: 24px; border-radius: 50%; background: #10b981; border: 3px solid #ffffff; box-shadow: 0 0 15px rgba(16, 185, 129, 0.8);"></div>
-          </div>
-        `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
-
-      userMarker = L.marker([lat, lng], { icon: gpsIcon }).addTo(map);
-      userMarker.bindPopup(`
-        <div style="font-family: monospace; font-size: 11px; padding: 2px;">
-          <strong style="color: #10b981; font-size: 12px;">Mobile GPS Fix</strong><br>
-          <span>Lat: ${lat.toFixed(6)}</span><br>
-          <span>Lng: ${lng.toFixed(6)}</span><br>
-          <span style="color: #64748b;">Accuracy: \u00B1 ${accuracy.toFixed(1)}m</span>
-        </div>
-      `).openPopup();
-    }
-
-    // OpenStreetMap Nominatim Reverse Geocoding API
-    async function reverseGeocodeAddress(lat, lng) {
-      const addressBox = document.getElementById('display-address');
-      addressBox.innerText = "Fetching street address details...";
-
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
-        if (!response.ok) throw new Error("Network error during reverse geocoding");
-        
-        const data = await response.json();
-        if (data && data.display_name) {
-          addressBox.innerText = data.display_name;
-        } else {
-          addressBox.innerText = `Location near ${lat.toFixed(4)}\u00B0 N, ${lng.toFixed(4)}\u00B0 E (Address lookup unavailable)`;
-        }
-      } catch (err) {
-        addressBox.innerText = `Exact Position: ${lat.toFixed(6)}\u00B0 N, ${lng.toFixed(6)}\u00B0 E (Reverse geocode failed or rate-limited)`;
-      }
-    }
-
-    // GPS Error Handler
-    function handleGpsError(error) {
-      const statusText = document.getElementById('gps-status-text');
-      const statusBadge = document.getElementById('gps-status-badge');
-      statusText.innerText = "GPS ERROR";
-      statusBadge.className = "px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold flex items-center space-x-1.5 text-[11px]";
-
-      let errorMsg = "An unknown location error occurred.";
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          errorMsg = "Location Permission Denied: Please enable Location/GPS access in your browser or phone settings.";
-          break;
-        case error.POSITION_UNAVAILABLE:
-          errorMsg = "Position Unavailable: GPS satellites or cell signal could not determine location.";
-          break;
-        case error.TIMEOUT:
-          errorMsg = "Location Request Timed Out: Please check device GPS connection and try again.";
-          break;
-      }
-      alert(`GPS Error: ${errorMsg}`);
-    }
-
-    // Utility: Copy Coordinates to Clipboard
-    function copyCoordinatesToClipboard() {
-      if (!currentLat || !currentLng) {
-        alert("No GPS location retrieved yet. Click 'Get Current GPS Location' first.");
-        return;
-      }
-
-      const text = `${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`;
-      navigator.clipboard.writeText(text).then(() => {
-        showToast(`Copied coordinates to clipboard: "${text}"`);
-      }).catch(() => {
-        prompt("Copy coordinates:", text);
-      });
     }
 
     // Toast Notification Banner
     function showToast(msg) {
       const banner = document.getElementById('toast-banner');
       const msgEl = document.getElementById('toast-message');
-      msgEl.innerText = msg;
-      banner.classList.remove('hidden');
-      setTimeout(() => { banner.classList.add('hidden'); }, 4000);
+      if (banner && msgEl) {
+        msgEl.innerText = msg;
+        banner.classList.remove('hidden');
+        setTimeout(() => { banner.classList.add('hidden'); }, 4000);
+      }
     }
 
     function hideToast() {
-      document.getElementById('toast-banner').classList.add('hidden');
+      document.getElementById('toast-banner')?.classList.add('hidden');
     }
   </script>
 </body>
