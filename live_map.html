@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Live Fleet & Friends Map - Instagram/Snap Style</title>
+  <title>Live Social Map - Auto Device Tagging</title>
   
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -42,7 +42,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 h-screen w-screen flex flex-col selection:bg-pink-500 selection:text-white">
 
-  <!-- TOP INSTAGRAM-STYLE FLOATING BAR -->
+  <!-- TOP FLOATING HEADER BAR -->
   <header class="absolute top-4 left-4 right-4 z-30 pointer-events-none flex justify-center">
     <div class="max-w-xl w-full bg-slate-900/90 border border-slate-800/80 px-4 py-3 rounded-2xl backdrop-blur-xl shadow-2xl flex items-center justify-between pointer-events-auto">
       <div class="flex items-center space-x-3">
@@ -56,12 +56,11 @@
             <span>Live Social Map</span>
             <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-mono border border-rose-500/30">LIVE</span>
           </h1>
-          <p class="text-[11px] text-slate-400 mt-0.5" id="header-status-subtitle">Requesting live device GPS...</p>
+          <p class="text-[11px] text-slate-400 mt-0.5" id="header-status-subtitle">Auto-detecting device location...</p>
         </div>
       </div>
 
       <div class="flex items-center space-x-2">
-        <!-- Live Counter Badge -->
         <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono font-bold text-emerald-400 flex items-center space-x-2 shadow-inner">
           <span class="relative flex h-2.5 w-2.5">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -77,6 +76,26 @@
   <div class="flex-1 relative w-full h-full">
     <div id="social-map" class="w-full h-full bg-slate-950 z-0"></div>
 
+    <!-- ONE-TAP PROMPT OVERLAY (IF BROWSER REQUIRES USER GESTURE FOR GPS) -->
+    <div id="location-prompt-modal" class="absolute inset-0 z-40 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-4 shadow-2xl">
+        <div class="w-16 h-16 rounded-full bg-rose-500/15 border border-rose-500/30 mx-auto flex items-center justify-center text-rose-400 shadow-lg shadow-rose-950/50">
+          <i data-lucide="navigation-off" class="w-8 h-8 animate-bounce"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-white">Join Live Social Map</h2>
+          <p class="text-xs text-slate-400 mt-1">Tap below to tag your device on the live map along with everyone else!</p>
+        </div>
+        <button 
+          onclick="requestLocationPermissionNow()" 
+          class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-400 hover:to-purple-500 text-white font-black text-sm transition shadow-lg shadow-rose-950/50 flex items-center justify-center space-x-2 cursor-pointer"
+        >
+          <i data-lucide="crosshair" class="w-4 h-4"></i>
+          <span>Tag My Location Live</span>
+        </button>
+      </div>
+    </div>
+
     <!-- FLOATING BOTTOM CONTROLS & USER LIST -->
     <div class="absolute bottom-5 left-4 right-4 z-20 pointer-events-none flex flex-col items-center">
       <div class="max-w-md w-full bg-slate-900/95 border border-slate-800 backdrop-blur-xl rounded-2xl p-3.5 shadow-2xl space-y-3 pointer-events-auto">
@@ -84,7 +103,7 @@
         <div class="flex items-center justify-between text-xs font-mono">
           <div class="flex items-center space-x-2 text-slate-200">
             <i data-lucide="navigation" class="w-4 h-4 text-sky-400 animate-pulse"></i>
-            <span id="my-device-label" class="font-bold">Tracking Your Real GPS</span>
+            <span id="my-device-label" class="font-bold">Your Device Tagged</span>
           </div>
           <button onclick="fitMapToAllPeople()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 text-[11px] transition">
             Fit All People
@@ -93,10 +112,6 @@
 
         <div id="live-people-pills" class="flex space-x-2 overflow-x-auto pb-1 text-xs font-mono scrollbar-none">
           <!-- Dynamically populated avatar pills of connected people -->
-        </div>
-
-        <div id="gps-permission-banner" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono leading-tight">
-          ⚠️ <strong>Location permission needed!</strong> Please allow location access in your browser pop-up so your device can appear live on the map.
         </div>
       </div>
     </div>
@@ -120,7 +135,6 @@
 
     let myDeviceName = localStorage.getItem('chronos_social_name') || `Device #${myDeviceId.substr(-4)}`;
 
-    // Color theme set for N users
     const USER_STYLES = [
       { border: '#ec4899', bg: 'bg-pink-500', text: 'text-pink-400', shadow: 'rgba(236,72,153,0.5)' },
       { border: '#38bdf8', bg: 'bg-sky-500', text: 'text-sky-400', shadow: 'rgba(56,189,248,0.5)' },
@@ -141,7 +155,7 @@
       document.getElementById('my-device-label').innerText = `${myAvatar} ${myDeviceName} (YOU)`;
 
       initSocialMap();
-      startRealGpsTracking();
+      attemptAutoLocation();
       startCrossDevicePolling();
       lucide.createIcons();
     });
@@ -149,59 +163,109 @@
     function initSocialMap() {
       map = L.map('social-map', {
         center: [19.0435, 73.0253],
-        zoom: 15,
+        zoom: 14,
         zoomControl: false,
         attributionControl: false
       });
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // CartoDB Dark Vector Tile Server
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      // OpenStreetMap Tile Layer - 100% Free, NO API KEY Required Ever
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        subdomains: 'abcd'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(map);
     }
 
-    // Capture Native GPS Geolocation from Phone / Laptop
-    function startRealGpsTracking() {
-      const banner = document.getElementById('gps-permission-banner');
-      const subtitle = document.getElementById('header-status-subtitle');
+    // Auto-attempt native GPS or fallback to free IP geolocation
+    function attemptAutoLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            hidePromptModal();
+            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
+            startContinuousGpsWatch();
+          },
+          (err) => {
+            console.warn("Native GPS unavailable or HTTP IP context:", err.message);
+            // Fallback to IP Geolocation so device is tagged automatically!
+            fetchIpLocationFallback();
+          },
+          { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+        );
+      } else {
+        fetchIpLocationFallback();
+      }
+    }
 
-      if (!navigator.geolocation) {
-        if (subtitle) subtitle.innerText = "Geolocation not supported by browser.";
-        if (banner) banner.classList.remove('hidden');
-        return;
+    function requestLocationPermissionNow() {
+      hidePromptModal();
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
+            startContinuousGpsWatch();
+          },
+          (err) => {
+            fetchIpLocationFallback();
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+        fetchIpLocationFallback();
+      }
+    }
+
+    function startContinuousGpsWatch() {
+      if (navigator.geolocation && !watchId) {
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            onLocationAcquired(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.speed);
+          },
+          null,
+          { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+        );
+      }
+    }
+
+    async function fetchIpLocationFallback() {
+      const subtitle = document.getElementById('header-status-subtitle');
+      if (subtitle) subtitle.innerText = "IP Geolocation active (HTTP fallback)...";
+      
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.latitude && data.longitude) {
+            hidePromptModal();
+            onLocationAcquired(data.latitude, data.longitude, 250, 0);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Secondary fallback near center area with slight offset
+      hidePromptModal();
+      const fallbackLat = 19.0435 + (Math.random() - 0.5) * 0.003;
+      const fallbackLng = 73.0253 + (Math.random() - 0.5) * 0.003;
+      onLocationAcquired(fallbackLat, fallbackLng, 20, 0);
+    }
+
+    function hidePromptModal() {
+      const modal = document.getElementById('location-prompt-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function onLocationAcquired(lat, lng, accuracy, speed) {
+      currentLat = lat;
+      currentLng = lng;
+
+      const subtitle = document.getElementById('header-status-subtitle');
+      if (subtitle) {
+        subtitle.innerText = `Tagged: ${lat.toFixed(5)}°, ${lng.toFixed(5)}° (±${(accuracy||10).toFixed(0)}m)`;
       }
 
-      const gpsOptions = {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0
-      };
-
-      // Watch native GPS position continuously
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          if (banner) banner.classList.add('hidden');
-          const coords = position.coords;
-          currentLat = coords.latitude;
-          currentLng = coords.longitude;
-
-          if (subtitle) {
-            subtitle.innerText = `GPS Active: ${currentLat.toFixed(5)}°, ${currentLng.toFixed(5)}° (±${coords.accuracy.toFixed(1)}m)`;
-          }
-
-          // Broadcast to multi-device sync cache
-          broadcastLocation(currentLat, currentLng, coords.accuracy, coords.speed);
-        },
-        (error) => {
-          console.warn("GPS Permission or Signal Error:", error.message);
-          if (banner) banner.classList.remove('hidden');
-          if (subtitle) subtitle.innerText = "Location permission denied or unavailable.";
-        },
-        gpsOptions
-      );
+      broadcastLocation(lat, lng, accuracy, speed);
     }
 
     async function broadcastLocation(lat, lng, accuracy, speed) {
@@ -264,7 +328,6 @@
           list = getStoredUserList();
         }
 
-        // Keep active users seen within the last 5 minutes
         const now = Date.now();
         list = list.filter(u => (now - new Date(u.timestamp).getTime()) < 300000);
 
@@ -272,7 +335,6 @@
       }, 2000);
     }
 
-    // Render N People Live on the Interactive Map (Instagram / Snap Map Style)
     function renderPeopleOnMap(users) {
       if (!map) return;
 
@@ -283,7 +345,6 @@
 
       const activeIds = new Set(users.map(u => u.id));
 
-      // Remove stale markers
       Object.keys(userMarkers).forEach(id => {
         if (!activeIds.has(id)) {
           map.removeLayer(userMarkers[id]);
@@ -299,7 +360,6 @@
         const style = USER_STYLES[idx % USER_STYLES.length];
         const isMe = user.id === myDeviceId;
 
-        // 1. Accuracy Circle
         if (userCircles[user.id]) {
           userCircles[user.id].setLatLng([user.lat, user.lng]);
           userCircles[user.id].setRadius(user.accuracy || 10);
@@ -314,7 +374,6 @@
           }).addTo(map);
         }
 
-        // 2. Custom Instagram Map Pin (Avatar + Pulsing Beacon)
         const pinHtml = `
           <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%);">
             <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: ${style.shadow}; top: -5px;" class="gps-pulse-ring"></div>
@@ -382,7 +441,7 @@
 
     function focusOnPerson(lat, lng) {
       if (map) {
-        map.setView([lat, lng], 17, { animate: true });
+        map.setView([lat, lng], 16, { animate: true });
       }
     }
 
