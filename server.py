@@ -92,6 +92,63 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
+def ensure_ssl_certificates():
+    cert_path = os.path.join(DIRECTORY, 'cert.pem')
+    key_path = os.path.join(DIRECTORY, 'key.pem')
+    if os.path.exists(cert_path) and os.path.exists(key_path):
+        return cert_path, key_path
+
+    try:
+        from datetime import datetime, timedelta, timezone
+        from cryptography import x509
+        from cryptography.x509.oid import NameOID
+        from cryptography.hazmat.primitives import hashes, serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        import socket, ipaddress
+
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        subject = issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, 'ChronosFlow-Local-Server')])
+
+        # Get local IP addresses
+        alt_names = [x509.DNSName('localhost'), x509.IPAddress(ipaddress.ip_address('127.0.0.1'))]
+        try:
+            hostname = socket.gethostname()
+            local_ip = socket.gethostbyname(hostname)
+            alt_names.append(x509.IPAddress(ipaddress.ip_address(local_ip)))
+        except Exception:
+            pass
+
+        cert = x509.CertificateBuilder().subject_name(
+            subject
+        ).issuer_name(
+            issuer
+        ).public_key(
+            key.public_key()
+        ).serial_number(
+            x509.random_serial_number()
+        ).not_valid_before(
+            datetime.now(timezone.utc)
+        ).not_valid_after(
+            datetime.now(timezone.utc) + timedelta(days=365)
+        ).add_extension(
+            x509.SubjectAlternativeName(alt_names),
+            critical=False,
+        ).sign(key, hashes.SHA256())
+
+        with open(cert_path, 'wb') as f:
+            f.write(cert.public_bytes(serialization.Encoding.PEM))
+
+        with open(key_path, 'wb') as f:
+            f.write(key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption()
+            ))
+        return cert_path, key_path
+    except Exception as e:
+        print(f"Warning: Could not auto-generate SSL certs ({e}). HTTPS mode may be disabled.")
+        return None, None
+
 def main():
     os.chdir(DIRECTORY)
     socketserver.TCPServer.allow_reuse_address = True
@@ -99,7 +156,6 @@ def main():
     port = PORT
     httpd = None
     
-    # Try PORT first, then try incremental ports if occupied
     for try_port in range(PORT, PORT + 10):
         try:
             httpd = socketserver.TCPServer(("", try_port), Handler)
@@ -114,20 +170,45 @@ def main():
         print(f"Error: Could not bind to any port between {PORT} and {PORT + 9}.")
         sys.exit(1)
 
-    with httpd:
-        url = f"http://localhost:{port}"
-        print("=" * 60)
-        print(" CHRONOSFLOW: Real-Time Multi-Profile Sync Server")
-        print("=" * 60)
-        print(f" Local Server running at: {url}")
-        print(" Incognito / Multi-Profile cross-tab sync API enabled on /api/sync")
-        print(" Press Ctrl+C to terminate the server.\n")
-        
-        # Try to automatically open in default browser
+    # Setup HTTPS Server on SSL_PORT = 8443
+    httpsd = None
+    https_port = 8443
+    cert_path, key_path = ensure_ssl_certificates()
+    
+    if cert_path and key_path:
+        import ssl
         try:
-            webbrowser.open(url)
+            httpsd = socketserver.TCPServer(("", https_port), Handler)
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl_context.load_cert_chain(certfile=cert_path, keyfile=key_path)
+            httpsd.socket = ssl_context.wrap_socket(httpsd.socket, server_side=True)
+        except Exception as err:
+            print(f"HTTPS Server Init Warning: {err}")
+            httpsd = None
+
+    import threading
+    if httpsd:
+        https_thread = threading.Thread(target=httpsd.serve_forever, daemon=True)
+        https_thread.start()
+
+    with httpd:
+        import socket
+        try:
+            local_ip = socket.gethostbyname(socket.gethostname())
         except Exception:
-            pass
+            local_ip = "192.168.x.x"
+
+        print("=" * 70)
+        print(" CHRONOSFLOW: Real-Time Multi-Device Live GPS Server")
+        print("=" * 70)
+        print(f" 🌐 HTTP Local Server:    http://localhost:{port}")
+        print(f" 📱 HTTP Mobile Link:    http://{local_ip}:{port}/live_map.html")
+        if httpsd:
+            print(f" 🔒 HTTPS Secure Server:  https://localhost:{https_port}")
+            print(f" 🚀 HTTPS MOBILE GPS:   https://{local_ip}:{https_port}/live_map.html")
+            print("    (Use HTTPS link on mobile phones to enable native GPS tracking!)")
+        print("=" * 70)
+        print(" Press Ctrl+C to terminate the server.\n")
 
         try:
             httpd.serve_forever()
