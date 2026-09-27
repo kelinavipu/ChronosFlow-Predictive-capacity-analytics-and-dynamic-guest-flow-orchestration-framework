@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Live Fleet & Friends Map - Instagram/Snap Style</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet Map Engine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.7); opacity: 0.9; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    .gps-pulse-ring {
+      animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    .leaflet-popup-content-wrapper {
+      background: #090d16 !important;
+      color: #f8fafc !important;
+      border: 1.5px solid #1e293b !important;
+      border-radius: 16px !important;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7) !important;
+    }
+    .leaflet-popup-tip {
+      background: #090d16 !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen w-screen flex flex-col selection:bg-pink-500 selection:text-white">
+
+  <!-- TOP INSTAGRAM-STYLE FLOATING BAR -->
+  <header class="absolute top-4 left-4 right-4 z-30 pointer-events-none flex justify-center">
+    <div class="max-w-xl w-full bg-slate-900/90 border border-slate-800/80 px-4 py-3 rounded-2xl backdrop-blur-xl shadow-2xl flex items-center justify-between pointer-events-auto">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[2px] shrink-0 shadow-lg shadow-rose-950/40">
+          <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-rose-400 font-black text-sm">
+            <i data-lucide="map-pin" class="w-5 h-5 text-pink-400"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-black text-white tracking-tight leading-none flex items-center space-x-1.5">
+            <span>Live Social Map</span>
+            <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-mono border border-rose-500/30">LIVE</span>
+          </h1>
+          <p class="text-[11px] text-slate-400 mt-0.5" id="header-status-subtitle">Requesting live device GPS...</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <!-- Live Counter Badge -->
+        <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono font-bold text-emerald-400 flex items-center space-x-2 shadow-inner">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span id="live-user-count">1 Person Live</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FULL-SCREEN MAP CANVAS -->
+  <div class="flex-1 relative w-full h-full">
+    <div id="social-map" class="w-full h-full bg-slate-950 z-0"></div>
+
+    <!-- FLOATING BOTTOM CONTROLS & USER LIST -->
+    <div class="absolute bottom-5 left-4 right-4 z-20 pointer-events-none flex flex-col items-center">
+      <div class="max-w-md w-full bg-slate-900/95 border border-slate-800 backdrop-blur-xl rounded-2xl p-3.5 shadow-2xl space-y-3 pointer-events-auto">
+        
+        <div class="flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center space-x-2 text-slate-200">
+            <i data-lucide="navigation" class="w-4 h-4 text-sky-400 animate-pulse"></i>
+            <span id="my-device-label" class="font-bold">Tracking Your Real GPS</span>
+          </div>
+          <button onclick="fitMapToAllPeople()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold border border-slate-700 text-[11px] transition">
+            Fit All People
+          </button>
+        </div>
+
+        <div id="live-people-pills" class="flex space-x-2 overflow-x-auto pb-1 text-xs font-mono scrollbar-none">
+          <!-- Dynamically populated avatar pills of connected people -->
+        </div>
+
+        <div id="gps-permission-banner" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono leading-tight">
+          ⚠️ <strong>Location permission needed!</strong> Please allow location access in your browser pop-up so your device can appear live on the map.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. Device Identification
+    let myDeviceId = localStorage.getItem('chronos_social_device_id');
+    if (!myDeviceId) {
+      myDeviceId = 'user_' + Math.random().toString(36).substr(2, 6);
+      localStorage.setItem('chronos_social_device_id', myDeviceId);
+    }
+
+    let userAvatars = ['😎', '🚀', '⚡', '🔥', '👑', '🎯', '🦄', '👾', '🌟', '🏆'];
+    let myAvatar = localStorage.getItem('chronos_social_avatar');
+    if (!myAvatar) {
+      myAvatar = userAvatars[Math.floor(Math.random() * userAvatars.length)];
+      localStorage.setItem('chronos_social_avatar', myAvatar);
+    }
+
+    let myDeviceName = localStorage.getItem('chronos_social_name') || `Device #${myDeviceId.substr(-4)}`;
+
+    // Color theme set for N users
+    const USER_STYLES = [
+      { border: '#ec4899', bg: 'bg-pink-500', text: 'text-pink-400', shadow: 'rgba(236,72,153,0.5)' },
+      { border: '#38bdf8', bg: 'bg-sky-500', text: 'text-sky-400', shadow: 'rgba(56,189,248,0.5)' },
+      { border: '#10b981', bg: 'bg-emerald-500', text: 'text-emerald-400', shadow: 'rgba(16,185,129,0.5)' },
+      { border: '#f59e0b', bg: 'bg-amber-500', text: 'text-amber-400', shadow: 'rgba(245,158,11,0.5)' },
+      { border: '#a855f7', bg: 'bg-purple-500', text: 'text-purple-400', shadow: 'rgba(168,85,247,0.5)' },
+      { border: '#ef4444', bg: 'bg-red-500', text: 'text-red-400', shadow: 'rgba(239,68,68,0.5)' }
+    ];
+
+    let map = null;
+    let userMarkers = {};
+    let userCircles = {};
+    let currentLat = null;
+    let currentLng = null;
+    let watchId = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('my-device-label').innerText = `${myAvatar} ${myDeviceName} (YOU)`;
+
+      initSocialMap();
+      startRealGpsTracking();
+      startCrossDevicePolling();
+      lucide.createIcons();
+    });
+
+    function initSocialMap() {
+      map = L.map('social-map', {
+        center: [19.0435, 73.0253],
+        zoom: 15,
+        zoomControl: false,
+        attributionControl: false
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      // CartoDB Dark Vector Tile Server
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+      }).addTo(map);
+    }
+
+    // Capture Native GPS Geolocation from Phone / Laptop
+    function startRealGpsTracking() {
+      const banner = document.getElementById('gps-permission-banner');
+      const subtitle = document.getElementById('header-status-subtitle');
+
+      if (!navigator.geolocation) {
+        if (subtitle) subtitle.innerText = "Geolocation not supported by browser.";
+        if (banner) banner.classList.remove('hidden');
+        return;
+      }
+
+      const gpsOptions = {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      };
+
+      // Watch native GPS position continuously
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          if (banner) banner.classList.add('hidden');
+          const coords = position.coords;
+          currentLat = coords.latitude;
+          currentLng = coords.longitude;
+
+          if (subtitle) {
+            subtitle.innerText = `GPS Active: ${currentLat.toFixed(5)}°, ${currentLng.toFixed(5)}° (±${coords.accuracy.toFixed(1)}m)`;
+          }
+
+          // Broadcast to multi-device sync cache
+          broadcastLocation(currentLat, currentLng, coords.accuracy, coords.speed);
+        },
+        (error) => {
+          console.warn("GPS Permission or Signal Error:", error.message);
+          if (banner) banner.classList.remove('hidden');
+          if (subtitle) subtitle.innerText = "Location permission denied or unavailable.";
+        },
+        gpsOptions
+      );
+    }
+
+    async function broadcastLocation(lat, lng, accuracy, speed) {
+      const payload = {
+        id: myDeviceId,
+        name: myDeviceName,
+        avatar: myAvatar,
+        lat: lat,
+        lng: lng,
+        accuracy: accuracy || 10,
+        speed: speed || 0,
+        timestamp: new Date().toISOString()
+      };
+
+      let list = getStoredUserList();
+      list = list.filter(u => u.id !== myDeviceId);
+      list.unshift(payload);
+
+      try {
+        localStorage.setItem('chronos_social_users', JSON.stringify(list));
+      } catch (e) {}
+
+      try {
+        await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: 'chronos_social_users', value: list })
+        });
+      } catch (e) {}
+
+      renderPeopleOnMap(list);
+    }
+
+    function getStoredUserList() {
+      try {
+        const data = localStorage.getItem('chronos_social_users');
+        return data ? JSON.parse(data) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function startCrossDevicePolling() {
+      setInterval(async () => {
+        let list = [];
+        try {
+          const res = await fetch('/api/sync?key=chronos_social_users');
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.value && Array.isArray(json.value)) {
+              list = json.value;
+              localStorage.setItem('chronos_social_users', JSON.stringify(list));
+            }
+          }
+        } catch (e) {
+          list = getStoredUserList();
+        }
+
+        if (list.length === 0) {
+          list = getStoredUserList();
+        }
+
+        // Keep active users seen within the last 5 minutes
+        const now = Date.now();
+        list = list.filter(u => (now - new Date(u.timestamp).getTime()) < 300000);
+
+        renderPeopleOnMap(list);
+      }, 2000);
+    }
+
+    // Render N People Live on the Interactive Map (Instagram / Snap Map Style)
+    function renderPeopleOnMap(users) {
+      if (!map) return;
+
+      const counter = document.getElementById('live-user-count');
+      if (counter) {
+        counter.innerText = `${users.length} ${users.length === 1 ? 'Person' : 'People'} Live`;
+      }
+
+      const activeIds = new Set(users.map(u => u.id));
+
+      // Remove stale markers
+      Object.keys(userMarkers).forEach(id => {
+        if (!activeIds.has(id)) {
+          map.removeLayer(userMarkers[id]);
+          delete userMarkers[id];
+          if (userCircles[id]) {
+            map.removeLayer(userCircles[id]);
+            delete userCircles[id];
+          }
+        }
+      });
+
+      users.forEach((user, idx) => {
+        const style = USER_STYLES[idx % USER_STYLES.length];
+        const isMe = user.id === myDeviceId;
+
+        // 1. Accuracy Circle
+        if (userCircles[user.id]) {
+          userCircles[user.id].setLatLng([user.lat, user.lng]);
+          userCircles[user.id].setRadius(user.accuracy || 10);
+        } else {
+          userCircles[user.id] = L.circle([user.lat, user.lng], {
+            radius: user.accuracy || 10,
+            color: style.border,
+            fillColor: style.border,
+            fillOpacity: 0.15,
+            weight: 2,
+            dashArray: '4, 4'
+          }).addTo(map);
+        }
+
+        // 2. Custom Instagram Map Pin (Avatar + Pulsing Beacon)
+        const pinHtml = `
+          <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%);">
+            <div style="position: absolute; width: 44px; height: 44px; border-radius: 50%; background: ${style.shadow}; top: -5px;" class="gps-pulse-ring"></div>
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: #0f172a; border: 3px solid ${style.border}; box-shadow: 0 0 16px ${style.shadow}; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 2;">
+              ${user.avatar || '👤'}
+            </div>
+            <div style="margin-top: 4px; font-size: 10px; font-family: monospace; font-weight: 800; color: #ffffff; background: rgba(15,23,42,0.92); padding: 3px 8px; border-radius: 8px; border: 1px solid ${style.border}; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+              ${user.name} ${isMe ? '(YOU)' : ''}
+            </div>
+          </div>
+        `;
+
+        const customIcon = L.divIcon({
+          className: 'instagram-map-pin',
+          html: pinHtml,
+          iconSize: [120, 60],
+          iconAnchor: [60, 30]
+        });
+
+        if (userMarkers[user.id]) {
+          userMarkers[user.id].setLatLng([user.lat, user.lng]);
+          userMarkers[user.id].setIcon(customIcon);
+        } else {
+          userMarkers[user.id] = L.marker([user.lat, user.lng], { icon: customIcon }).addTo(map);
+        }
+
+        userMarkers[user.id].bindPopup(`
+          <div style="font-family: monospace; font-size: 11px; padding: 4px; min-width: 170px;">
+            <div style="display: flex; items-center: space-x-2; margin-bottom: 6px;">
+              <span style="font-size: 20px;">${user.avatar || '👤'}</span>
+              <div>
+                <div style="font-weight: 900; color: ${style.border}; font-size: 13px;">${user.name} ${isMe ? '(YOU)' : ''}</div>
+                <div style="color: #10b981; font-size: 9px; font-weight: bold;">● ONLINE LIVE</div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid #1e293b; padding-top: 4px;">
+              <div>Lat: <strong>${user.lat.toFixed(6)}°</strong></div>
+              <div>Lng: <strong>${user.lng.toFixed(6)}°</strong></div>
+              <div style="color: #94a3b8;">Accuracy: &plusmn;${(user.accuracy || 10).toFixed(1)}m</div>
+              <div style="color: #64748b; font-size: 9px; margin-top: 4px;">Updated: ${new Date(user.timestamp).toLocaleTimeString()}</div>
+            </div>
+          </div>
+        `);
+      });
+
+      renderPeoplePills(users);
+    }
+
+    function renderPeoplePills(users) {
+      const container = document.getElementById('live-people-pills');
+      if (!container) return;
+
+      container.innerHTML = users.map((u, idx) => {
+        const style = USER_STYLES[idx % USER_STYLES.length];
+        const isMe = u.id === myDeviceId;
+        return `
+          <div onclick="focusOnPerson(${u.lat}, ${u.lng})" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 cursor-pointer shrink-0 transition">
+            <span class="text-sm">${u.avatar || '👤'}</span>
+            <span class="font-bold text-white">${u.name}</span>
+            ${isMe ? `<span class="text-[9px] text-emerald-400 font-bold">YOU</span>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function focusOnPerson(lat, lng) {
+      if (map) {
+        map.setView([lat, lng], 17, { animate: true });
+      }
+    }
+
+    function fitMapToAllPeople() {
+      const users = getStoredUserList();
+      if (!map || users.length === 0) return;
+
+      const bounds = L.latLngBounds(users.map(u => [u.lat, u.lng]));
+      map.fitBounds(bounds, { padding: [60, 60] });
+    }
+  </script>
+</body>
+</html>

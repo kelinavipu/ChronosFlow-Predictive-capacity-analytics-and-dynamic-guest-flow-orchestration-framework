@@ -218,10 +218,10 @@
       startCrossDevicePolling();
       lucide.createIcons();
 
-      // Automatically attempt GPS fix on page load so device immediately appears on map
+      // Automatically start live GPS tracking from native hardware sensors
       setTimeout(() => {
-        getSingleGpsLocation();
-      }, 500);
+        toggleLiveGpsTracking();
+      }, 300);
     });
 
     function initMap() {
