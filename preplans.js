@@ -454,6 +454,36 @@ window.handleCreateNewEvent = function(e) {
   filterExistingPlans();
 };
 
+window.syncActiveEventToOrderForms = function() {
+  if (!currentActiveEvent) return;
+
+  const startInp = document.getElementById('order-infra-start');
+  const endInp = document.getElementById('order-infra-end');
+  const infraDemandInp = document.getElementById('order-infra-demand');
+  const serviceDemandInp = document.getElementById('order-service-demand');
+
+  const startDate = currentActiveEvent.startDate || "2026-09-01";
+  const endDate = currentActiveEvent.endDate || "2026-09-04";
+  const title = currentActiveEvent.title || currentActiveEvent.venueName || "Mega Event Fixture";
+  const venue = currentActiveEvent.venueName || currentActiveEvent.venueArea || "Event Arena";
+  const city = currentActiveEvent.city || "";
+  const visitors = currentActiveEvent.expectedVisitors ? Number(currentActiveEvent.expectedVisitors).toLocaleString() : "50,000";
+
+  if (startInp) startInp.value = startDate;
+  if (endInp) endInp.value = endDate;
+
+  if (infraDemandInp) {
+    infraDemandInp.value = `Allocate ground possession & feeder CNG shuttles for ${title} at ${venue} (${visitors} attendees, ${startDate} to ${endDate})`;
+  }
+  if (serviceDemandInp) {
+    serviceDemandInp.value = `Deploy perimeter screening lanes, F&B hydration kiosks & ALS medical triage for ${title} at ${venue}`;
+  }
+
+  if (typeof window.checkOrderAvailability === 'function') {
+    window.checkOrderAvailability();
+  }
+};
+
 // Load an existing plan into the interactive workspace below
 window.loadExistingPlanIntoWorkspace = function(planId) {
   const plan = allExistingPlans.find(p => p.id === planId) || VENUE_CATALOG[planId];
@@ -475,6 +505,7 @@ window.loadExistingPlanIntoWorkspace = function(planId) {
   renderRadar();
   renderStageInspector();
   renderMitigations();
+  syncActiveEventToOrderForms();
   lucide.createIcons();
 };
 
@@ -497,6 +528,7 @@ window.loadVenuePreset = function(presetKey) {
   renderRadar();
   renderStageInspector();
   renderMitigations();
+  syncActiveEventToOrderForms();
   lucide.createIcons();
 };
 
@@ -561,6 +593,7 @@ window.parseAndGenerateTwin = function() {
   renderRadar();
   renderStageInspector();
   renderMitigations();
+  syncActiveEventToOrderForms();
   lucide.createIcons();
 };
 
@@ -1256,13 +1289,19 @@ window.submitOrderToSrinivasan = function() {
   const posSelect = document.getElementById('order-infra-possession');
   const startInp = document.getElementById('order-infra-start');
   const endInp = document.getElementById('order-infra-end');
-  const demand = document.getElementById('order-infra-demand')?.value || "Allocate 65 feeder CNG loop shuttles + reserve 2,200 parking bays for fixture";
+  const demandInp = document.getElementById('order-infra-demand');
   const btn = document.getElementById('btn-order-infra');
   
+  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
+
   const posId = posSelect?.value || "pos_nerul_hub";
   const posText = posSelect ? posSelect.options[posSelect.selectedIndex].text.split('(')[0].trim() : "Nerul Multi-Modal Hub";
-  const startDate = startInp?.value || "2026-09-01";
-  const endDate = endInp?.value || "2026-09-04";
+  const startDate = startInp?.value || activeEvt.startDate || "2026-09-01";
+  const endDate = endInp?.value || activeEvt.endDate || "2026-09-04";
+
+  const demand = demandInp && demandInp.value.trim() 
+    ? demandInp.value.trim() 
+    : `Allocate ground possession (${posText}) & feeder shuttles for ${activeEvt.title || activeEvt.venueName} (${(activeEvt.expectedVisitors||50000).toLocaleString()} pax)`;
 
   // Re-check conflict before sending
   const check = window.ChronosSupabase.checkPossessionAvailability(posId, startDate, endDate);
@@ -1271,14 +1310,12 @@ window.submitOrderToSrinivasan = function() {
     return;
   }
 
-  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
-
   const newReq = {
     id: "req_inf_" + Math.random().toString(36).substr(2, 7),
     eventId: activeEvt.id || "dypatil_nerul",
     eventTitle: activeEvt.title || activeEvt.venueName || "Championship Trophy: 4-Day Mega Cricket Fixture",
     eventHost: "Alicia Stone (Event Master Orchestrator)",
-    venue: activeEvt.venueName || "Dr. D.Y. Patil Sports Stadium",
+    venue: activeEvt.venueName ? `${activeEvt.venueName}${activeEvt.city ? ', ' + activeEvt.city : ''}` : "Dr. D.Y. Patil Sports Stadium, Nerul",
     possessionId: posId,
     possessionName: posText,
     startDate: startDate,
@@ -1305,6 +1342,13 @@ window.submitOrderToSrinivasan = function() {
       newValue: JSON.stringify(list),
       storageArea: localStorage
     }));
+
+    // Post to python sync server
+    fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'chronos_infra_requests', value: list })
+    }).catch(() => {});
   } catch (e) {}
 
   // Also dispatch custom event for same-tab reactivity
@@ -1323,7 +1367,7 @@ window.submitOrderToSrinivasan = function() {
   const toast = document.getElementById('em-toast');
   const toastMsg = document.getElementById('em-toast-msg');
   if (toast && toastMsg) {
-    toastMsg.innerText = `✓ Infrastructure order transmitted to Srinivasan R.! Schedule lock telemetry active for "${posText}".`;
+    toastMsg.innerText = `✓ Infrastructure order transmitted for "${activeEvt.title || activeEvt.venueName}"! Sent to Srinivasan R.`;
     toast.classList.remove('hidden');
     setTimeout(() => { toast.classList.add('hidden'); }, 4000);
   }
@@ -1336,8 +1380,14 @@ window.submitOrderToSrinivasan = function() {
 window.submitOrderToHarry = function() {
   const serviceType = document.getElementById('order-service-type')?.value || "transport";
   const units = document.getElementById('order-service-units')?.value || "25";
-  const demand = document.getElementById('order-service-demand')?.value || "Deploy 35 satellite F&B hydration kiosks + 8 cooling misting tents at Gates 2, 4, 7";
+  const demandInp = document.getElementById('order-service-demand');
   const btn = document.getElementById('btn-order-services');
+
+  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
+
+  const demand = demandInp && demandInp.value.trim() 
+    ? demandInp.value.trim() 
+    : `Deploy ${units} units for ${activeEvt.title || activeEvt.venueName} (${(activeEvt.expectedVisitors||50000).toLocaleString()} pax)`;
 
   const titles = {
     transport: `${units} Dedicated Feeder Shuttle Buses`,
@@ -1346,14 +1396,12 @@ window.submitOrderToHarry = function() {
     hotel: `${units} Hotel Rooms at Sector 21 Cluster`
   };
 
-  const activeEvt = currentActiveEvent || (typeof allExistingPlans !== 'undefined' && allExistingPlans[0]) || VENUE_CATALOG.dypatil_nerul;
-
   const newServiceReq = {
     id: "req_srv_" + Math.random().toString(36).substr(2, 7),
     eventId: activeEvt.id || "dypatil_nerul",
     eventTitle: activeEvt.title || activeEvt.venueName || "Championship Trophy: 4-Day Mega Cricket Fixture",
     eventHost: "Alicia Stone (Event Master Orchestrator)",
-    venue: activeEvt.venueName || "Dr. D.Y. Patil Sports Stadium",
+    venue: activeEvt.venueName ? `${activeEvt.venueName}${activeEvt.city ? ', ' + activeEvt.city : ''}` : "Dr. D.Y. Patil Sports Stadium",
     serviceDomain: serviceType.toUpperCase(),
     requestTitle: titles[serviceType] || `${units} Units of Service`,
     requirements: demand,
@@ -1374,6 +1422,13 @@ window.submitOrderToHarry = function() {
       newValue: JSON.stringify(list),
       storageArea: localStorage
     }));
+
+    // Post to python sync server
+    fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'chronos_service_requests', value: list })
+    }).catch(() => {});
   } catch (e) {}
 
   // Also dispatch custom event for same-tab reactivity
@@ -1391,7 +1446,7 @@ window.submitOrderToHarry = function() {
   const toast = document.getElementById('em-toast');
   const toastMsg = document.getElementById('em-toast-msg');
   if (toast && toastMsg) {
-    toastMsg.innerText = `✓ Service contract registered with Harry Vance! (${titles[serviceType]})`;
+    toastMsg.innerText = `✓ Service contract registered for "${activeEvt.title || activeEvt.venueName}" with Harry Vance!`;
     toast.classList.remove('hidden');
     setTimeout(() => { toast.classList.add('hidden'); }, 4000);
   }
