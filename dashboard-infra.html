@@ -742,29 +742,29 @@
           <div class="space-y-3 max-w-2xl">
             <div class="flex flex-wrap items-center gap-2">
               <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold badge-sand">READY TO HOST</span>
-              <span class="text-xs text-slate-400 font-mono">&bull; Event ID: dypatil_nerul</span>
+              <span class="text-xs text-slate-400 font-mono" id="pipeline-event-id">&bull; Event ID: dypatil_nerul</span>
               <span class="text-xs text-emerald-400 font-mono">&bull; Baseline Locked</span>
             </div>
 
             <div>
-              <h3 class="text-xl font-black text-white">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
+              <h3 class="text-xl font-black text-white" id="pipeline-event-title">Championship Trophy: 4-Day Mega Cricket Fixture</h3>
               <div class="flex items-center space-x-2 text-xs text-slate-300 mt-1">
                 <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
-                <span>Hosted by <strong class="text-white">Alicia Stone</strong> (Event Master Orchestrator)</span>
+                <span>Hosted by <strong class="text-white" id="pipeline-event-host">Alicia Stone</strong> (Event Master Orchestrator)</span>
                 <span>&bull;</span>
                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
-                <span>Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
+                <span id="pipeline-event-venue">Dr. D.Y. Patil Sports Stadium, Sector 7, Nerul</span>
               </div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
               <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
                 <div class="text-[10px] text-slate-400">Dates</div>
-                <div class="font-bold text-white">Sep 1 - Sep 4</div>
+                <div class="font-bold text-white" id="pipeline-event-dates">Sep 1 - Sep 4</div>
               </div>
               <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
                 <div class="text-[10px] text-slate-400">Daily Spectators</div>
-                <div class="font-bold text-sky-300">50,000 / Day</div>
+                <div class="font-bold text-sky-300" id="pipeline-event-paxs">50,000 / Day</div>
               </div>
               <div class="p-2.5 rounded-xl bg-slate-900/90 border border-sky-900/30">
                 <div class="text-[10px] text-slate-400">Rail Demand</div>
@@ -1751,6 +1751,24 @@
         }
       }
       lastRenderedReqCount = requests.length;
+
+      // Dynamically update Host Event Pipeline card with latest active host request
+      if (requests.length > 0) {
+        const latest = requests[0];
+        const pipeTitle = document.getElementById('pipeline-event-title');
+        const pipeId = document.getElementById('pipeline-event-id');
+        const pipeHost = document.getElementById('pipeline-event-host');
+        const pipeVenue = document.getElementById('pipeline-event-venue');
+        const pipeDates = document.getElementById('pipeline-event-dates');
+        const pipePaxs = document.getElementById('pipeline-event-paxs');
+
+        if (pipeTitle) pipeTitle.innerText = latest.eventTitle || "Mega Event Fixture";
+        if (pipeId) pipeId.innerText = `• Event ID: ${latest.eventId || 'active_evt'}`;
+        if (pipeHost) pipeHost.innerText = (latest.eventHost || "Alicia Stone").split('(')[0].trim();
+        if (pipeVenue) pipeVenue.innerText = latest.venue || "Event Stadium Arena";
+        if (pipeDates) pipeDates.innerText = `${latest.startDate || '2026-09-01'} to ${latest.endDate || '2026-09-04'}`;
+        if (pipePaxs) pipePaxs.innerText = latest.expectedVisitors ? `${Number(latest.expectedVisitors).toLocaleString()} / Day` : "50,000 / Day";
+      }
 
       if (!container) return;
 
